@@ -86,7 +86,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-slate-800 px-6 py-8 text-center text-slate-400">
-        © {new Date().getFullYear()} DURANT — جميع الحقوق محفوظة
+        © {2026} DURANT — جميع الحقوق محفوظة
       </footer>
     </main>
   );
