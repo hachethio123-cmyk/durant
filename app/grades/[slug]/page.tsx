@@ -1,3 +1,4 @@
+export const instant = false;
 
 const gradeNames: Record<string, string> = {
   "first-prep": "الصف الأول الإعدادي",
@@ -80,7 +81,7 @@ export default async function GradePage({
         )}
 
         <footer className="mt-12 border-t border-slate-800 py-8 text-center text-slate-400">
-          DURANT © جميع الحقوق محفوظة
+          © 2026 DURANT — جميع الحقوق محفوظة
         </footer>
       </div>
     </main>
