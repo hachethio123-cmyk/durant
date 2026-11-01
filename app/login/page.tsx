@@ -17,10 +17,11 @@ const grades = [
 export default function LoginPage() {
   const router = useRouter();
 
-  const [mode, setMode] = useState<"signup" | "login">("signup");
+  const [mode, setMode] = useState<"signup" | "login">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [grade, setGrade] = useState("third-prep");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function LoginPage() {
         }
 
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             data: {
@@ -50,27 +51,33 @@ export default function LoginPage() {
 
         if (error) throw error;
 
+        // منع الدخول التلقائي بعد إنشاء الحساب
         if (data.session) {
-          router.push("/dashboard");
-        } else {
-          setMessage(
-            "تم إنشاء الحساب. راجع بريدك الإلكتروني لتأكيد الحساب، ثم سجّل الدخول."
-          );
-          setMode("login");
+          const { error: signOutError } = await supabase.auth.signOut();
+          if (signOutError) throw signOutError;
         }
+
+        setMode("login");
+        setPassword("");
+        setShowPassword(false);
+        setMessage(
+          "تم إنشاء حسابك بنجاح. اكتب بريدك الإلكتروني وكلمة المرور لتسجيل الدخول."
+        );
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
 
         if (error) throw error;
 
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "حدث خطأ، حاول مرة أخرى."
+        error instanceof Error
+          ? error.message
+          : "حدث خطأ، حاول مرة أخرى."
       );
     } finally {
       setLoading(false);
@@ -83,19 +90,17 @@ export default function LoginPage() {
       className="flex min-h-screen items-center justify-center bg-slate-950 px-5 py-12 text-white"
     >
       <div className="w-full max-w-md rounded-3xl border border-yellow-400/20 bg-slate-900 p-8 shadow-2xl">
-        <a href="/" className="text-sm text-yellow-400">
-          ← العودة للرئيسية
-        </a>
-
         <div className="my-7 text-center">
           <div className="text-5xl">🎓</div>
+
           <h1 className="mt-4 text-4xl font-black text-yellow-400">
             DURANT
           </h1>
+
           <p className="mt-3 text-slate-300">
             {mode === "signup"
               ? "أنشئ حسابك وابدأ رحلتك التعليمية"
-              : "أهلاً بعودتك إلى ديورانت"}
+              : "أهلاً بك في منصة ديورانت"}
           </p>
         </div>
 
@@ -138,6 +143,7 @@ export default function LoginPage() {
                 <span className="mb-2 block text-sm text-slate-300">
                   الاسم بالكامل
                 </span>
+
                 <input
                   required
                   value={name}
@@ -151,6 +157,7 @@ export default function LoginPage() {
                 <span className="mb-2 block text-sm text-slate-300">
                   الصف الدراسي
                 </span>
+
                 <select
                   value={grade}
                   onChange={(e) => setGrade(e.target.value)}
@@ -170,6 +177,7 @@ export default function LoginPage() {
             <span className="mb-2 block text-sm text-slate-300">
               البريد الإلكتروني
             </span>
+
             <input
               required
               type="email"
@@ -184,15 +192,31 @@ export default function LoginPage() {
             <span className="mb-2 block text-sm text-slate-300">
               كلمة المرور
             </span>
-            <input
-              required
-              type="password"
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 outline-none focus:border-yellow-400"
-              placeholder="6 أحرف أو أكثر"
-            />
+
+            <div className="relative">
+              <input
+                required
+                type={showPassword ? "text" : "password"}
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 pl-14 outline-none focus:border-yellow-400"
+                placeholder="6 أحرف أو أكثر"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-yellow-400"
+                aria-label={
+                  showPassword
+                    ? "إخفاء كلمة المرور"
+                    : "إظهار كلمة المرور"
+                }
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </label>
 
           {message && (
@@ -213,6 +237,12 @@ export default function LoginPage() {
                 : "تسجيل الدخول"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-xs leading-6 text-slate-400">
+          منصة DURANT التعليمية
+          <br />
+          مع مستر أمير عبد الناصر
+        </p>
       </div>
     </main>
   );
