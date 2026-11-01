@@ -13,13 +13,21 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://durant-platform.netlify.app"),
+
   title: {
     default: "DURANT | منصة ديورانت التعليمية",
     template: "%s | DURANT",
   },
+
   description:
     "منصة ديورانت التعليمية مع مستر أمير عبد الناصر، متخصصة في الدراسات الاجتماعية والتاريخ والجغرافيا.",
+
   applicationName: "DURANT",
+
+  verification: {
+    google: "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
+  },
+
   openGraph: {
     type: "website",
     locale: "ar_EG",
