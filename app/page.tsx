@@ -48,6 +48,15 @@ export const metadata: Metadata = {
   },
 };
 
+// الهوية الرسمية لمنصة DURANT لمحركات البحث
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "منصة ديورانت التعليمية",
+  alternateName: ["DURANT", "ديورانت"],
+  url: "https://durant-platform.netlify.app/",
+};
+
 const grades = [
   "الصف الأول الإعدادي",
   "الصف الثاني الإعدادي",
@@ -63,6 +72,14 @@ export default function Home() {
       dir="rtl"
       className="min-h-screen overflow-hidden bg-slate-950 text-white"
     >
+      {/* بيانات هوية الموقع لمحركات البحث */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+
       {/* الشريط العلوي */}
       <nav className="border-b border-yellow-400/20 bg-slate-950/95">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5">
