@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
 
+type Language = "ar" | "en";
+
 const sections = [
   { id: "appearance", title: "المظهر والألوان", icon: "🎨" },
   { id: "notifications", title: "الإشعارات", icon: "🔔" },
@@ -23,6 +25,9 @@ export default function SettingsPage() {
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
 
+  const [language, setLanguage] = useState<Language>("ar");
+  const [languageReady, setLanguageReady] = useState(false);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const section = params.get("section");
@@ -30,7 +35,24 @@ export default function SettingsPage() {
     if (sections.some((item) => item.id === section)) {
       setActiveSection(section!);
     }
+
+    const savedLanguage = localStorage.getItem("durant-language");
+
+    if (savedLanguage === "ar" || savedLanguage === "en") {
+      setLanguage(savedLanguage);
+    }
+
+    setLanguageReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!languageReady) return;
+
+    localStorage.setItem("durant-language", language);
+
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  }, [language, languageReady]);
 
   const activeTitle =
     sections.find((item) => item.id === activeSection)?.title ??
@@ -38,7 +60,7 @@ export default function SettingsPage() {
 
   return (
     <main
-      dir="rtl"
+      dir={language === "ar" ? "rtl" : "ltr"}
       className="min-h-screen flex-1 bg-slate-950 p-5 pt-20 text-white md:p-8"
     >
       <div className="mx-auto max-w-6xl">
@@ -48,7 +70,11 @@ export default function SettingsPage() {
             <p className="text-sm font-bold text-yellow-400">
               DURANT / لوحة التحكم
             </p>
-            <h1 className="mt-2 text-3xl font-black">الإعدادات ⚙️</h1>
+
+            <h1 className="mt-2 text-3xl font-black">
+              الإعدادات ⚙️
+            </h1>
+
             <p className="mt-2 text-slate-400">
               تحكم في تجربتك التعليمية واجعل المنصة مناسبة لك.
             </p>
@@ -95,6 +121,7 @@ export default function SettingsPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="font-bold">نظام الألوان</h3>
+
                   <p className="mt-1 text-sm text-slate-400">
                     اختر الشكل الذي تفضله للمنصة.
                   </p>
@@ -118,9 +145,11 @@ export default function SettingsPage() {
                         }`}
                       >
                         <span className="block text-3xl">{item.icon}</span>
+
                         <span className="mt-2 block font-bold">
                           {item.title}
                         </span>
+
                         {theme === item.id && (
                           <span className="mt-2 block text-xs">
                             ✓ محدد
@@ -146,6 +175,7 @@ export default function SettingsPage() {
                       تنبيهات الدروس والامتحانات الجديدة.
                     </span>
                   </span>
+
                   <input
                     type="checkbox"
                     checked={notifications}
@@ -163,6 +193,7 @@ export default function SettingsPage() {
                       استقبال التنبيهات عبر البريد.
                     </span>
                   </span>
+
                   <input
                     type="checkbox"
                     checked={emailNotifications}
@@ -181,19 +212,30 @@ export default function SettingsPage() {
                   <label className="mb-2 block font-bold">
                     لغة المنصة
                   </label>
+
                   <select
-                    defaultValue="ar"
+                    value={language}
+                    onChange={(e) =>
+                      setLanguage(e.target.value as Language)
+                    }
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-white"
                   >
                     <option value="ar">العربية</option>
                     <option value="en">English</option>
                   </select>
+
+                  <p className="mt-2 text-sm text-slate-400">
+                    {language === "ar"
+                      ? "تم حفظ اختيار اللغة العربية."
+                      : "English preference saved. Full translation is not connected yet."}
+                  </p>
                 </div>
 
                 <div>
                   <label className="mb-2 block font-bold">
                     حجم الخط
                   </label>
+
                   <select
                     value={fontSize}
                     onChange={(e) => setFontSize(e.target.value)}
@@ -211,9 +253,11 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 <div className="rounded-xl border border-slate-800 p-4">
                   <h3 className="font-bold">كلمة المرور</h3>
+
                   <p className="mt-2 text-sm text-slate-400">
                     حافظ على سرية كلمة المرور ولا تشاركها مع أحد.
                   </p>
+
                   <p className="mt-3 text-sm text-yellow-400">
                     تغيير كلمة المرور — سنضيف الوظيفة قريبًا.
                   </p>
@@ -221,6 +265,7 @@ export default function SettingsPage() {
 
                 <div className="rounded-xl border border-slate-800 p-4">
                   <h3 className="font-bold">خصوصية الحساب</h3>
+
                   <p className="mt-2 text-sm text-slate-400">
                     بيانات حسابك التعليمية مرتبطة بحسابك الشخصي.
                   </p>
@@ -231,7 +276,9 @@ export default function SettingsPage() {
             {activeSection === "devices" && (
               <div className="rounded-xl border border-slate-800 p-5">
                 <div className="text-3xl">📱</div>
+
                 <h3 className="mt-3 font-bold">الأجهزة والجلسات</h3>
+
                 <p className="mt-2 text-sm text-slate-400">
                   سنضيف هنا عرض الأجهزة المسجل منها الدخول وإدارة الجلسات.
                 </p>
@@ -241,10 +288,13 @@ export default function SettingsPage() {
             {activeSection === "support" && (
               <div className="rounded-xl border border-slate-800 p-5">
                 <div className="text-3xl">💬</div>
+
                 <h3 className="mt-3 font-bold">تحتاج مساعدة؟</h3>
+
                 <p className="mt-2 text-sm text-slate-400">
                   قسم الدعم الفني لمساعدتك في استخدام منصة DURANT.
                 </p>
+
                 <p className="mt-3 text-sm text-yellow-400">
                   سنضيف وسيلة التواصل قريبًا.
                 </p>
@@ -256,12 +306,15 @@ export default function SettingsPage() {
                 <h3 className="text-4xl font-black tracking-wider text-yellow-400">
                   DURANT
                 </h3>
+
                 <p className="mt-4 text-lg font-bold">
                   منصة ديورانت التعليمية
                 </p>
+
                 <p className="mt-2 text-sm text-slate-400">
                   مع مستر أمير عبد الناصر
                 </p>
+
                 <p className="mt-6 text-xs text-slate-500">
                   © DURANT — جميع الحقوق محفوظة
                 </p>
