@@ -12,7 +12,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://durant-platform.netlify.app"),
+  metadataBase: new URL("https://durant-rose.vercel.app"),
 
   title: {
     default: "DURANT | منصة ديورانت التعليمية",
@@ -25,7 +25,10 @@ export const metadata: Metadata = {
   applicationName: "DURANT",
 
   verification: {
-    google: "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
+    google: [
+      "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
+      "1xX3qz2UvE5sltQoImjRmvEdbKJyQoxWXxfYo_c5OQU",
+    ],
   },
 
   openGraph: {
