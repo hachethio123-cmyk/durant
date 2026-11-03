@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://durant-platform.netlify.app/sitemap.xml",
+    sitemap: "https://durant-rose.vercel.app/sitemap.xml",
   };
 }
