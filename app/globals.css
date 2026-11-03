@@ -6,6 +6,7 @@
   --foreground: #171717;
   --surface: #f1f5f9;
   --surface-border: #e2e8f0;
+  --durant-font-size: 16px;
 }
 
 html.dark {
@@ -20,6 +21,25 @@ html.light {
   --foreground: #171717;
   --surface: #f1f5f9;
   --surface-border: #e2e8f0;
+}
+
+/* DURANT Font Size */
+
+html {
+  font-size: var(--durant-font-size);
+  transition: font-size 0.2s ease;
+}
+
+html[data-font-size="small"] {
+  --durant-font-size: 14px;
+}
+
+html[data-font-size="medium"] {
+  --durant-font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  --durant-font-size: 18px;
 }
 
 @theme inline {

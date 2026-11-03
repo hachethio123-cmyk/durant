@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/ThemeProvider";
 
@@ -19,6 +19,37 @@ export default function StudentSidebar() {
     pathname === "/settings"
   );
   const [loggingOut, setLoggingOut] = useState(false);
+
+  // إغلاق القائمة بزر Escape ومنع تمرير الصفحة خلفها
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen]);
+
+  // إغلاق القائمة تلقائيًا عند الانتقال لصفحة أخرى
+  useEffect(() => {
+    setMobileOpen(false);
+
+    if (pathname === "/settings") {
+      setSettingsOpen(true);
+    }
+  }, [pathname]);
 
   const menuItems = [
     {
@@ -77,6 +108,8 @@ export default function StudentSidebar() {
   ];
 
   async function handleLogout() {
+    if (loggingOut) return;
+
     setLoggingOut(true);
 
     const { error } = await supabase.auth.signOut();
@@ -100,28 +133,35 @@ export default function StudentSidebar() {
 
   return (
     <div dir={isArabic ? "rtl" : "ltr"}>
+      {/* Mobile and tablet menu button */}
       <button
         type="button"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className={`fixed top-4 z-[60] rounded-xl border border-slate-700 bg-slate-900 p-3 text-white shadow-lg md:hidden ${
+        onClick={() => setMobileOpen((current) => !current)}
+        className={`fixed top-4 z-[60] flex h-12 w-12 items-center justify-center rounded-xl border border-slate-700 bg-slate-900 text-xl text-white shadow-lg transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 lg:hidden ${
           isArabic ? "right-4" : "left-4"
         }`}
         aria-label={isArabic ? "فتح القائمة" : "Open menu"}
+        aria-expanded={mobileOpen}
+        aria-controls="durant-student-sidebar"
       >
-        ☰
+        {mobileOpen ? "✕" : "☰"}
       </button>
 
+      {/* Background overlay */}
       {mobileOpen && (
         <button
           type="button"
           aria-label={isArabic ? "إغلاق القائمة" : "Close menu"}
           onClick={closeMobile}
-          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          className="fixed inset-0 z-40 cursor-default bg-black/60 backdrop-blur-[2px] lg:hidden"
         />
       )}
 
+      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 z-50 flex w-72 flex-col border-slate-800 bg-slate-950 p-5 shadow-2xl transition-transform duration-300 md:sticky md:top-0 md:h-screen md:w-64 md:translate-x-0 ${
+        id="durant-student-sidebar"
+        aria-label={isArabic ? "القائمة الرئيسية" : "Main navigation"}
+        className={`fixed inset-y-0 z-50 flex h-dvh w-72 max-w-[calc(100vw-2rem)] shrink-0 flex-col border-slate-800 bg-slate-950 p-5 shadow-2xl transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:max-w-none lg:translate-x-0 lg:shadow-none xl:w-72 ${
           isArabic ? "right-0 border-l" : "left-0 border-r"
         } ${
           mobileOpen
@@ -131,7 +171,8 @@ export default function StudentSidebar() {
               : "-translate-x-full"
         }`}
       >
-        <div className="border-b border-slate-800 pb-6 text-center">
+        {/* Brand */}
+        <div className="shrink-0 border-b border-slate-800 pb-6 text-center">
           <h1 className="text-3xl font-black tracking-wider text-yellow-400">
             DURANT
           </h1>
@@ -145,7 +186,8 @@ export default function StudentSidebar() {
           <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-yellow-400" />
         </div>
 
-        <nav className="mt-7 flex-1 space-y-2 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="mt-7 min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pb-4">
           <p className="mb-3 px-3 text-xs font-bold text-slate-500">
             {isArabic ? "القائمة الرئيسية" : "MAIN MENU"}
           </p>
@@ -161,35 +203,38 @@ export default function StudentSidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={closeMobile}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 font-bold transition ${
+                aria-current={active ? "page" : undefined}
+                className={`flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 font-bold transition ${
                   active
                     ? "bg-yellow-400 text-slate-950 shadow-lg shadow-yellow-400/10"
                     : "text-slate-300 hover:bg-slate-800 hover:text-yellow-400"
                 }`}
               >
-                <span className="text-xl">{item.icon}</span>
-                {item.label}
+                <span className="shrink-0 text-xl">{item.icon}</span>
+                <span className="min-w-0">{item.label}</span>
               </Link>
             );
           })}
 
           <div className="my-5 border-t border-slate-800" />
 
+          {/* Settings */}
           <button
             type="button"
-            onClick={() => setSettingsOpen(!settingsOpen)}
-            className={`flex w-full items-center justify-between rounded-xl px-4 py-3 font-bold transition ${
+            onClick={() => setSettingsOpen((current) => !current)}
+            className={`flex min-h-12 w-full items-center justify-between rounded-xl px-4 py-3 font-bold transition ${
               pathname === "/settings"
                 ? "bg-yellow-400 text-slate-950"
                 : "text-slate-300 hover:bg-slate-800 hover:text-yellow-400"
             }`}
+            aria-expanded={settingsOpen}
           >
-            <span className="flex items-center gap-3">
-              <span className="text-xl">⚙️</span>
-              {isArabic ? "الإعدادات" : "Settings"}
+            <span className="flex min-w-0 items-center gap-3">
+              <span className="shrink-0 text-xl">⚙️</span>
+              <span>{isArabic ? "الإعدادات" : "Settings"}</span>
             </span>
 
-            <span className="text-sm">
+            <span className="shrink-0 text-sm">
               {settingsOpen ? "⌄" : isArabic ? "‹" : "›"}
             </span>
           </button>
@@ -207,22 +252,23 @@ export default function StudentSidebar() {
                   key={item.section}
                   href={`/settings?section=${item.section}`}
                   onClick={closeMobile}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition hover:bg-slate-800 hover:text-yellow-400"
+                  className="flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition hover:bg-slate-800 hover:text-yellow-400"
                 >
-                  <span>{item.icon}</span>
-                  {item.label}
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="min-w-0">{item.label}</span>
                 </Link>
               ))}
             </div>
           )}
         </nav>
 
-        <div className="border-t border-slate-800 pt-4">
+        {/* Logout and footer */}
+        <div className="shrink-0 border-t border-slate-800 pt-4">
           <button
             type="button"
             onClick={handleLogout}
             disabled={loggingOut}
-            className="w-full rounded-xl border border-red-500/30 px-4 py-3 font-bold text-red-400 transition hover:bg-red-500/10 disabled:opacity-50"
+            className="min-h-12 w-full rounded-xl border border-red-500/30 px-4 py-3 font-bold text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loggingOut
               ? isArabic

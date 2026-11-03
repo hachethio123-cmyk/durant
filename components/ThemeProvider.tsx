@@ -10,12 +10,15 @@ import {
 
 type Theme = "dark" | "light" | "system";
 type Language = "ar" | "en";
+type FontSize = "small" | "medium" | "large";
 
 type ThemeContextType = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   language: Language;
   setLanguage: (language: Language) => void;
+  fontSize: FontSize;
+  setFontSize: (size: FontSize) => void;
   languageReady: boolean;
 };
 
@@ -48,12 +51,15 @@ export default function ThemeProvider({
 }) {
   const [theme, setTheme] = useState<Theme>("dark");
   const [language, setLanguage] = useState<Language>("ar");
+  const [fontSize, setFontSize] = useState<FontSize>("medium");
+
   const [ready, setReady] = useState(false);
   const [languageReady, setLanguageReady] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("durant-theme");
     const savedLanguage = localStorage.getItem("durant-language");
+    const savedFontSize = localStorage.getItem("durant-font-size");
 
     if (
       savedTheme === "dark" ||
@@ -65,6 +71,14 @@ export default function ThemeProvider({
 
     if (savedLanguage === "ar" || savedLanguage === "en") {
       setLanguage(savedLanguage);
+    }
+
+    if (
+      savedFontSize === "small" ||
+      savedFontSize === "medium" ||
+      savedFontSize === "large"
+    ) {
+      setFontSize(savedFontSize);
     }
 
     setReady(true);
@@ -106,6 +120,24 @@ export default function ThemeProvider({
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
   }, [language, languageReady]);
 
+  useEffect(() => {
+    if (!ready) return;
+
+    localStorage.setItem("durant-font-size", fontSize);
+
+    const root = document.documentElement;
+
+    root.dataset.fontSize = fontSize;
+
+    const sizes: Record<FontSize, string> = {
+      small: "14px",
+      medium: "16px",
+      large: "18px",
+    };
+
+    root.style.setProperty("--durant-font-size", sizes[fontSize]);
+  }, [fontSize, ready]);
+
   return (
     <ThemeContext.Provider
       value={{
@@ -113,6 +145,8 @@ export default function ThemeProvider({
         setTheme,
         language,
         setLanguage,
+        fontSize,
+        setFontSize,
         languageReady,
       }}
     >

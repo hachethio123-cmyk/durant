@@ -16,13 +16,12 @@ const sections = [
 ];
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, fontSize, setFontSize } = useTheme();
   const { language, setLanguage, languageReady } = useLanguage();
 
   const isArabic = language === "ar";
 
   const [activeSection, setActiveSection] = useState("appearance");
-  const [fontSize, setFontSize] = useState("medium");
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
 
@@ -35,7 +34,7 @@ export default function SettingsPage() {
     }
   }, []);
 
-  const t = (ar: string, en: string) => isArabic ? ar : en;
+  const t = (ar: string, en: string) => (isArabic ? ar : en);
 
   if (!languageReady) {
     return (
@@ -46,8 +45,9 @@ export default function SettingsPage() {
   }
 
   const activeTitle =
-    sections.find((item) => item.id === activeSection)?.[isArabic ? "ar" : "en"] ??
-    t("الإعدادات", "Settings");
+    sections.find((item) => item.id === activeSection)?.[
+      isArabic ? "ar" : "en"
+    ] ?? t("الإعدادات", "Settings");
 
   return (
     <main
@@ -117,7 +117,10 @@ export default function SettingsPage() {
                   </h3>
 
                   <p className="mt-1 text-sm text-slate-400">
-                    {t("اختر الشكل الذي تفضله للمنصة.", "Choose your preferred platform appearance.")}
+                    {t(
+                      "اختر الشكل الذي تفضله للمنصة.",
+                      "Choose your preferred platform appearance."
+                    )}
                   </p>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -129,7 +132,9 @@ export default function SettingsPage() {
                       <button
                         key={item.id}
                         type="button"
-                        onClick={() => setTheme(item.id as "dark" | "light" | "system")}
+                        onClick={() =>
+                          setTheme(item.id as "dark" | "light" | "system")
+                        }
                         className={`rounded-xl border p-5 text-center transition ${
                           theme === item.id
                             ? "border-yellow-400 bg-yellow-400/10 text-yellow-400"
@@ -167,9 +172,13 @@ export default function SettingsPage() {
                       {t("إشعارات المنصة", "Platform Notifications")}
                     </span>
                     <span className="text-sm text-slate-400">
-                      {t("تنبيهات الدروس والامتحانات الجديدة.", "Alerts for new lessons and exams.")}
+                      {t(
+                        "تنبيهات الدروس والامتحانات الجديدة.",
+                        "Alerts for new lessons and exams."
+                      )}
                     </span>
                   </span>
+
                   <input
                     type="checkbox"
                     checked={notifications}
@@ -184,9 +193,13 @@ export default function SettingsPage() {
                       {t("إشعارات البريد الإلكتروني", "Email Notifications")}
                     </span>
                     <span className="text-sm text-slate-400">
-                      {t("استقبال التنبيهات عبر البريد.", "Receive alerts by email.")}
+                      {t(
+                        "استقبال التنبيهات عبر البريد.",
+                        "Receive alerts by email."
+                      )}
                     </span>
                   </span>
+
                   <input
                     type="checkbox"
                     checked={emailNotifications}
@@ -206,7 +219,9 @@ export default function SettingsPage() {
 
                   <select
                     value={language}
-                    onChange={(e) => setLanguage(e.target.value as "ar" | "en")}
+                    onChange={(e) =>
+                      setLanguage(e.target.value as "ar" | "en")
+                    }
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-white"
                   >
                     <option value="ar">العربية</option>
@@ -227,13 +242,24 @@ export default function SettingsPage() {
 
                   <select
                     value={fontSize}
-                    onChange={(e) => setFontSize(e.target.value)}
+                    onChange={(e) =>
+                      setFontSize(
+                        e.target.value as "small" | "medium" | "large"
+                      )
+                    }
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-white"
                   >
                     <option value="small">{t("صغير", "Small")}</option>
                     <option value="medium">{t("متوسط", "Medium")}</option>
                     <option value="large">{t("كبير", "Large")}</option>
                   </select>
+
+                  <p className="mt-2 text-sm text-slate-400">
+                    {t(
+                      "سيتم حفظ اختيارك وتطبيقه على المنصة.",
+                      "Your choice will be saved and applied across the platform."
+                    )}
+                  </p>
                 </div>
               </div>
             )}
@@ -244,11 +270,19 @@ export default function SettingsPage() {
                   <h3 className="font-bold">
                     {t("كلمة المرور", "Password")}
                   </h3>
+
                   <p className="mt-2 text-sm text-slate-400">
-                    {t("حافظ على سرية كلمة المرور ولا تشاركها مع أحد.", "Keep your password private and never share it.")}
+                    {t(
+                      "حافظ على سرية كلمة المرور ولا تشاركها مع أحد.",
+                      "Keep your password private and never share it."
+                    )}
                   </p>
+
                   <p className="mt-3 text-sm text-yellow-400">
-                    {t("تغيير كلمة المرور — سنضيف الوظيفة قريبًا.", "Change password — coming soon.")}
+                    {t(
+                      "تغيير كلمة المرور — سنضيف الوظيفة قريبًا.",
+                      "Change password — coming soon."
+                    )}
                   </p>
                 </div>
 
@@ -256,8 +290,12 @@ export default function SettingsPage() {
                   <h3 className="font-bold">
                     {t("خصوصية الحساب", "Account Privacy")}
                   </h3>
+
                   <p className="mt-2 text-sm text-slate-400">
-                    {t("بيانات حسابك التعليمية مرتبطة بحسابك الشخصي.", "Your learning data is linked to your personal account.")}
+                    {t(
+                      "بيانات حسابك التعليمية مرتبطة بحسابك الشخصي.",
+                      "Your learning data is linked to your personal account."
+                    )}
                   </p>
                 </div>
               </div>
@@ -266,9 +304,11 @@ export default function SettingsPage() {
             {activeSection === "devices" && (
               <div className="rounded-xl border border-slate-800 p-5">
                 <div className="text-3xl">📱</div>
+
                 <h3 className="mt-3 font-bold">
                   {t("الأجهزة والجلسات", "Devices & Sessions")}
                 </h3>
+
                 <p className="mt-2 text-sm text-slate-400">
                   {t(
                     "سنضيف هنا عرض الأجهزة المسجل منها الدخول وإدارة الجلسات.",
@@ -281,17 +321,23 @@ export default function SettingsPage() {
             {activeSection === "support" && (
               <div className="rounded-xl border border-slate-800 p-5">
                 <div className="text-3xl">💬</div>
+
                 <h3 className="mt-3 font-bold">
                   {t("تحتاج مساعدة؟", "Need Help?")}
                 </h3>
+
                 <p className="mt-2 text-sm text-slate-400">
                   {t(
                     "قسم الدعم الفني لمساعدتك في استخدام منصة DURANT.",
                     "Technical support to help you use the DURANT platform."
                   )}
                 </p>
+
                 <p className="mt-3 text-sm text-yellow-400">
-                  {t("سنضيف وسيلة التواصل قريبًا.", "Contact options coming soon.")}
+                  {t(
+                    "سنضيف وسيلة التواصل قريبًا.",
+                    "Contact options coming soon."
+                  )}
                 </p>
               </div>
             )}
@@ -301,12 +347,21 @@ export default function SettingsPage() {
                 <h3 className="text-4xl font-black tracking-wider text-yellow-400">
                   DURANT
                 </h3>
+
                 <p className="mt-4 text-lg font-bold">
-                  {t("منصة ديورانت التعليمية", "DURANT Educational Platform")}
+                  {t(
+                    "منصة ديورانت التعليمية",
+                    "DURANT Educational Platform"
+                  )}
                 </p>
+
                 <p className="mt-2 text-sm text-slate-400">
-                  {t("مع مستر أمير عبد الناصر", "With Mr. Amir Abdel Nasser")}
+                  {t(
+                    "مع مستر أمير عبد الناصر",
+                    "With Mr. Amir Abdel Nasser"
+                  )}
                 </p>
+
                 <p className="mt-6 text-xs text-slate-500">
                   © DURANT — {t("جميع الحقوق محفوظة", "All Rights Reserved")}
                 </p>
