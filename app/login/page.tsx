@@ -4,18 +4,25 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import { useLanguage } from "@/components/ThemeProvider";
 
 const grades = [
-  { value: "first-prep", label: "الصف الأول الإعدادي" },
-  { value: "second-prep", label: "الصف الثاني الإعدادي" },
-  { value: "third-prep", label: "الصف الثالث الإعدادي" },
-  { value: "first-secondary", label: "الصف الأول الثانوي" },
-  { value: "second-secondary", label: "الصف الثاني الثانوي" },
-  { value: "third-secondary", label: "الصف الثالث الثانوي" },
+  { value: "first-prep", ar: "الصف الأول الإعدادي", en: "First Preparatory Grade" },
+  { value: "second-prep", ar: "الصف الثاني الإعدادي", en: "Second Preparatory Grade" },
+  { value: "third-prep", ar: "الصف الثالث الإعدادي", en: "Third Preparatory Grade" },
+  { value: "first-secondary", ar: "الصف الأول الثانوي", en: "First Secondary Grade" },
+  { value: "second-secondary", ar: "الصف الثاني الثانوي", en: "Second Secondary Grade" },
+  { value: "third-secondary", ar: "الصف الثالث الثانوي", en: "Third Secondary Grade" },
 ];
 
 export default function LoginPage() {
   const router = useRouter();
+  const { language, languageReady } = useLanguage();
+
+  const isArabic = language === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
+  const t = (ar: string, en: string) => isArabic ? ar : en;
 
   const [mode, setMode] = useState<"signup" | "login">("login");
   const [name, setName] = useState("");
@@ -26,6 +33,46 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function getErrorMessage(error: unknown) {
+    const errorText =
+      error instanceof Error ? error.message.toLowerCase() : "";
+
+    if (
+      errorText.includes("invalid login credentials") ||
+      errorText.includes("invalid credentials")
+    ) {
+      return t(
+        "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+        "Incorrect email or password."
+      );
+    }
+
+    if (errorText.includes("email not confirmed")) {
+      return t(
+        "يجب تأكيد بريدك الإلكتروني أولاً.",
+        "Please confirm your email address first."
+      );
+    }
+
+    if (errorText.includes("user already registered")) {
+      return t(
+        "هذا البريد الإلكتروني مسجل بالفعل.",
+        "This email address is already registered."
+      );
+    }
+
+    if (errorText.includes("password should be")) {
+      return t(
+        "كلمة المرور لا تستوفي شروط الأمان.",
+        "Your password does not meet the security requirements."
+      );
+    }
+
+    return error instanceof Error
+      ? error.message
+      : t("حدث خطأ، حاول مرة أخرى.", "Something went wrong. Please try again.");
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
@@ -34,7 +81,7 @@ export default function LoginPage() {
     try {
       if (mode === "signup") {
         if (!name.trim()) {
-          setMessage("اكتب اسمك بالكامل.");
+          setMessage(t("اكتب اسمك بالكامل.", "Please enter your full name."));
           return;
         }
 
@@ -61,7 +108,10 @@ export default function LoginPage() {
         setPassword("");
         setShowPassword(false);
         setMessage(
-          "تم إنشاء حسابك بنجاح. اكتب بريدك الإلكتروني وكلمة المرور لتسجيل الدخول."
+          t(
+            "تم إنشاء حسابك بنجاح. اكتب بريدك الإلكتروني وكلمة المرور لتسجيل الدخول.",
+            "Your account was created successfully. Enter your email and password to log in."
+          )
         );
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -74,19 +124,30 @@ export default function LoginPage() {
         router.replace("/dashboard");
       }
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "حدث خطأ، حاول مرة أخرى."
-      );
+      setMessage(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
   }
 
+  if (!languageReady) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+        <div className="text-center">
+          <h1 className="text-4xl font-black tracking-widest text-yellow-400">
+            DURANT
+          </h1>
+          <p className="mt-4 text-slate-300">
+            Loading...
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main
-      dir="rtl"
+      dir={direction}
       className="flex min-h-screen items-center justify-center bg-slate-950 px-5 py-12 text-white"
     >
       <div className="w-full max-w-md rounded-3xl border border-yellow-400/20 bg-slate-900 p-8 shadow-2xl">
@@ -99,8 +160,14 @@ export default function LoginPage() {
 
           <p className="mt-3 text-slate-300">
             {mode === "signup"
-              ? "أنشئ حسابك وابدأ رحلتك التعليمية"
-              : "أهلاً بك في منصة ديورانت"}
+              ? t(
+                  "أنشئ حسابك وابدأ رحلتك التعليمية",
+                  "Create your account and start your learning journey"
+                )
+              : t(
+                  "أهلاً بك في منصة ديورانت",
+                  "Welcome to DURANT"
+                )}
           </p>
         </div>
 
@@ -117,7 +184,7 @@ export default function LoginPage() {
                 : "text-slate-300"
             }`}
           >
-            حساب جديد
+            {t("حساب جديد", "Create Account")}
           </button>
 
           <button
@@ -132,7 +199,7 @@ export default function LoginPage() {
                 : "text-slate-300"
             }`}
           >
-            تسجيل الدخول
+            {t("تسجيل الدخول", "Log In")}
           </button>
         </div>
 
@@ -141,7 +208,7 @@ export default function LoginPage() {
             <>
               <label className="block">
                 <span className="mb-2 block text-sm text-slate-300">
-                  الاسم بالكامل
+                  {t("الاسم بالكامل", "Full Name")}
                 </span>
 
                 <input
@@ -149,13 +216,13 @@ export default function LoginPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 outline-none focus:border-yellow-400"
-                  placeholder="اكتب اسمك"
+                  placeholder={t("اكتب اسمك", "Enter your name")}
                 />
               </label>
 
               <label className="block">
                 <span className="mb-2 block text-sm text-slate-300">
-                  الصف الدراسي
+                  {t("الصف الدراسي", "School Grade")}
                 </span>
 
                 <select
@@ -165,7 +232,7 @@ export default function LoginPage() {
                 >
                   {grades.map((item) => (
                     <option key={item.value} value={item.value}>
-                      {item.label}
+                      {isArabic ? item.ar : item.en}
                     </option>
                   ))}
                 </select>
@@ -175,7 +242,7 @@ export default function LoginPage() {
 
           <label className="block">
             <span className="mb-2 block text-sm text-slate-300">
-              البريد الإلكتروني
+              {t("البريد الإلكتروني", "Email Address")}
             </span>
 
             <input
@@ -183,14 +250,15 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 outline-none focus:border-yellow-400"
+              dir="ltr"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 text-left outline-none focus:border-yellow-400"
               placeholder="example@email.com"
             />
           </label>
 
           <label className="block">
             <span className="mb-2 block text-sm text-slate-300">
-              كلمة المرور
+              {t("كلمة المرور", "Password")}
             </span>
 
             <div className="relative">
@@ -200,18 +268,23 @@ export default function LoginPage() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-800 p-4 pl-14 outline-none focus:border-yellow-400"
-                placeholder="6 أحرف أو أكثر"
+                dir="ltr"
+                className={`w-full rounded-xl border border-slate-700 bg-slate-800 p-4 outline-none focus:border-yellow-400 ${
+                  isArabic ? "pl-14 text-right" : "pr-14 text-left"
+                }`}
+                placeholder={t("6 أحرف أو أكثر", "6 characters or more")}
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-yellow-400"
+                className={`absolute top-1/2 -translate-y-1/2 text-slate-300 hover:text-yellow-400 ${
+                  isArabic ? "left-4" : "right-4"
+                }`}
                 aria-label={
                   showPassword
-                    ? "إخفاء كلمة المرور"
-                    : "إظهار كلمة المرور"
+                    ? t("إخفاء كلمة المرور", "Hide password")
+                    : t("إظهار كلمة المرور", "Show password")
                 }
               >
                 {showPassword ? "🙈" : "👁️"}
@@ -231,17 +304,17 @@ export default function LoginPage() {
             className="w-full rounded-xl bg-yellow-400 p-4 font-black text-slate-950 transition hover:bg-yellow-300 disabled:opacity-50"
           >
             {loading
-              ? "جارٍ التنفيذ..."
+              ? t("جارٍ التنفيذ...", "Please wait...")
               : mode === "signup"
-                ? "إنشاء الحساب"
-                : "تسجيل الدخول"}
+                ? t("إنشاء الحساب", "Create Account")
+                : t("تسجيل الدخول", "Log In")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-xs leading-6 text-slate-400">
-          منصة DURANT التعليمية
+          {t("منصة ديورانت التعليمية", "DURANT Educational Platform")}
           <br />
-          مع مستر أمير عبد الناصر
+          {t("مع مستر أمير عبد الناصر", "With Mr. Amir Abdel Nasser")}
         </p>
       </div>
     </main>

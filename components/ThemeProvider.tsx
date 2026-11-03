@@ -1,13 +1,22 @@
 
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type Theme = "dark" | "light" | "system";
+type Language = "ar" | "en";
 
 type ThemeContextType = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
+  languageReady: boolean;
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -22,22 +31,44 @@ export function useTheme() {
   return context;
 }
 
+export function useLanguage() {
+  const context = useTheme();
+
+  return {
+    language: context.language,
+    setLanguage: context.setLanguage,
+    languageReady: context.languageReady,
+  };
+}
+
 export default function ThemeProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [theme, setTheme] = useState<Theme>("dark");
+  const [language, setLanguage] = useState<Language>("ar");
   const [ready, setReady] = useState(false);
+  const [languageReady, setLanguageReady] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("durant-theme");
+    const savedTheme = localStorage.getItem("durant-theme");
+    const savedLanguage = localStorage.getItem("durant-language");
 
-    if (saved === "dark" || saved === "light" || saved === "system") {
-      setTheme(saved);
+    if (
+      savedTheme === "dark" ||
+      savedTheme === "light" ||
+      savedTheme === "system"
+    ) {
+      setTheme(savedTheme);
+    }
+
+    if (savedLanguage === "ar" || savedLanguage === "en") {
+      setLanguage(savedLanguage);
     }
 
     setReady(true);
+    setLanguageReady(true);
   }, []);
 
   useEffect(() => {
@@ -66,8 +97,25 @@ export default function ThemeProvider({
     }
   }, [theme, ready]);
 
+  useEffect(() => {
+    if (!languageReady) return;
+
+    localStorage.setItem("durant-language", language);
+
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  }, [language, languageReady]);
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        setTheme,
+        language,
+        setLanguage,
+        languageReady,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
