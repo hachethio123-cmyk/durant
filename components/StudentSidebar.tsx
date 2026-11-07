@@ -20,12 +20,10 @@ export default function StudentSidebar() {
   );
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // إغلاق القائمة بزر Escape ومنع تمرير الصفحة خلفها
   useEffect(() => {
     if (!mobileOpen) return;
 
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -42,7 +40,6 @@ export default function StudentSidebar() {
     };
   }, [mobileOpen]);
 
-  // إغلاق القائمة تلقائيًا عند الانتقال لصفحة أخرى
   useEffect(() => {
     setMobileOpen(false);
 
@@ -61,6 +58,11 @@ export default function StudentSidebar() {
       label: isArabic ? "الصفوف الدراسية" : "School Grades",
       icon: "📚",
       href: "/dashboard#grades",
+    },
+    {
+      label: isArabic ? "الإنجازات" : "Achievements",
+      icon: "🏆",
+      href: "/achievements",
     },
     {
       label: isArabic ? "الملف الشخصي" : "Profile",
@@ -133,7 +135,7 @@ export default function StudentSidebar() {
 
   return (
     <div dir={isArabic ? "rtl" : "ltr"}>
-      {/* Mobile and tablet menu button */}
+      {/* Mobile menu button */}
       <button
         type="button"
         onClick={() => setMobileOpen((current) => !current)}
@@ -196,7 +198,9 @@ export default function StudentSidebar() {
             const active =
               item.href === "/dashboard#grades"
                 ? false
-                : pathname === item.href;
+                : pathname === item.href ||
+                  (item.href === "/achievements" &&
+                    pathname.startsWith("/achievements"));
 
             return (
               <Link
@@ -210,7 +214,9 @@ export default function StudentSidebar() {
                     : "text-slate-300 hover:bg-slate-800 hover:text-yellow-400"
                 }`}
               >
-                <span className="shrink-0 text-xl">{item.icon}</span>
+                <span className="shrink-0 text-xl">
+                  {item.icon}
+                </span>
                 <span className="min-w-0">{item.label}</span>
               </Link>
             );

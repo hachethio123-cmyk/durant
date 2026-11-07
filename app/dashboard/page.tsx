@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -34,6 +33,18 @@ type Achievement = {
   description_en: string;
   icon: string;
   xp_reward: number;
+};
+
+type NotificationItem = {
+  id: string;
+  title_ar: string;
+  title_en: string | null;
+  message_ar: string;
+  message_en: string | null;
+  type: string;
+  action_url: string | null;
+  is_read: boolean;
+  created_at: string;
 };
 
 const formatNumber = (value: number, locale: string) =>
@@ -97,6 +108,15 @@ export default function Dashboard() {
 
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
+  const [studentId, setStudentId] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState("");
+  const [markingNotificationId, setMarkingNotificationId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -114,6 +134,7 @@ export default function Dashboard() {
         }
 
         const studentId = authData.user.id;
+        setStudentId(studentId);
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
@@ -197,6 +218,118 @@ export default function Dashboard() {
     };
   }, [router]);
 
+  const searchItems = [
+    {
+      title: t("الرئيسية", "Home"),
+      description: t("لوحة التحكم الرئيسية", "Main dashboard"),
+      href: "/dashboard",
+      keywords: "home dashboard الرئيسية",
+    },
+    {
+      title: t("الصفوف الدراسية", "School Grades"),
+      description: t("موادك ومحتوى صفك الدراسي", "Your grade and subjects"),
+      href: gradeSlug ? `/grades/${gradeSlug}` : "/dashboard#grades",
+      keywords: "grades subjects الصفوف المواد الدروس",
+    },
+    {
+      title: t("الملف الشخصي", "Profile"),
+      description: t("بيانات حسابك الشخصي", "Your account information"),
+      href: "/profile",
+      keywords: "profile account الملف الشخصي حساب",
+    },
+    {
+      title: t("الإعدادات", "Settings"),
+      description: t("إعدادات المنصة والحساب", "Platform and account settings"),
+      href: "/settings",
+      keywords: "settings preferences الإعدادات",
+    },
+  ];
+
+  const searchResults = search.trim()
+    ? searchItems.filter((item) =>
+        `${item.title} ${item.description} ${item.keywords}`
+          .toLowerCase()
+          .includes(search.trim().toLowerCase())
+      )
+    : [];
+
+  async function loadNotifications(currentStudentId = studentId) {
+    if (!currentStudentId) return;
+    setNotificationsLoading(true);
+    setNotificationsError("");
+
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("id, title_ar, title_en, message_ar, message_en, type, action_url, is_read, created_at")
+      .eq("student_id", currentStudentId)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      setNotificationsError(t("تعذر تحميل الإشعارات حاليًا.", "Could not load notifications."));
+    } else {
+      setNotifications((data ?? []) as NotificationItem[]);
+    }
+    setNotificationsLoading(false);
+  }
+
+  useEffect(() => {
+    if (!studentId) return;
+
+    loadNotifications(studentId);
+
+    const channel = supabase
+      .channel(`dashboard-notifications-${studentId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `student_id=eq.${studentId}`,
+        },
+        () => loadNotifications(studentId)
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [studentId]);
+
+  async function markNotificationAsRead(notification: NotificationItem) {
+    if (notification.is_read || markingNotificationId) return true;
+
+    setMarkingNotificationId(notification.id);
+    const { data, error } = await supabase.rpc("mark_notification_read", {
+      p_notification_id: notification.id,
+    });
+    setMarkingNotificationId(null);
+
+    if (error || data !== true) {
+      setNotificationsError(t("تعذر تحديث الإشعار.", "Could not update this notification."));
+      return false;
+    }
+
+    setNotifications((current) =>
+      current.map((item) => item.id === notification.id ? { ...item, is_read: true } : item)
+    );
+    return true;
+  }
+
+  async function openNotification(notification: NotificationItem) {
+    const updated = await markNotificationAsRead(notification);
+    if (!updated) return;
+
+    setNotificationsOpen(false);
+    const destination = notification.action_url;
+    if (destination && destination.startsWith("/") && !destination.startsWith("//")) {
+      router.push(destination);
+    }
+  }
+
+  const unreadNotifications = notifications.filter((item) => !item.is_read).length;
+
   if (!languageReady || loading) {
     return (
       <main
@@ -262,19 +395,79 @@ export default function Dashboard() {
         <div className="mx-auto w-full min-w-0 max-w-[1500px]">
           {/* Top navigation */}
           <header className="mb-5 flex min-w-0 flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="order-2 flex min-h-11 w-full min-w-0 items-center gap-3 rounded-full border border-[#e2e6f5] bg-white px-4 py-3 shadow-sm sm:order-1 sm:w-auto sm:max-w-[360px] sm:flex-1 sm:px-5">
-              <span className="shrink-0 text-xl text-slate-400">⌕</span>
-              <span className="truncate text-sm text-slate-400">
-                {t("ابحث عن أي محتوى...", "Search for any content...")}
-              </span>
+            <div className="order-2 flex w-full min-w-0 flex-1 items-center gap-3 sm:order-1 sm:max-w-[520px]">
+              <div className="relative min-w-0 flex-1">
+                <div className="flex min-h-11 items-center gap-3 rounded-full border border-[#e2e6f5] bg-white px-4 py-3 shadow-sm sm:px-5">
+                  <span className="shrink-0 text-xl text-slate-400">⌕</span>
+                  <input
+                    type="search"
+                    value={search}
+                    onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
+                    onFocus={() => setSearchOpen(true)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") setSearchOpen(false);
+                      if (event.key === "Enter" && searchResults[0]) {
+                        router.push(searchResults[0].href);
+                        setSearch("");
+                        setSearchOpen(false);
+                      }
+                    }}
+                    placeholder={t("ابحث عن أي محتوى...", "Search for any content...")}
+                    aria-label={t("البحث في المنصة", "Search the platform")}
+                    className="min-w-0 flex-1 bg-transparent text-sm text-[#17213d] outline-none placeholder:text-slate-400"
+                  />
+                  {search && <button type="button" onClick={() => { setSearch(""); setSearchOpen(false); }} aria-label={t("مسح البحث", "Clear search")} className="text-slate-400">✕</button>}
+                </div>
+                {searchOpen && search.trim() && (
+                  <>
+                    <button type="button" aria-label={t("إغلاق نتائج البحث", "Close search results")} className="fixed inset-0 z-30 cursor-default" onClick={() => setSearchOpen(false)} />
+                    <div className="absolute start-0 top-full z-40 mt-2 w-full min-w-[250px] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white p-2 shadow-xl">
+                      {searchResults.length ? searchResults.map((item) => (
+                        <button key={item.href} type="button" onClick={() => { router.push(item.href); setSearch(""); setSearchOpen(false); }} className="flex w-full flex-col rounded-xl px-3 py-3 text-start transition hover:bg-blue-50">
+                          <span className="text-sm font-black text-[#17213d]">{item.title}</span>
+                          <span className="mt-1 text-xs text-slate-500">{item.description}</span>
+                        </button>
+                      )) : <p className="p-4 text-center text-sm text-slate-500">{t("لا توجد نتائج مطابقة.", "No matching results.")}</p>}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="order-1 flex min-w-0 items-center justify-between gap-2 sm:order-2 sm:justify-end sm:gap-3">
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-xl shadow-sm sm:h-11 sm:w-11">
-                🔔
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white">
-                  3
-                </span>
+              <div className="relative shrink-0">
+                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setSearchOpen(false); if (!notificationsOpen) loadNotifications(); }} aria-label={t("الإشعارات", "Notifications")} aria-expanded={notificationsOpen} className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm transition hover:bg-amber-50 sm:h-11 sm:w-11">
+                  🔔
+                  {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}
+                </button>
+                {notificationsOpen && (
+                  <>
+                    <button type="button" aria-label={t("إغلاق الإشعارات", "Close notifications")} className="fixed inset-0 z-30 cursor-default" onClick={() => setNotificationsOpen(false)} />
+                    <div className="absolute end-0 top-full z-40 mt-3 w-[min(350px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white shadow-2xl">
+                      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
+                        <h3 className="font-black text-[#17213d]">{t("الإشعارات", "Notifications")}</h3>
+                        <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">{unreadNotifications} {t("غير مقروء", "unread")}</span>
+                      </div>
+                      <div className="max-h-[360px] overflow-y-auto">
+                        {notificationsLoading ? <p className="p-6 text-center text-sm text-slate-500">{t("جاري تحميل الإشعارات...", "Loading notifications...")}</p>
+                        : notificationsError ? <div className="p-5 text-center"><p className="text-sm text-red-500">{notificationsError}</p><button type="button" onClick={() => loadNotifications()} className="mt-3 text-xs font-bold text-blue-600">{t("إعادة المحاولة", "Try again")}</button></div>
+                        : notifications.length === 0 ? <p className="p-6 text-center text-sm text-slate-500">{t("لا توجد إشعارات حتى الآن.", "No notifications yet.")}</p>
+                        : notifications.map((notification) => (
+                          <button key={notification.id} type="button" disabled={markingNotificationId === notification.id} onClick={() => openNotification(notification)} className={`flex w-full gap-3 border-b border-slate-50 px-4 py-4 text-start transition hover:bg-blue-50 ${notification.is_read ? "bg-white" : "bg-blue-50/60"}`}>
+                            <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-sm font-black text-[#17213d]">{isArabic ? notification.title_ar : notification.title_en || notification.title_ar}</span>
+                              <span className="mt-1 block text-xs leading-6 text-slate-500">{isArabic ? notification.message_ar : notification.message_en || notification.message_ar}</span>
+                              <span className="mt-2 block text-[10px] text-slate-400">{new Date(notification.created_at).toLocaleString(locale)}</span>
+                            </span>
+                            {!notification.is_read && <span className="shrink-0 self-center text-[10px] font-bold text-blue-600">{t("جديد", "New")}</span>}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="border-t border-slate-100 p-3"><button type="button" onClick={() => loadNotifications()} className="w-full rounded-xl bg-slate-50 py-2.5 text-xs font-bold text-[#17213d] transition hover:bg-slate-100">{t("تحديث الإشعارات", "Refresh notifications")}</button></div>
+                    </div>
+                  </>
+                )}
               </div>
 
               <Link
@@ -315,8 +508,8 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              {/* Main hero and level */}
-              <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_265px] xl:gap-5">
+              {/* Main hero: full width, matching the approved reference */}
+              <section className="min-w-0">
                 <div className="min-w-0 overflow-hidden rounded-2xl">
                   <DashboardHero
                     gradeName={gradeName}
@@ -324,329 +517,157 @@ export default function Dashboard() {
                     isArabic={isArabic}
                   />
                 </div>
+              </section>
 
-                <div className="flex min-h-[250px] min-w-0 flex-col items-center justify-between rounded-2xl bg-gradient-to-br from-[#252d4d] to-[#111a32] p-5 text-center text-white shadow-lg sm:min-h-[270px] sm:p-6 xl:min-h-[285px]">
-                  <div className="flex w-full items-center justify-between gap-2">
-                    <h2 className="text-sm font-black sm:text-base">
-                      {t("مستواك الحالي", "Current Level")}
-                    </h2>
-                    <span className="shrink-0 text-2xl text-amber-400">♛</span>
+              {/* Four compact summary cards */}
+              <section className="mt-4 grid min-w-0 grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3 xl:grid-cols-4">
+                <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">🏆</div>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">{formatNumber(earnedCount, locale)}</p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("إنجاز مكتمل", "Achievements")}</p>
                   </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">+{formatNumber(earnedCount, locale)}</span>
+                </div>
 
-                  <div className="my-2 flex h-20 w-20 items-center justify-center rounded-full border-[6px] border-amber-300 bg-gradient-to-br from-yellow-200 to-amber-500 text-4xl shadow-[0_0_30px_rgba(245,184,55,.25)] sm:h-24 sm:w-24 sm:text-5xl">
-                    🏅
+                <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">📗</div>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">{formatNumber(subjects.length, locale)}</p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("مواد دراسية", "Subjects")}</p>
                   </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">+{formatNumber(subjects.length, locale)}</span>
+                </div>
 
-                  <p className="text-lg font-black sm:text-xl">
-                    {t("المستوى", "Level")} {formatNumber(studentLevel, locale)}
-                  </p>
+                <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">⭐</div>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">{formatNumber(xpPoints, locale)}</p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("نقاط الخبرة", "Experience")}</p>
+                  </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[9px] font-bold text-blue-600 sm:inline">XP</span>
+                </div>
 
-                  <div className="w-full">
-                    <div className="h-3 overflow-hidden rounded-full bg-white/15">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 transition-all"
-                        style={{ width: `${xpProgress}%` }}
-                      />
-                    </div>
-                    <p className="mt-3 break-words text-xs text-blue-100">
-                      {formatNumber(xpPoints, locale)} /{" "}
-                      {formatNumber(Math.floor(xpPoints / 100) * 100 + 100, locale)} XP
-                    </p>
+                <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-amber-100 bg-[#fffdfa] px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">🪙</div>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">{formatNumber(goldCoins, locale)}</p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("عملة ذهبية", "Gold Coins")}</p>
                   </div>
                 </div>
               </section>
 
-              {/* Four summary cards */}
-              <section className="mt-5 grid min-w-0 grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:mt-6 sm:gap-4 xl:grid-cols-4">
-                <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-[#e5e8f5] bg-white p-4 shadow-sm sm:gap-4 sm:p-5">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet-100 text-2xl text-violet-600 sm:h-14 sm:w-14 sm:text-3xl">
-                    🏆
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black sm:text-2xl">
-                      {formatNumber(earnedCount, locale)}
-                    </p>
-                    <p className="mt-1 break-words text-xs text-slate-500 sm:text-sm">
-                      {t("إنجاز مكتمل", "Achievements Earned")}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-[#e5e8f5] bg-white p-4 shadow-sm sm:gap-4 sm:p-5">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-2xl sm:h-14 sm:w-14 sm:text-3xl">
-                    📗
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black sm:text-2xl">
-                      {formatNumber(subjects.length, locale)}
-                    </p>
-                    <p className="mt-1 break-words text-xs text-slate-500 sm:text-sm">
-                      {t("مواد دراسية", "Subjects")}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-[#e5e8f5] bg-white p-4 shadow-sm sm:gap-4 sm:p-5">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-2xl sm:h-14 sm:w-14 sm:text-3xl">
-                    ⭐
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black sm:text-2xl">
-                      {formatNumber(xpPoints, locale)}
-                    </p>
-                    <p className="mt-1 break-words text-xs text-slate-500 sm:text-sm">
-                      {t("نقاط الخبرة", "Experience Points")}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-amber-100 bg-[#fffdfa] p-4 shadow-sm sm:gap-4 sm:p-5">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-100 text-2xl sm:h-14 sm:w-14 sm:text-3xl">
-                    🪙
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black sm:text-2xl">
-                      {formatNumber(goldCoins, locale)}
-                    </p>
-                    <p className="mt-1 break-words text-xs text-slate-500 sm:text-sm">
-                      {t("عملة ذهبية", "Gold Coins")}
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              {/* Subjects and learning progress */}
-              <section
-                id="grades"
-                className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 sm:gap-5 xl:grid-cols-2"
-              >
-                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-6">
+              {/* Subjects and learning checklist area */}
+              <section id="grades" className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
+                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-3.5 sm:p-5">
                   <SectionTitle
                     eyebrow="YOUR SUBJECTS"
                     title={t("موادك الدراسية", "Your Subjects")}
                     icon="📚"
-                    action={
-                      <Link
-                        href={`/grades/${gradeSlug}`}
-                        className="text-[11px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
-                      >
-                        {t("عرض الكل ←", "View All →")}
-                      </Link>
-                    }
+                    action={<Link href={`/grades/${gradeSlug}`} className="text-[10px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs">{t("عرض الكل ←", "View All →")}</Link>}
                   />
-
-                  <div
-                    className={`grid min-w-0 gap-4 ${
-                      subjects.length > 1 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
-                    }`}
-                  >
+                  <div className={`grid min-w-0 gap-3 ${subjects.length > 1 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:max-w-[360px]"}`}>
                     {subjects.map((subject) => (
-                      <Link
-                        key={subject.title}
-                        href={`/grades/${gradeSlug}`}
-                        className="group relative flex min-h-[210px] min-w-0 flex-col justify-end overflow-hidden rounded-xl bg-[#17213d] p-4 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:min-h-[235px] sm:p-5"
-                      >
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-br ${subject.visual} opacity-95 transition group-hover:scale-105`}
-                        />
+                      <Link key={subject.title} href={`/grades/${gradeSlug}`} className="group relative flex min-h-[190px] min-w-0 flex-col justify-end overflow-hidden rounded-xl bg-[#17213d] p-4 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:min-h-[210px]">
+                        <div className={`absolute inset-0 bg-gradient-to-br ${subject.visual} opacity-95 transition group-hover:scale-105`} />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#101a35] via-[#101a35]/20 to-transparent" />
-                        <div className="relative z-10 mb-auto flex h-20 items-center justify-center text-6xl drop-shadow-xl sm:h-24 sm:text-7xl">
-                          {subject.icon}
-                        </div>
+                        <div className="relative z-10 mb-auto flex h-20 items-center justify-center text-6xl drop-shadow-xl sm:h-24 sm:text-7xl">{subject.icon}</div>
                         <div className="relative z-10 min-w-0 text-center">
-                          <h3 className="break-words text-lg font-black sm:text-xl">
-                            {subject.title}
-                          </h3>
-                          <p className="mt-1 break-words text-xs leading-6 text-blue-100">
-                            {subject.subtitle}
-                          </p>
-                          <span className="mx-auto mt-3 inline-flex max-w-full rounded-full bg-white/10 px-5 py-2 text-xs font-bold sm:px-6">
-                            {t("ابدأ التعلم ←", "Start Learning →")}
-                          </span>
+                          <h3 className="break-words text-lg font-black sm:text-xl">{subject.title}</h3>
+                          <p className="mt-1 break-words text-xs leading-6 text-blue-100">{subject.subtitle}</p>
+                          <span className="mx-auto mt-3 inline-flex max-w-full rounded-full bg-white/10 px-5 py-2 text-xs font-bold">{t("ابدأ التعلم ←", "Start Learning →")}</span>
                         </div>
                       </Link>
                     ))}
                   </div>
                 </div>
 
-                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-6">
-                  <SectionTitle
-                    eyebrow="YOUR LEARNING JOURNEY"
-                    title={t("رحلتك التعليمية", "Your Learning Journey")}
-                    icon="📊"
-                  />
-
-                  <div className="flex min-h-[235px] min-w-0 flex-col items-center justify-center gap-6 sm:flex-row sm:justify-around">
-                    <div
-                      className="relative flex h-40 w-40 shrink-0 items-center justify-center rounded-full p-3 sm:h-44 sm:w-44 sm:p-[13px]"
-                      style={{
-                        background: `conic-gradient(#20b77b ${xpProgress * 3.6}deg, #e8ebf6 0deg)`,
-                      }}
-                    >
-                      <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-white">
-                        <p className="text-3xl font-black text-[#17213d] sm:text-4xl">
-                          {xpProgress}%
-                        </p>
-                        <p className="mt-1 text-center text-[10px] font-bold text-slate-400 sm:text-xs">
-                          {t("تقدم المستوى", "Level Progress")}
-                        </p>
+                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-5">
+                  <SectionTitle eyebrow="YOUR DAILY PROGRESS" title={t("رحلتك التعليمية", "Your Learning Journey")} icon="📋" />
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-black text-emerald-600">✓</span>
+                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("حسابك جاهز للتعلم", "Your account is ready")}</p><p className="mt-1 text-[10px] text-slate-400">{t("يمكنك استكشاف مواد صفك", "Explore your grade subjects")}</p></div>
                       </div>
+                      <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
-
-                    <div className="w-full min-w-0 max-w-[280px] space-y-4 sm:space-y-5">
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          ✓
-                        </span>
-                        <div className="min-w-0">
-                          <p className="break-words text-sm font-bold">
-                            {t("رحلتك التعليمية", "Learning Journey")}
-                          </p>
-                          <p className="mt-1 break-words text-xs text-slate-400">
-                            {t("حسابك جاهز للتعلم", "Your account is ready")}
-                          </p>
-                        </div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">📚</span>
+                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("المواد الدراسية", "School Subjects")}</p><p className="mt-1 text-[10px] text-slate-400">{formatNumber(subjects.length, locale)} {t("مواد متاحة", "subjects available")}</p></div>
                       </div>
-
-                      <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
-                          ⭐
-                        </span>
-                        <div className="min-w-0">
-                          <p className="break-words text-sm font-bold">
-                            {t("المستوى الحالي", "Current Level")}
-                          </p>
-                          <p className="mt-1 break-words text-xs text-slate-400">
-                            {t(`المستوى ${studentLevel}`, `Level ${studentLevel}`)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                          ⚡
-                        </span>
-                        <div className="min-w-0">
-                          <p className="break-words text-sm font-bold">
-                            {t("نقاط الخبرة", "Experience Points")}
-                          </p>
-                          <p className="mt-1 break-words text-xs text-slate-400">
-                            {formatNumber(xpPoints, locale)} XP
-                          </p>
-                        </div>
-                      </div>
+                      <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">⭐</span>
+                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("مستواك الحالي", "Current Level")}</p><p className="mt-1 text-[10px] text-slate-400">{t(`المستوى ${studentLevel}`, `Level ${studentLevel}`)} · {formatNumber(xpPoints, locale)} XP</p></div>
+                      </div>
+                      <span className="shrink-0 text-amber-500">★</span>
+                    </div>
+                  </div>
+                  <div className="mt-5 border-t border-slate-100 pt-4">
+                    <div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className="font-bold text-slate-600">{t("تقدم المستوى", "Level Progress")}</span><span className="font-black text-[#17213d]">{xpProgress}%</span></div>
+                    <div className="h-2.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#42b58b] transition-all" style={{ width: `${xpProgress}%` }} /></div>
                   </div>
                 </div>
               </section>
 
-              {/* Achievements and leaderboard */}
-              <section className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 sm:gap-5 xl:grid-cols-2">
-                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-6">
-                  <SectionTitle
-                    eyebrow="YOUR ACHIEVEMENTS"
-                    title={t("إنجازاتك", "Your Achievements")}
-                    icon="🏆"
-                    action={
-                      <span className="text-[11px] font-bold text-blue-600 sm:text-xs">
-                        {t("عرض الكل ←", "View All →")}
-                      </span>
-                    }
-                  />
-
+              {/* Achievements and wallet */}
+              <section className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
+                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-3.5 sm:p-5">
+                  <SectionTitle eyebrow="YOUR ACHIEVEMENTS" title={t("إنجازاتك", "Your Achievements")} icon="🏆" action={<span className="text-[10px] font-bold text-blue-600 sm:text-xs">{t("عرض الكل ←", "View All →")}</span>} />
                   {achievements.length === 0 ? (
-                    <p className="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500 sm:p-6">
-                      {t("لا توجد إنجازات متاحة حاليًا.", "No achievements available yet.")}
-                    </p>
+                    <p className="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">{t("لا توجد إنجازات متاحة حاليًا.", "No achievements available yet.")}</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-4 sm:gap-3">
-                      {achievements.slice(0, 4).map((achievement) => {
+                      {achievements.map((achievement) => {
                         const earned = earnedAchievementIds.includes(achievement.id);
-
-                        return (
-                          <div
-                            key={achievement.id}
-                            className={`min-w-0 rounded-xl border p-3 text-center sm:p-4 ${
-                              earned
-                                ? "border-amber-200 bg-amber-50/60"
-                                : "border-slate-100 bg-slate-50 opacity-60"
-                            }`}
-                          >
-                            <div className="text-3xl sm:text-4xl">
-                              {achievement.icon}
-                            </div>
-                            <p className="mt-2 line-clamp-2 break-words text-[10px] font-black text-[#17213d] sm:mt-3 sm:text-xs">
-                              {isArabic ? achievement.name_ar : achievement.name_en}
-                            </p>
-                            <p className="mt-2 text-[9px] font-bold text-slate-400 sm:text-[10px]">
-                              {earned ? t("مكتسب", "Earned") : t("مقفل", "Locked")}
-                            </p>
-                          </div>
-                        );
+                        return <div key={achievement.id} className={`min-w-0 rounded-xl border p-3 text-center sm:p-4 ${earned ? "border-amber-200 bg-amber-50/60" : "border-slate-100 bg-slate-50 opacity-60"}`}>
+                          <div className="text-3xl sm:text-4xl">{achievement.icon}</div>
+                          <p className="mt-2 line-clamp-2 break-words text-[10px] font-black text-[#17213d] sm:mt-3 sm:text-xs">{isArabic ? achievement.name_ar : achievement.name_en}</p>
+                          <p className="mt-2 text-[9px] font-bold text-slate-400 sm:text-[10px]">{earned ? t("مكتسب", "Earned") : t("مقفل", "Locked")}</p>
+                        </div>;
                       })}
                     </div>
                   )}
                 </div>
 
-                <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-6">
-                  <SectionTitle
-                    eyebrow="DURANT LEADERBOARD"
-                    title={t("ترتيب الطلاب", "Student Leaderboard")}
-                    icon="👥"
-                    action={
-                      <span className="text-[10px] font-bold text-blue-600 sm:text-xs">
-                        TOP 10
-                      </span>
-                    }
-                  />
-
-                  {leaderboardLoading ? (
-                    <p className="p-5 text-center text-sm text-slate-500 sm:p-6">
-                      {t("جاري تحميل الترتيب...", "Loading leaderboard...")}
-                    </p>
-                  ) : leaderboardError ? (
-                    <p className="break-words p-5 text-center text-sm text-red-500 sm:p-6">
-                      {t(leaderboardError, "Unable to load leaderboard.")}
-                    </p>
-                  ) : leaderboard.length === 0 ? (
-                    <p className="p-5 text-center text-sm text-slate-500 sm:p-6">
-                      {t("لا يوجد ترتيب متاح حاليًا.", "No ranking available yet.")}
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {leaderboard.slice(0, 5).map((student) => (
-                        <div
-                          key={student.rank_number}
-                          className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[#e8ebf5] bg-[#f8f9fd] px-2 py-3 sm:gap-3 sm:px-3"
-                        >
-                          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                            <span
-                              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black sm:h-9 sm:w-9 sm:text-sm ${getRankStyle(student.rank_number)}`}
-                            >
-                              {student.rank_number <= 3
-                                ? ["🥇", "🥈", "🥉"][student.rank_number - 1]
-                                : student.rank_number}
-                            </span>
-
-                            <div className="min-w-0">
-                              <p className="truncate text-xs font-black sm:text-sm">
-                                {student.student_name}
-                              </p>
-                              <p className="truncate text-[9px] text-slate-400 sm:text-[10px]">
-                                {gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ??
-                                  student.grade}
-                              </p>
-                            </div>
-                          </div>
-
-                          <p className="shrink-0 text-[11px] font-black text-[#17213d] sm:text-sm">
-                            {formatNumber(Number(student.gold_coins), locale)} 🪙
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-5">
+                  <SectionTitle eyebrow="YOUR WALLET" title={t("رصيدك", "Your Wallet")} icon="🪙" />
+                  <div className="rounded-xl border border-amber-100 bg-[#fffaf0] px-4 py-6 text-center">
+                    <div className="text-3xl">🪙</div>
+                    <p className="mt-2 text-2xl font-black text-[#17213d] sm:text-3xl">{formatNumber(goldCoins, locale)} <span className="text-amber-500">⭐</span></p>
+                    <p className="mt-1 text-xs text-slate-500">{t("رصيد العملات الذهبية", "Gold coins balance")}</p>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between gap-2 text-xs"><span className="text-slate-500">{t("مستواك الحالي", "Current level")}</span><span className="font-black text-[#17213d]">{formatNumber(studentLevel, locale)}</span></div>
+                  <div className="mt-2 flex items-center justify-between gap-2 text-xs"><span className="text-slate-500">{t("نقاط الخبرة", "Experience points")}</span><span className="font-black text-[#17213d]">{formatNumber(xpPoints, locale)} XP</span></div>
                 </div>
+              </section>
+
+              {/* Leaderboard remains available below the reference sections */}
+              <section className="mt-5 min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:mt-6 sm:p-6">
+                <SectionTitle eyebrow="DURANT LEADERBOARD" title={t("ترتيب الطلاب", "Student Leaderboard")} icon="👥" action={<span className="text-[10px] font-bold text-blue-600 sm:text-xs">TOP 10</span>} />
+                {leaderboardLoading ? (
+                  <p className="p-5 text-center text-sm text-slate-500">{t("جاري تحميل الترتيب...", "Loading leaderboard...")}</p>
+                ) : leaderboardError ? (
+                  <p className="break-words p-5 text-center text-sm text-red-500">{t(leaderboardError, "Unable to load leaderboard.")}</p>
+                ) : leaderboard.length === 0 ? (
+                  <p className="p-5 text-center text-sm text-slate-500">{t("لا يوجد ترتيب متاح حاليًا.", "No ranking available yet.")}</p>
+                ) : (
+                  <div className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+                    {leaderboard.slice(0, 5).map((student) => (
+                      <div key={student.rank_number} className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[#e8ebf5] bg-[#f8f9fd] px-3 py-3">
+                        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black ${getRankStyle(student.rank_number)}`}>{student.rank_number <= 3 ? ["🥇", "🥈", "🥉"][student.rank_number - 1] : student.rank_number}</span>
+                          <div className="min-w-0"><p className="truncate text-xs font-black sm:text-sm">{student.student_name}</p><p className="truncate text-[9px] text-slate-400 sm:text-[10px]">{gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ?? student.grade}</p></div>
+                        </div>
+                        <p className="shrink-0 text-[11px] font-black text-[#17213d] sm:text-sm">{formatNumber(Number(student.gold_coins), locale)} 🪙</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </section>
 
               {/* Learning center */}

@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
@@ -14,63 +13,48 @@ type Props = {
 const slides = [
   {
     id: 1,
-    eyebrow: "DURANT EDUCATIONAL PLATFORM",
-    arTitle: "رحلتك نحو التفوق تبدأ هنا",
-    enTitle: "Your Journey to Excellence Starts Here",
-    arText: "مع مستر أمير عبد الناصر، اجعل التعلم طريقك إلى النجاح.",
-    enText: "Learn, grow and achieve your goals with DURANT.",
-    arButton: "ابدأ رحلتك",
-    enButton: "Start Learning",
-    style: "from-[#101a35] via-[#23375d] to-[#17213d]",
-    visual: "teacher",
+    arTitle: "استمر في التعلم.. فالمستقبل ينتظرك!",
+    enTitle: "Keep Learning... Your Future Awaits!",
+    arButton: "ابدأ الآن",
+    enButton: "Start Now",
+    visual: "🎓",
+    accent: "from-[#111b35] via-[#26395e] to-[#17213d]",
   },
   {
     id: 2,
-    eyebrow: "LEARN EVERY DAY",
     arTitle: "كل يوم فرصة جديدة للنجاح",
     enTitle: "Every Day Is a New Chance",
-    arText: "خطوة صغيرة في التعلم اليوم تصنع فرقًا كبيرًا غدًا.",
-    enText: "Small steps today lead to great achievements tomorrow.",
     arButton: "واصل التعلم",
     enButton: "Keep Learning",
-    style: "from-[#102c43] via-[#176b83] to-[#17213d]",
-    visual: "student",
+    visual: "📚",
+    accent: "from-[#10243d] via-[#294d69] to-[#17213d]",
   },
   {
     id: 3,
-    eyebrow: "HISTORY & GEOGRAPHY",
     arTitle: "اكتشف العالم وافهم التاريخ",
-    enTitle: "Discover the World",
-    arText: "رحلة ممتعة بين الحضارات والأماكن والأحداث.",
-    enText: "Explore civilizations, places and important events.",
+    enTitle: "Discover the World and History",
     arButton: "اكتشف موادك",
     enButton: "Explore Subjects",
-    style: "from-[#352449] via-[#75502e] to-[#17213d]",
-    visual: "world",
+    visual: "🌍",
+    accent: "from-[#202443] via-[#554b4c] to-[#17213d]",
   },
   {
     id: 4,
-    eyebrow: "DREAM • WORK • ACHIEVE",
     arTitle: "لا تتوقف حتى تصل إلى حلمك",
     enTitle: "Never Stop Chasing Your Dreams",
-    arText: "اجتهد اليوم، وافتخر بنفسك غدًا.",
-    enText: "Work hard today and make yourself proud tomorrow.",
     arButton: "ابدأ الآن",
     enButton: "Get Started",
-    style: "from-[#17213d] via-[#344b72] to-[#8b642e]",
-    visual: "motivation",
+    visual: "🏆",
+    accent: "from-[#17213d] via-[#354969] to-[#78603d]",
   },
   {
     id: 5,
-    eyebrow: "WELCOME TO DURANT",
     arTitle: "ديورانت.. طريقك نحو التميّز",
     enTitle: "DURANT — Your Path to Excellence",
-    arText: "هنا تبدأ الحكاية، وبالعلم نصنع المستقبل. تعلّم، اجتهد، وتألق.",
-    enText: "Learn, work hard and shine. Your future starts here.",
     arButton: "انطلق نحو النجاح",
     enButton: "Start Your Journey",
-    style: "from-[#101a35] via-[#263b61] to-[#17213d]",
-    visual: "logo",
+    visual: "✨",
+    accent: "from-[#101a35] via-[#293d61] to-[#17213d]",
   },
 ];
 
@@ -100,144 +84,115 @@ export default function DashboardHero({
   return (
     <section
       dir={isArabic ? "rtl" : "ltr"}
-      className="group relative min-h-[320px] overflow-hidden rounded-[28px] bg-[#17213d] text-white shadow-[0_18px_50px_rgba(23,33,61,0.18)] sm:min-h-[350px] lg:min-h-[370px]"
+      aria-label={isArabic ? "بانر لوحة التحكم" : "Dashboard banner"}
+      className={`group relative isolate h-[145px] w-full overflow-hidden rounded-[14px] bg-gradient-to-r ${slide.accent} text-white shadow-[0_8px_25px_rgba(23,33,61,0.13)] sm:h-[170px] lg:h-[185px]`}
     >
-      {slides.map((item, index) => (
-        <div
-          key={item.id}
-          aria-hidden={activeIndex !== index}
-          className={`absolute inset-0 bg-gradient-to-br ${item.style} transition-opacity duration-700 ${
-            activeIndex === index
-              ? "z-10 opacity-100"
-              : "z-0 opacity-0"
-          }`}
-        >
-          {item.visual === "teacher" && (
-            <>
-              <div className="absolute bottom-0 left-0 top-0 w-[48%]">
-                <Image
-                  src="/images/ameer-nasser.jpg"
-                  alt="مستر أمير عبد الناصر"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 45vw, 48vw"
-                  className="object-cover object-top opacity-90"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#17213d]/20 to-[#17213d]" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-l from-[#17213d]/20 via-transparent to-transparent" />
-            </>
-          )}
+      {/* خلفية زخرفية */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-12 -top-20 h-52 w-52 rounded-full bg-blue-300/10 blur-3xl" />
+        <div className="absolute -right-8 -bottom-24 h-56 w-56 rounded-full bg-amber-300/15 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101a35]/35 to-transparent" />
+      </div>
 
-          {item.visual === "student" && (
-            <div className="absolute bottom-0 left-4 flex h-full w-[40%] items-end justify-center">
-              <div className="mb-10 flex h-52 w-52 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[105px] shadow-2xl backdrop-blur-sm sm:h-64 sm:w-64 sm:text-[130px]">
-                📖
-              </div>
-              <span className="absolute bottom-12 left-5 text-4xl text-amber-300">✦</span>
-              <span className="absolute left-12 top-16 text-3xl text-white/60">✧</span>
-            </div>
-          )}
+      {/* الجانب المصور */}
+      <div
+        key={slide.id}
+        className="absolute bottom-0 right-0 top-0 flex w-[43%] items-center justify-center"
+      >
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-amber-100/5 to-transparent" />
 
-          {item.visual === "world" && (
-            <div className="absolute bottom-0 left-3 flex h-full w-[42%] items-center justify-center">
-              <div className="relative flex h-52 w-52 items-center justify-center rounded-full border border-amber-200/30 bg-white/5 text-8xl shadow-2xl backdrop-blur-sm sm:h-64 sm:w-64 sm:text-9xl">
-                🌍
-                <span className="absolute -right-2 top-5 text-5xl">🏛️</span>
-                <span className="absolute -bottom-2 left-1 text-4xl">📜</span>
-              </div>
-            </div>
-          )}
+        <div className="relative flex h-full w-full items-center justify-center">
+          {/* إضاءة خلفية */}
+          <div className="absolute h-28 w-28 rounded-full bg-amber-200/20 blur-2xl sm:h-40 sm:w-40" />
 
-          {item.visual === "motivation" && (
-            <div className="absolute bottom-0 left-0 flex h-full w-[42%] items-center justify-center">
-              <div className="relative flex h-52 w-52 items-center justify-center rounded-full border-[2px] border-amber-300/40 bg-amber-300/10 text-8xl shadow-[0_0_80px_rgba(245,184,55,0.18)] sm:h-64 sm:w-64 sm:text-9xl">
-                🏆
-                <span className="absolute -right-2 top-3 text-4xl text-amber-200">✦</span>
-                <span className="absolute -bottom-1 left-2 text-3xl text-amber-200">✧</span>
-              </div>
-            </div>
-          )}
+          {/* العنصر الرئيسي */}
+          <span className="relative z-10 select-none text-[76px] drop-shadow-[0_12px_12px_rgba(0,0,0,0.35)] transition-transform duration-700 group-hover:scale-105 sm:text-[100px] lg:text-[112px]">
+            {slide.visual}
+          </span>
 
-          {item.visual === "logo" && (
-            <div className="absolute bottom-0 left-0 flex h-full w-[42%] items-center justify-center">
-              <div className="flex h-52 w-52 flex-col items-center justify-center rounded-full border-2 border-amber-300/50 bg-white/5 shadow-[0_0_70px_rgba(245,184,55,0.15)] backdrop-blur-sm sm:h-64 sm:w-64">
-                <span className="text-8xl font-black text-amber-300 sm:text-9xl">D</span>
-                <span className="mt-1 text-xs font-black tracking-[0.35em] text-white">
-                  DURANT
-                </span>
-                <span className="mt-2 text-2xl">📚 🎓</span>
-              </div>
-            </div>
-          )}
+          {/* عناصر تعليمية صغيرة */}
+          <span className="absolute bottom-5 left-[12%] rotate-[-12deg] text-2xl opacity-90 sm:text-3xl">
+            ✏️
+          </span>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101a35]/45 to-transparent" />
-        </div>
-      ))}
+          <span className="absolute right-[10%] top-4 text-xl text-amber-200 sm:text-3xl">
+            ✧
+          </span>
 
-      <div className="relative z-20 flex min-h-[320px] items-center px-6 py-10 sm:min-h-[350px] sm:px-10 lg:min-h-[370px] lg:px-12">
-        <div className="max-w-[680px]">
-          <p className="text-[10px] font-black tracking-[0.24em] text-amber-300 sm:text-xs">
-            {slide.eyebrow}
-          </p>
+          <span className="absolute bottom-8 right-[12%] text-lg text-amber-200 sm:text-2xl">
+            ✦
+          </span>
 
-          <h1 className="mt-5 max-w-[620px] text-3xl font-black leading-[1.55] sm:text-4xl lg:text-[43px]">
-            {isArabic ? slide.arTitle : slide.enTitle}
-          </h1>
-
-          <p className="mt-3 max-w-[520px] text-sm leading-8 text-blue-100 sm:text-base">
-            {isArabic ? slide.arText : slide.enText}
-          </p>
-
-          <p className="mt-3 text-xs font-bold text-amber-200/90">
-            {gradeName}
-          </p>
-
-          <Link
-            href={`/grades/${gradeSlug}`}
-            className="mt-6 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-7 py-3 text-sm font-black text-[#17213d] shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:shadow-amber-300/30"
-          >
-            {isArabic ? slide.arButton : slide.enButton}
-            <span aria-hidden="true">{isArabic ? "←" : "→"}</span>
-          </Link>
+          <span className="absolute left-[28%] top-5 text-lg text-white/70 sm:text-2xl">
+            ✧
+          </span>
         </div>
       </div>
 
-      <div className="absolute bottom-5 end-6 z-30 flex items-center gap-2 sm:end-10">
+      {/* طبقة فصل النص عن الصورة */}
+      <div className="pointer-events-none absolute inset-y-0 right-[34%] w-[25%] bg-gradient-to-l from-transparent to-[#17213d]/25" />
+
+      {/* النص والزر */}
+      <div className="absolute inset-y-0 left-0 z-20 flex w-[61%] flex-col items-center justify-center px-3 text-center sm:px-5">
+        <h1
+          key={`${slide.id}-${isArabic}`}
+          className="max-w-[390px] animate-[heroFade_.5s_ease-out] text-[18px] font-black leading-[1.55] text-white drop-shadow-sm sm:text-[24px] lg:text-[27px]"
+        >
+          {isArabic ? slide.arTitle : slide.enTitle}
+        </h1>
+
+        {/* الخط الذهبي */}
+        <div className="mt-1.5 h-[3px] w-14 rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 sm:mt-2 sm:w-20" />
+
+        <Link
+          href={`/grades/${gradeSlug}`}
+          className="mt-2.5 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-4 py-1.5 text-[10px] font-black text-[#17213d] shadow-md shadow-black/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-lg sm:mt-3 sm:px-5 sm:py-2 sm:text-xs"
+        >
+          {isArabic ? slide.arButton : slide.enButton}
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#17213d]/10 text-[10px]">
+            {isArabic ? "◀" : "▶"}
+          </span>
+        </Link>
+
+        <span className="sr-only">{gradeName}</span>
+      </div>
+
+      {/* نقاط التنقل */}
+      <div className="absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5">
         {slides.map((item, index) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setActiveIndex(index)}
             aria-label={
-              isArabic
-                ? `الشريحة ${index + 1}`
-                : `Slide ${index + 1}`
+              isArabic ? `الشريحة ${index + 1}` : `Slide ${index + 1}`
             }
             aria-current={activeIndex === index}
-            className={`h-2 rounded-full transition-all duration-300 ${
+            className={`h-1.5 rounded-full transition-all duration-300 ${
               activeIndex === index
-                ? "w-8 bg-amber-300"
-                : "w-2 bg-white/50 hover:bg-white"
+                ? "w-5 bg-amber-300"
+                : "w-1.5 bg-white/60 hover:bg-white"
             }`}
           />
         ))}
       </div>
 
-      <div className="absolute bottom-4 start-5 z-30 flex gap-2 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+      {/* أزرار السابق والتالي */}
+      <div className="absolute bottom-2 left-2 z-30 flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
         <button
           type="button"
           onClick={() => changeSlide(-1)}
           aria-label={isArabic ? "الشريحة السابقة" : "Previous slide"}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/20 text-lg text-white backdrop-blur-sm transition hover:bg-white/20"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-black/20 text-xs text-white backdrop-blur-sm transition hover:bg-white/20"
         >
           {isArabic ? "→" : "←"}
         </button>
+
         <button
           type="button"
           onClick={() => changeSlide(1)}
           aria-label={isArabic ? "الشريحة التالية" : "Next slide"}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/20 text-lg text-white backdrop-blur-sm transition hover:bg-white/20"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-black/20 text-xs text-white backdrop-blur-sm transition hover:bg-white/20"
         >
           {isArabic ? "←" : "→"}
         </button>
