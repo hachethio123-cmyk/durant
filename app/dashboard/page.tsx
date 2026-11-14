@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -82,6 +83,163 @@ function getRankStyle(rank: number) {
   if (rank === 2) return "bg-slate-100 text-slate-600 border-slate-200";
   if (rank === 3) return "bg-orange-100 text-orange-700 border-orange-200";
   return "bg-blue-50 text-blue-600 border-blue-100";
+}
+
+/* XP progress card */
+function XPProgressCard({
+  xpPoints,
+  studentLevel,
+  xpProgress,
+  locale,
+  isArabic,
+}: {
+  xpPoints: number;
+  studentLevel: number;
+  xpProgress: number;
+  locale: string;
+  isArabic: boolean;
+}) {
+  const progress = Math.max(0, Math.min(100, Number(xpProgress) || 0));
+  const remaining = 100 - progress;
+
+  const circumference = 2 * Math.PI * 43;
+  const dashOffset = circumference - (progress / 100) * circumference;
+
+  const format = (value: number) => value.toLocaleString(locale);
+
+  return (
+    <div className="relative mt-5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-br from-white via-white to-blue-50/80 p-4 shadow-[0_8px_30px_rgba(30,64,175,0.06)] sm:p-5">
+      <div className="pointer-events-none absolute -end-12 -top-16 h-36 w-36 rounded-full bg-blue-200/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 -start-10 h-36 w-36 rounded-full bg-violet-200/20 blur-3xl" />
+
+      <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+        <div className="relative flex h-28 w-28 shrink-0 items-center justify-center">
+          <svg
+            viewBox="0 0 100 100"
+            className="h-full w-full -rotate-90 overflow-visible"
+            role="img"
+            aria-label={`${progress}%`}
+          >
+            <defs>
+              <linearGradient
+                id="xpProgressGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="55%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+            </defs>
+
+            <circle
+              cx="50"
+              cy="50"
+              r="43"
+              fill="none"
+              stroke="#e8edf8"
+              strokeWidth="8"
+            />
+
+            <circle
+              cx="50"
+              cy="50"
+              r="43"
+              fill="none"
+              stroke="url(#xpProgressGradient)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={dashOffset}
+              className="transition-all duration-1000 ease-out"
+            />
+          </svg>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-black text-[#17213d]">
+              {format(progress)}%
+            </span>
+            <span className="mt-0.5 text-[9px] font-bold text-slate-400">
+              {isArabic ? "التقدم" : "PROGRESS"}
+            </span>
+          </div>
+
+          <div className="absolute -end-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-blue-500 text-xs text-white shadow-md">
+            ✦
+          </div>
+        </div>
+
+        <div className="min-w-0 flex-1 text-center sm:text-start">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+            <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black text-blue-600">
+              {isArabic ? "رحلة التطور" : "LEVEL JOURNEY"}
+            </span>
+
+            <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black text-amber-600">
+              <span>⭐</span>
+              {isArabic
+                ? `المستوى ${format(studentLevel)}`
+                : `Level ${format(studentLevel)}`}
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-base font-black text-[#17213d] sm:text-lg">
+            {isArabic
+              ? "أنت تقترب من المستوى التالي!"
+              : "You're getting closer to the next level!"}
+          </h3>
+
+          <p className="mt-1 text-xs leading-6 text-slate-500">
+            {isArabic
+              ? "استمر في التعلم واجمع نقاط الخبرة لتطوير مستواك."
+              : "Keep learning and collecting XP to advance your level."}
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-xl border border-blue-100/80 bg-white/80 px-3 py-2.5 backdrop-blur-sm">
+              <p className="text-[10px] font-bold text-slate-400">
+                {isArabic ? "إجمالي الخبرة" : "TOTAL EXPERIENCE"}
+              </p>
+              <p className="mt-1 text-lg font-black text-[#17213d]">
+                {format(xpPoints)}
+                <span className="ms-1 text-[10px] font-bold text-blue-500">
+                  XP
+                </span>
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-violet-100/80 bg-white/80 px-3 py-2.5 backdrop-blur-sm">
+              <p className="text-[10px] font-bold text-slate-400">
+                {isArabic ? "المتبقي للتقدم" : "REMAINING"}
+              </p>
+              <p className="mt-1 text-lg font-black text-[#17213d]">
+                {format(remaining)}
+                <span className="ms-1 text-[10px] font-bold text-violet-500">
+                  XP
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative mt-5">
+        <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-bold text-slate-400">
+          <span>{isArabic ? "تقدمك الحالي" : "YOUR PROGRESS"}</span>
+          <span className="text-blue-600">{format(progress)} / 100</span>
+        </div>
+
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 transition-all duration-1000 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -312,7 +470,9 @@ export default function Dashboard() {
     }
 
     setNotifications((current) =>
-      current.map((item) => item.id === notification.id ? { ...item, is_read: true } : item)
+      current.map((item) =>
+        item.id === notification.id ? { ...item, is_read: true } : item
+      )
     );
     return true;
   }
@@ -402,7 +562,10 @@ export default function Dashboard() {
                   <input
                     type="search"
                     value={search}
-                    onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
+                    onChange={(event) => {
+                      setSearch(event.target.value);
+                      setSearchOpen(true);
+                    }}
                     onFocus={() => setSearchOpen(true)}
                     onKeyDown={(event) => {
                       if (event.key === "Escape") setSearchOpen(false);
@@ -416,18 +579,55 @@ export default function Dashboard() {
                     aria-label={t("البحث في المنصة", "Search the platform")}
                     className="min-w-0 flex-1 bg-transparent text-sm text-[#17213d] outline-none placeholder:text-slate-400"
                   />
-                  {search && <button type="button" onClick={() => { setSearch(""); setSearchOpen(false); }} aria-label={t("مسح البحث", "Clear search")} className="text-slate-400">✕</button>}
+                  {search && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch("");
+                        setSearchOpen(false);
+                      }}
+                      aria-label={t("مسح البحث", "Clear search")}
+                      className="text-slate-400"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
+
                 {searchOpen && search.trim() && (
                   <>
-                    <button type="button" aria-label={t("إغلاق نتائج البحث", "Close search results")} className="fixed inset-0 z-30 cursor-default" onClick={() => setSearchOpen(false)} />
+                    <button
+                      type="button"
+                      aria-label={t("إغلاق نتائج البحث", "Close search results")}
+                      className="fixed inset-0 z-30 cursor-default"
+                      onClick={() => setSearchOpen(false)}
+                    />
                     <div className="absolute start-0 top-full z-40 mt-2 w-full min-w-[250px] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white p-2 shadow-xl">
-                      {searchResults.length ? searchResults.map((item) => (
-                        <button key={item.href} type="button" onClick={() => { router.push(item.href); setSearch(""); setSearchOpen(false); }} className="flex w-full flex-col rounded-xl px-3 py-3 text-start transition hover:bg-blue-50">
-                          <span className="text-sm font-black text-[#17213d]">{item.title}</span>
-                          <span className="mt-1 text-xs text-slate-500">{item.description}</span>
-                        </button>
-                      )) : <p className="p-4 text-center text-sm text-slate-500">{t("لا توجد نتائج مطابقة.", "No matching results.")}</p>}
+                      {searchResults.length ? (
+                        searchResults.map((item) => (
+                          <button
+                            key={item.href}
+                            type="button"
+                            onClick={() => {
+                              router.push(item.href);
+                              setSearch("");
+                              setSearchOpen(false);
+                            }}
+                            className="flex w-full flex-col rounded-xl px-3 py-3 text-start transition hover:bg-blue-50"
+                          >
+                            <span className="text-sm font-black text-[#17213d]">
+                              {item.title}
+                            </span>
+                            <span className="mt-1 text-xs text-slate-500">
+                              {item.description}
+                            </span>
+                          </button>
+                        ))
+                      ) : (
+                        <p className="p-4 text-center text-sm text-slate-500">
+                          {t("لا توجد نتائج مطابقة.", "No matching results.")}
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
@@ -436,35 +636,111 @@ export default function Dashboard() {
 
             <div className="order-1 flex min-w-0 items-center justify-between gap-2 sm:order-2 sm:justify-end sm:gap-3">
               <div className="relative shrink-0">
-                <button type="button" onClick={() => { setNotificationsOpen((value) => !value); setSearchOpen(false); if (!notificationsOpen) loadNotifications(); }} aria-label={t("الإشعارات", "Notifications")} aria-expanded={notificationsOpen} className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm transition hover:bg-amber-50 sm:h-11 sm:w-11">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNotificationsOpen((value) => !value);
+                    setSearchOpen(false);
+                    if (!notificationsOpen) loadNotifications();
+                  }}
+                  aria-label={t("الإشعارات", "Notifications")}
+                  aria-expanded={notificationsOpen}
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm transition hover:bg-amber-50 sm:h-11 sm:w-11"
+                >
                   🔔
-                  {unreadNotifications > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
+                      {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                    </span>
+                  )}
                 </button>
+
                 {notificationsOpen && (
                   <>
-                    <button type="button" aria-label={t("إغلاق الإشعارات", "Close notifications")} className="fixed inset-0 z-30 cursor-default" onClick={() => setNotificationsOpen(false)} />
+                    <button
+                      type="button"
+                      aria-label={t("إغلاق الإشعارات", "Close notifications")}
+                      className="fixed inset-0 z-30 cursor-default"
+                      onClick={() => setNotificationsOpen(false)}
+                    />
                     <div className="absolute end-0 top-full z-40 mt-3 w-[min(350px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white shadow-2xl">
                       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
-                        <h3 className="font-black text-[#17213d]">{t("الإشعارات", "Notifications")}</h3>
-                        <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">{unreadNotifications} {t("غير مقروء", "unread")}</span>
+                        <h3 className="font-black text-[#17213d]">
+                          {t("الإشعارات", "Notifications")}
+                        </h3>
+                        <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">
+                          {unreadNotifications} {t("غير مقروء", "unread")}
+                        </span>
                       </div>
+
                       <div className="max-h-[360px] overflow-y-auto">
-                        {notificationsLoading ? <p className="p-6 text-center text-sm text-slate-500">{t("جاري تحميل الإشعارات...", "Loading notifications...")}</p>
-                        : notificationsError ? <div className="p-5 text-center"><p className="text-sm text-red-500">{notificationsError}</p><button type="button" onClick={() => loadNotifications()} className="mt-3 text-xs font-bold text-blue-600">{t("إعادة المحاولة", "Try again")}</button></div>
-                        : notifications.length === 0 ? <p className="p-6 text-center text-sm text-slate-500">{t("لا توجد إشعارات حتى الآن.", "No notifications yet.")}</p>
-                        : notifications.map((notification) => (
-                          <button key={notification.id} type="button" disabled={markingNotificationId === notification.id} onClick={() => openNotification(notification)} className={`flex w-full gap-3 border-b border-slate-50 px-4 py-4 text-start transition hover:bg-blue-50 ${notification.is_read ? "bg-white" : "bg-blue-50/60"}`}>
-                            <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
-                            <span className="min-w-0 flex-1">
-                              <span className="block text-sm font-black text-[#17213d]">{isArabic ? notification.title_ar : notification.title_en || notification.title_ar}</span>
-                              <span className="mt-1 block text-xs leading-6 text-slate-500">{isArabic ? notification.message_ar : notification.message_en || notification.message_ar}</span>
-                              <span className="mt-2 block text-[10px] text-slate-400">{new Date(notification.created_at).toLocaleString(locale)}</span>
-                            </span>
-                            {!notification.is_read && <span className="shrink-0 self-center text-[10px] font-bold text-blue-600">{t("جديد", "New")}</span>}
-                          </button>
-                        ))}
+                        {notificationsLoading ? (
+                          <p className="p-6 text-center text-sm text-slate-500">
+                            {t("جاري تحميل الإشعارات...", "Loading notifications...")}
+                          </p>
+                        ) : notificationsError ? (
+                          <div className="p-5 text-center">
+                            <p className="text-sm text-red-500">
+                              {notificationsError}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => loadNotifications()}
+                              className="mt-3 text-xs font-bold text-blue-600"
+                            >
+                              {t("إعادة المحاولة", "Try again")}
+                            </button>
+                          </div>
+                        ) : notifications.length === 0 ? (
+                          <p className="p-6 text-center text-sm text-slate-500">
+                            {t("لا توجد إشعارات حتى الآن.", "No notifications yet.")}
+                          </p>
+                        ) : (
+                          notifications.map((notification) => (
+                            <button
+                              key={notification.id}
+                              type="button"
+                              disabled={markingNotificationId === notification.id}
+                              onClick={() => openNotification(notification)}
+                              className={`flex w-full gap-3 border-b border-slate-50 px-4 py-4 text-start transition hover:bg-blue-50 ${
+                                notification.is_read ? "bg-white" : "bg-blue-50/60"
+                              }`}
+                            >
+                              <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-sm font-black text-[#17213d]">
+                                  {isArabic
+                                    ? notification.title_ar
+                                    : notification.title_en || notification.title_ar}
+                                </span>
+                                <span className="mt-1 block text-xs leading-6 text-slate-500">
+                                  {isArabic
+                                    ? notification.message_ar
+                                    : notification.message_en || notification.message_ar}
+                                </span>
+                                <span className="mt-2 block text-[10px] text-slate-400">
+                                  {new Date(notification.created_at).toLocaleString(locale)}
+                                </span>
+                              </span>
+                              {!notification.is_read && (
+                                <span className="shrink-0 self-center text-[10px] font-bold text-blue-600">
+                                  {t("جديد", "New")}
+                                </span>
+                              )}
+                            </button>
+                          ))
+                        )}
                       </div>
-                      <div className="border-t border-slate-100 p-3"><button type="button" onClick={() => loadNotifications()} className="w-full rounded-xl bg-slate-50 py-2.5 text-xs font-bold text-[#17213d] transition hover:bg-slate-100">{t("تحديث الإشعارات", "Refresh notifications")}</button></div>
+
+                      <div className="border-t border-slate-100 p-3">
+                        <button
+                          type="button"
+                          onClick={() => loadNotifications()}
+                          className="w-full rounded-xl bg-slate-50 py-2.5 text-xs font-bold text-[#17213d] transition hover:bg-slate-100"
+                        >
+                          {t("تحديث الإشعارات", "Refresh notifications")}
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -508,7 +784,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              {/* Main hero: full width, matching the approved reference */}
+              {/* Main hero */}
               <section className="min-w-0">
                 <div className="min-w-0 overflow-hidden rounded-2xl">
                   <DashboardHero
@@ -519,63 +795,124 @@ export default function Dashboard() {
                 </div>
               </section>
 
-              {/* Four compact summary cards */}
+              {/* Summary cards */}
               <section className="mt-4 grid min-w-0 grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3 xl:grid-cols-4">
                 <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">🏆</div>
-                  <div className="min-w-0">
-                    <p className="text-base font-black sm:text-lg">{formatNumber(earnedCount, locale)}</p>
-                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("إنجاز مكتمل", "Achievements")}</p>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
+                    🏆
                   </div>
-                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">+{formatNumber(earnedCount, locale)}</span>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">
+                      {formatNumber(earnedCount, locale)}
+                    </p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">
+                      {t("إنجاز مكتمل", "Achievements")}
+                    </p>
+                  </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">
+                    +{formatNumber(earnedCount, locale)}
+                  </span>
                 </div>
 
                 <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">📗</div>
-                  <div className="min-w-0">
-                    <p className="text-base font-black sm:text-lg">{formatNumber(subjects.length, locale)}</p>
-                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("مواد دراسية", "Subjects")}</p>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
+                    📗
                   </div>
-                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">+{formatNumber(subjects.length, locale)}</span>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">
+                      {formatNumber(subjects.length, locale)}
+                    </p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">
+                      {t("مواد دراسية", "Subjects")}
+                    </p>
+                  </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">
+                    +{formatNumber(subjects.length, locale)}
+                  </span>
                 </div>
 
                 <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-[#e5e8f5] bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">⭐</div>
-                  <div className="min-w-0">
-                    <p className="text-base font-black sm:text-lg">{formatNumber(xpPoints, locale)}</p>
-                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("نقاط الخبرة", "Experience")}</p>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
+                    ⭐
                   </div>
-                  <span className="ms-auto hidden shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[9px] font-bold text-blue-600 sm:inline">XP</span>
+                  <div className="min-w-0">
+                    <p className="text-base font-black sm:text-lg">
+                      {formatNumber(xpPoints, locale)}
+                    </p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">
+                      {t("نقاط الخبرة", "Experience")}
+                    </p>
+                  </div>
+                  <span className="ms-auto hidden shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[9px] font-bold text-blue-600 sm:inline">
+                    XP
+                  </span>
                 </div>
 
                 <div className="flex min-w-0 items-center gap-2.5 rounded-xl border border-amber-100 bg-[#fffdfa] px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">🪙</div>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
+                    🪙
+                  </div>
                   <div className="min-w-0">
-                    <p className="text-base font-black sm:text-lg">{formatNumber(goldCoins, locale)}</p>
-                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">{t("عملة ذهبية", "Gold Coins")}</p>
+                    <p className="text-base font-black sm:text-lg">
+                      {formatNumber(goldCoins, locale)}
+                    </p>
+                    <p className="truncate text-[10px] text-slate-500 sm:text-xs">
+                      {t("عملة ذهبية", "Gold Coins")}
+                    </p>
                   </div>
                 </div>
               </section>
 
-              {/* Subjects and learning checklist area */}
-              <section id="grades" className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
+              {/* Subjects and learning journey */}
+              <section
+                id="grades"
+                className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]"
+              >
                 <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-3.5 sm:p-5">
                   <SectionTitle
                     eyebrow="YOUR SUBJECTS"
                     title={t("موادك الدراسية", "Your Subjects")}
                     icon="📚"
-                    action={<Link href={`/grades/${gradeSlug}`} className="text-[10px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs">{t("عرض الكل ←", "View All →")}</Link>}
+                    action={
+                      <Link
+                        href={`/grades/${gradeSlug}`}
+                        className="text-[10px] font-bold text-blue-600 hover:text-blue-800 sm:text-xs"
+                      >
+                        {t("عرض الكل ←", "View All →")}
+                      </Link>
+                    }
                   />
-                  <div className={`grid min-w-0 gap-3 ${subjects.length > 1 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:max-w-[360px]"}`}>
+
+                  <div
+                    className={`grid min-w-0 gap-3 ${
+                      subjects.length > 1
+                        ? "grid-cols-1 sm:grid-cols-2"
+                        : "grid-cols-1 sm:max-w-[360px]"
+                    }`}
+                  >
                     {subjects.map((subject) => (
-                      <Link key={subject.title} href={`/grades/${gradeSlug}`} className="group relative flex min-h-[190px] min-w-0 flex-col justify-end overflow-hidden rounded-xl bg-[#17213d] p-4 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:min-h-[210px]">
-                        <div className={`absolute inset-0 bg-gradient-to-br ${subject.visual} opacity-95 transition group-hover:scale-105`} />
+                      <Link
+                        key={subject.title}
+                        href={`/grades/${gradeSlug}`}
+                        className="group relative flex min-h-[190px] min-w-0 flex-col justify-end overflow-hidden rounded-xl bg-[#17213d] p-4 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:min-h-[210px]"
+                      >
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-br ${subject.visual} opacity-95 transition group-hover:scale-105`}
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#101a35] via-[#101a35]/20 to-transparent" />
-                        <div className="relative z-10 mb-auto flex h-20 items-center justify-center text-6xl drop-shadow-xl sm:h-24 sm:text-7xl">{subject.icon}</div>
+                        <div className="relative z-10 mb-auto flex h-20 items-center justify-center text-6xl drop-shadow-xl sm:h-24 sm:text-7xl">
+                          {subject.icon}
+                        </div>
                         <div className="relative z-10 min-w-0 text-center">
-                          <h3 className="break-words text-lg font-black sm:text-xl">{subject.title}</h3>
-                          <p className="mt-1 break-words text-xs leading-6 text-blue-100">{subject.subtitle}</p>
-                          <span className="mx-auto mt-3 inline-flex max-w-full rounded-full bg-white/10 px-5 py-2 text-xs font-bold">{t("ابدأ التعلم ←", "Start Learning →")}</span>
+                          <h3 className="break-words text-lg font-black sm:text-xl">
+                            {subject.title}
+                          </h3>
+                          <p className="mt-1 break-words text-xs leading-6 text-blue-100">
+                            {subject.subtitle}
+                          </p>
+                          <span className="mx-auto mt-3 inline-flex max-w-full rounded-full bg-white/10 px-5 py-2 text-xs font-bold">
+                            {t("ابدأ التعلم ←", "Start Learning →")}
+                          </span>
                         </div>
                       </Link>
                     ))}
@@ -583,87 +920,219 @@ export default function Dashboard() {
                 </div>
 
                 <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-5">
-                  <SectionTitle eyebrow="YOUR DAILY PROGRESS" title={t("رحلتك التعليمية", "Your Learning Journey")} icon="📋" />
+                  <SectionTitle
+                    eyebrow="YOUR DAILY PROGRESS"
+                    title={t("رحلتك التعليمية", "Your Learning Journey")}
+                    icon="📋"
+                  />
+
                   <div className="space-y-4">
                     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-black text-emerald-600">✓</span>
-                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("حسابك جاهز للتعلم", "Your account is ready")}</p><p className="mt-1 text-[10px] text-slate-400">{t("يمكنك استكشاف مواد صفك", "Explore your grade subjects")}</p></div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-black text-emerald-600">
+                          ✓
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold sm:text-sm">
+                            {t("حسابك جاهز للتعلم", "Your account is ready")}
+                          </p>
+                          <p className="mt-1 text-[10px] text-slate-400">
+                            {t("يمكنك استكشاف مواد صفك", "Explore your grade subjects")}
+                          </p>
+                        </div>
                       </div>
                       <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
+
                     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">📚</span>
-                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("المواد الدراسية", "School Subjects")}</p><p className="mt-1 text-[10px] text-slate-400">{formatNumber(subjects.length, locale)} {t("مواد متاحة", "subjects available")}</p></div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                          📚
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold sm:text-sm">
+                            {t("المواد الدراسية", "School Subjects")}
+                          </p>
+                          <p className="mt-1 text-[10px] text-slate-400">
+                            {formatNumber(subjects.length, locale)}{" "}
+                            {t("مواد متاحة", "subjects available")}
+                          </p>
+                        </div>
                       </div>
                       <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
+
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">⭐</span>
-                        <div className="min-w-0"><p className="text-xs font-bold sm:text-sm">{t("مستواك الحالي", "Current Level")}</p><p className="mt-1 text-[10px] text-slate-400">{t(`المستوى ${studentLevel}`, `Level ${studentLevel}`)} · {formatNumber(xpPoints, locale)} XP</p></div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                          ⭐
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold sm:text-sm">
+                            {t("مستواك الحالي", "Current Level")}
+                          </p>
+                          <p className="mt-1 text-[10px] text-slate-400">
+                            {t(`المستوى ${studentLevel}`, `Level ${studentLevel}`)}{" "}
+                            · {formatNumber(xpPoints, locale)} XP
+                          </p>
+                        </div>
                       </div>
                       <span className="shrink-0 text-amber-500">★</span>
                     </div>
                   </div>
-                  <div className="mt-5 border-t border-slate-100 pt-4">
-                    <div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className="font-bold text-slate-600">{t("تقدم المستوى", "Level Progress")}</span><span className="font-black text-[#17213d]">{xpProgress}%</span></div>
-                    <div className="h-2.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#42b58b] transition-all" style={{ width: `${xpProgress}%` }} /></div>
-                  </div>
+
+                  {/* New XP progress card */}
+                  <XPProgressCard
+                    xpPoints={xpPoints}
+                    studentLevel={studentLevel}
+                    xpProgress={xpProgress}
+                    locale={locale}
+                    isArabic={isArabic}
+                  />
                 </div>
               </section>
 
               {/* Achievements and wallet */}
               <section className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
                 <div className="min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-3.5 sm:p-5">
-                  <SectionTitle eyebrow="YOUR ACHIEVEMENTS" title={t("إنجازاتك", "Your Achievements")} icon="🏆" action={<span className="text-[10px] font-bold text-blue-600 sm:text-xs">{t("عرض الكل ←", "View All →")}</span>} />
+                  <SectionTitle
+                    eyebrow="YOUR ACHIEVEMENTS"
+                    title={t("إنجازاتك", "Your Achievements")}
+                    icon="🏆"
+                    action={
+                      <span className="text-[10px] font-bold text-blue-600 sm:text-xs">
+                        {t("عرض الكل ←", "View All →")}
+                      </span>
+                    }
+                  />
+
                   {achievements.length === 0 ? (
-                    <p className="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">{t("لا توجد إنجازات متاحة حاليًا.", "No achievements available yet.")}</p>
+                    <p className="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">
+                      {t("لا توجد إنجازات متاحة حاليًا.", "No achievements available yet.")}
+                    </p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-4 sm:gap-3">
                       {achievements.map((achievement) => {
                         const earned = earnedAchievementIds.includes(achievement.id);
-                        return <div key={achievement.id} className={`min-w-0 rounded-xl border p-3 text-center sm:p-4 ${earned ? "border-amber-200 bg-amber-50/60" : "border-slate-100 bg-slate-50 opacity-60"}`}>
-                          <div className="text-3xl sm:text-4xl">{achievement.icon}</div>
-                          <p className="mt-2 line-clamp-2 break-words text-[10px] font-black text-[#17213d] sm:mt-3 sm:text-xs">{isArabic ? achievement.name_ar : achievement.name_en}</p>
-                          <p className="mt-2 text-[9px] font-bold text-slate-400 sm:text-[10px]">{earned ? t("مكتسب", "Earned") : t("مقفل", "Locked")}</p>
-                        </div>;
+
+                        return (
+                          <div
+                            key={achievement.id}
+                            className={`min-w-0 rounded-xl border p-3 text-center sm:p-4 ${
+                              earned
+                                ? "border-amber-200 bg-amber-50/60"
+                                : "border-slate-100 bg-slate-50 opacity-60"
+                            }`}
+                          >
+                            <div className="text-3xl sm:text-4xl">
+                              {achievement.icon}
+                            </div>
+                            <p className="mt-2 line-clamp-2 break-words text-[10px] font-black text-[#17213d] sm:mt-3 sm:text-xs">
+                              {isArabic ? achievement.name_ar : achievement.name_en}
+                            </p>
+                            <p className="mt-2 text-[9px] font-bold text-slate-400 sm:text-[10px]">
+                              {earned ? t("مكتسب", "Earned") : t("مقفل", "Locked")}
+                            </p>
+                          </div>
+                        );
                       })}
                     </div>
                   )}
                 </div>
 
                 <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:p-5">
-                  <SectionTitle eyebrow="YOUR WALLET" title={t("رصيدك", "Your Wallet")} icon="🪙" />
+                  <SectionTitle
+                    eyebrow="YOUR WALLET"
+                    title={t("رصيدك", "Your Wallet")}
+                    icon="🪙"
+                  />
+
                   <div className="rounded-xl border border-amber-100 bg-[#fffaf0] px-4 py-6 text-center">
                     <div className="text-3xl">🪙</div>
-                    <p className="mt-2 text-2xl font-black text-[#17213d] sm:text-3xl">{formatNumber(goldCoins, locale)} <span className="text-amber-500">⭐</span></p>
-                    <p className="mt-1 text-xs text-slate-500">{t("رصيد العملات الذهبية", "Gold coins balance")}</p>
+                    <p className="mt-2 text-2xl font-black text-[#17213d] sm:text-3xl">
+                      {formatNumber(goldCoins, locale)}{" "}
+                      <span className="text-amber-500">⭐</span>
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {t("رصيد العملات الذهبية", "Gold coins balance")}
+                    </p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between gap-2 text-xs"><span className="text-slate-500">{t("مستواك الحالي", "Current level")}</span><span className="font-black text-[#17213d]">{formatNumber(studentLevel, locale)}</span></div>
-                  <div className="mt-2 flex items-center justify-between gap-2 text-xs"><span className="text-slate-500">{t("نقاط الخبرة", "Experience points")}</span><span className="font-black text-[#17213d]">{formatNumber(xpPoints, locale)} XP</span></div>
+
+                  <div className="mt-4 flex items-center justify-between gap-2 text-xs">
+                    <span className="text-slate-500">
+                      {t("مستواك الحالي", "Current level")}
+                    </span>
+                    <span className="font-black text-[#17213d]">
+                      {formatNumber(studentLevel, locale)}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between gap-2 text-xs">
+                    <span className="text-slate-500">
+                      {t("نقاط الخبرة", "Experience points")}
+                    </span>
+                    <span className="font-black text-[#17213d]">
+                      {formatNumber(xpPoints, locale)} XP
+                    </span>
+                  </div>
                 </div>
               </section>
 
-              {/* Leaderboard remains available below the reference sections */}
+              {/* Leaderboard */}
               <section className="mt-5 min-w-0 rounded-2xl border border-[#e5e8f5] bg-white p-4 sm:mt-6 sm:p-6">
-                <SectionTitle eyebrow="DURANT LEADERBOARD" title={t("ترتيب الطلاب", "Student Leaderboard")} icon="👥" action={<span className="text-[10px] font-bold text-blue-600 sm:text-xs">TOP 10</span>} />
+                <SectionTitle
+                  eyebrow="DURANT LEADERBOARD"
+                  title={t("ترتيب الطلاب", "Student Leaderboard")}
+                  icon="👥"
+                  action={
+                    <span className="text-[10px] font-bold text-blue-600 sm:text-xs">
+                      TOP 10
+                    </span>
+                  }
+                />
+
                 {leaderboardLoading ? (
-                  <p className="p-5 text-center text-sm text-slate-500">{t("جاري تحميل الترتيب...", "Loading leaderboard...")}</p>
+                  <p className="p-5 text-center text-sm text-slate-500">
+                    {t("جاري تحميل الترتيب...", "Loading leaderboard...")}
+                  </p>
                 ) : leaderboardError ? (
-                  <p className="break-words p-5 text-center text-sm text-red-500">{t(leaderboardError, "Unable to load leaderboard.")}</p>
+                  <p className="break-words p-5 text-center text-sm text-red-500">
+                    {t(leaderboardError, "Unable to load leaderboard.")}
+                  </p>
                 ) : leaderboard.length === 0 ? (
-                  <p className="p-5 text-center text-sm text-slate-500">{t("لا يوجد ترتيب متاح حاليًا.", "No ranking available yet.")}</p>
+                  <p className="p-5 text-center text-sm text-slate-500">
+                    {t("لا يوجد ترتيب متاح حاليًا.", "No ranking available yet.")}
+                  </p>
                 ) : (
                   <div className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
                     {leaderboard.slice(0, 5).map((student) => (
-                      <div key={student.rank_number} className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[#e8ebf5] bg-[#f8f9fd] px-3 py-3">
+                      <div
+                        key={student.rank_number}
+                        className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[#e8ebf5] bg-[#f8f9fd] px-3 py-3"
+                      >
                         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black ${getRankStyle(student.rank_number)}`}>{student.rank_number <= 3 ? ["🥇", "🥈", "🥉"][student.rank_number - 1] : student.rank_number}</span>
-                          <div className="min-w-0"><p className="truncate text-xs font-black sm:text-sm">{student.student_name}</p><p className="truncate text-[9px] text-slate-400 sm:text-[10px]">{gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ?? student.grade}</p></div>
+                          <span
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black ${getRankStyle(
+                              student.rank_number
+                            )}`}
+                          >
+                            {student.rank_number <= 3
+                              ? ["🥇", "🥈", "🥉"][student.rank_number - 1]
+                              : student.rank_number}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-black sm:text-sm">
+                              {student.student_name}
+                            </p>
+                            <p className="truncate text-[9px] text-slate-400 sm:text-[10px]">
+                              {gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ??
+                                student.grade}
+                            </p>
+                          </div>
                         </div>
-                        <p className="shrink-0 text-[11px] font-black text-[#17213d] sm:text-sm">{formatNumber(Number(student.gold_coins), locale)} 🪙</p>
+                        <p className="shrink-0 text-[11px] font-black text-[#17213d] sm:text-sm">
+                          {formatNumber(Number(student.gold_coins), locale)} 🪙
+                        </p>
                       </div>
                     ))}
                   </div>
