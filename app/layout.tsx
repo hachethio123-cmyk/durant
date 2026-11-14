@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     google: [
       "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
       "1xX3qz2UvE5sltQoImjRmvEdbKJyQoxWXxfYo_c5OQU",
+      "qb6XADN7aV1ZTPFepZRxzaXueNQ_JNXoi5ldPch7ysY",
     ],
   },
 
