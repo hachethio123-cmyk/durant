@@ -19,6 +19,56 @@ export default function StudentSidebar() {
     pathname === "/settings"
   );
   const [loggingOut, setLoggingOut] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Verify admin permission using Supabase
+  useEffect(() => {
+    let active = true;
+
+    async function checkAdmin() {
+      try {
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
+
+        if (userError || !userData.user) {
+          if (active) setIsAdmin(false);
+          return;
+        }
+
+        const { data, error } = await supabase.rpc("is_admin");
+
+        if (active) {
+          setIsAdmin(!error && data === true);
+        }
+      } catch {
+        if (active) setIsAdmin(false);
+      }
+    }
+
+    void checkAdmin();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
+        setIsAdmin(false);
+      } else if (
+        event === "SIGNED_IN" ||
+        event === "TOKEN_REFRESHED" ||
+        event === "USER_UPDATED"
+      ) {
+        // Defer the check until the auth callback has completed.
+        Promise.resolve().then(() => {
+          if (active) void checkAdmin();
+        });
+      }
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -123,6 +173,7 @@ export default function StudentSidebar() {
       return;
     }
 
+    setIsAdmin(false);
     router.replace("/login");
     router.refresh();
   }
@@ -221,7 +272,7 @@ export default function StudentSidebar() {
             </span>
           </div>
 
-          {menuItems.map((item, index) => {
+          {menuItems.map((item) => {
             const active =
               item.href === "/dashboard#grades"
                 ? false
@@ -284,6 +335,49 @@ export default function StudentSidebar() {
               </Link>
             );
           })}
+
+          {/* Admin link - visible only to verified admins */}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              onClick={closeMobile}
+              aria-current={
+                pathname.startsWith("/admin") ? "page" : undefined
+              }
+              className={`${navItemClass} ${
+                pathname.startsWith("/admin")
+                  ? "bg-gradient-to-r from-[#edf1f9] to-[#f5f7fc] text-[#17213d] shadow-sm"
+                  : "text-slate-600 hover:translate-x-0.5 hover:bg-slate-50 hover:text-[#17213d]"
+              }`}
+            >
+              {pathname.startsWith("/admin") && (
+                <span
+                  className={`absolute inset-y-3 w-1 rounded-full bg-[#263d70] ${
+                    isArabic ? "right-0" : "left-0"
+                  }`}
+                />
+              )}
+
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xl text-slate-600 transition-all duration-300 group-hover:bg-blue-50 group-hover:text-[#263d70]">
+                ⚙
+              </span>
+
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-bold">
+                  {isArabic ? "المديرين" : "Administration"}
+                </span>
+                <span className="mt-0.5 block text-[10px] text-slate-400">
+                  {isArabic
+                    ? "إدارة المنصة والطلاب"
+                    : "Manage platform and students"}
+                </span>
+              </span>
+
+              <span className="text-sm text-[#263d70]">
+                {isArabic ? "‹" : "›"}
+              </span>
+            </Link>
+          )}
 
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-slate-100" />

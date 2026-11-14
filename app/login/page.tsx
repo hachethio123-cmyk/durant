@@ -15,6 +15,17 @@ const grades = [
   { value: "third-secondary", ar: "الصف الثالث الثانوي", en: "Third Secondary Grade" },
 ];
 
+function normalizePhone(value: string) {
+  return value
+    .replace(/[٠-٩]/g, (digit) =>
+      String("٠١٢٣٤٥٦٧٨٩".indexOf(digit))
+    )
+    .replace(/[۰-۹]/g, (digit) =>
+      String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))
+    )
+    .replace(/[\s\-()]/g, "");
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const { language, languageReady } = useLanguage();
@@ -25,6 +36,8 @@ export default function LoginPage() {
 
   const [mode, setMode] = useState<"signup" | "login">("login");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [guardianPhone, setGuardianPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -67,6 +80,16 @@ export default function LoginPage() {
       );
     }
 
+    if (
+      errorText.includes("invalid student phone") ||
+      errorText.includes("invalid guardian phone")
+    ) {
+      return t(
+        "رقم الهاتف غير صحيح. تأكد من إدخال الرقم بصيغة صحيحة.",
+        "One of the phone numbers is invalid."
+      );
+    }
+
     return t(
       "حدث خطأ، حاول مرة أخرى.",
       "Something went wrong. Please try again."
@@ -85,6 +108,29 @@ export default function LoginPage() {
           return;
         }
 
+        const normalizedPhone = normalizePhone(phone);
+        const normalizedGuardianPhone = normalizePhone(guardianPhone);
+
+        if (!/^\+?[0-9]{8,15}$/.test(normalizedPhone)) {
+          setMessage(
+            t(
+              "رقم هاتف الطالب غير صحيح. أدخل من 8 إلى 15 رقمًا.",
+              "Enter a valid student phone number (8–15 digits)."
+            )
+          );
+          return;
+        }
+
+        if (!/^\+?[0-9]{8,15}$/.test(normalizedGuardianPhone)) {
+          setMessage(
+            t(
+              "رقم هاتف ولي الأمر غير صحيح. أدخل من 8 إلى 15 رقمًا.",
+              "Enter a valid guardian phone number (8–15 digits)."
+            )
+          );
+          return;
+        }
+
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
@@ -92,6 +138,8 @@ export default function LoginPage() {
             data: {
               full_name: name.trim(),
               grade,
+              phone_number: normalizedPhone,
+              guardian_phone_number: normalizedGuardianPhone,
             },
           },
         });
@@ -106,6 +154,7 @@ export default function LoginPage() {
         setMode("login");
         setPassword("");
         setShowPassword(false);
+
         setMessage(
           t(
             "تم إنشاء حسابك بنجاح. اكتب بريدك الإلكتروني وكلمة المرور لتسجيل الدخول.",
@@ -154,7 +203,6 @@ export default function LoginPage() {
     >
       <div className="grid w-full max-w-6xl overflow-hidden rounded-[28px] border border-[#e7eaf1] bg-white shadow-[0_24px_80px_rgba(23,33,61,0.10)] lg:min-h-[720px] lg:grid-cols-2">
 
-        {/* Brand panel */}
         <section className="relative hidden overflow-hidden bg-[#17213d] px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between xl:px-14">
           <div className="pointer-events-none absolute -left-28 -top-28 h-80 w-80 rounded-full border border-white/10" />
           <div className="pointer-events-none absolute -bottom-40 -right-24 h-[430px] w-[430px] rounded-full border border-white/10" />
@@ -202,7 +250,6 @@ export default function LoginPage() {
           </div>
         </section>
 
-        {/* Form panel */}
         <section className="flex min-w-0 flex-col justify-center px-5 py-8 sm:px-10 sm:py-12 xl:px-16">
           <div className="mx-auto w-full max-w-md">
 
@@ -310,6 +357,42 @@ export default function LoginPage() {
                         </option>
                       ))}
                     </select>
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-[#334155]">
+                      {t("رقم هاتف الطالب", "Student phone number")}
+                    </span>
+
+                    <input
+                      required
+                      type="tel"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      dir="ltr"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="01xxxxxxxxx"
+                      className="w-full rounded-xl border border-[#dfe5ef] bg-white px-4 py-3.5 text-left text-[#17213d] outline-none transition placeholder:text-[#a0aabc] focus:border-[#26385f] focus:ring-4 focus:ring-[#17213d]/[0.07]"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-[#334155]">
+                      {t("رقم هاتف ولي الأمر", "Parent / Guardian phone number")}
+                    </span>
+
+                    <input
+                      required
+                      type="tel"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      dir="ltr"
+                      value={guardianPhone}
+                      onChange={(e) => setGuardianPhone(e.target.value)}
+                      placeholder="01xxxxxxxxx"
+                      className="w-full rounded-xl border border-[#dfe5ef] bg-white px-4 py-3.5 text-left text-[#17213d] outline-none transition placeholder:text-[#a0aabc] focus:border-[#26385f] focus:ring-4 focus:ring-[#17213d]/[0.07]"
+                    />
                   </label>
                 </>
               )}
