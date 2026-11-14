@@ -24,6 +24,10 @@ export const metadata: Metadata = {
 
   applicationName: "DURANT",
 
+  alternates: {
+    canonical: "/",
+  },
+
   verification: {
     google: [
       "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
@@ -38,6 +42,7 @@ export const metadata: Metadata = {
     title: "منصة ديورانت التعليمية",
     description:
       "منصة تعليمية متخصصة في الدراسات الاجتماعية مع مستر أمير عبد الناصر.",
+    url: "https://durant-rose.vercel.app/",
   },
 };
 
