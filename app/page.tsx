@@ -47,6 +47,47 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "EducationalOrganization",
+      "@id": "https://durant-rose.vercel.app/#organization",
+      name: "منصة ديورانت التعليمية",
+      alternateName: "DURANT",
+      url: "https://durant-rose.vercel.app/",
+      description:
+        "منصة ديورانت التعليمية المتخصصة في الدراسات الاجتماعية والتاريخ والجغرافيا للمرحلتين الإعدادية والثانوية، مع مستر أمير عبد الناصر.",
+      knowsAbout: [
+        "الدراسات الاجتماعية",
+        "التاريخ",
+        "الجغرافيا",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://durant-rose.vercel.app/#website",
+      name: "منصة ديورانت التعليمية DURANT",
+      alternateName: "DURANT",
+      url: "https://durant-rose.vercel.app/",
+      inLanguage: "ar-EG",
+      publisher: {
+        "@id": "https://durant-rose.vercel.app/#organization",
+      },
+    },
+  ],
+};
+
 export default function Home() {
-  return <HomePageClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+      <HomePageClient />
+    </>
+  );
 }
