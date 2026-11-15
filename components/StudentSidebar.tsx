@@ -21,7 +21,6 @@ export default function StudentSidebar() {
   const [loggingOut, setLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Verify admin permission using Supabase
   useEffect(() => {
     let active = true;
 
@@ -57,7 +56,6 @@ export default function StudentSidebar() {
         event === "TOKEN_REFRESHED" ||
         event === "USER_UPDATED"
       ) {
-        // Defer the check until the auth callback has completed.
         Promise.resolve().then(() => {
           if (active) void checkAdmin();
         });
@@ -114,6 +112,14 @@ export default function StudentSidebar() {
       icon: "♜",
       href: "/achievements",
       description: isArabic ? "إنجازاتك ومكافآتك" : "Your rewards",
+    },
+    {
+      label: "DURANT AI",
+      icon: "✦",
+      href: "/assistant",
+      description: isArabic
+        ? "مساعدك الذكي الشخصي"
+        : "Your AI assistant",
     },
     {
       label: isArabic ? "الملف الشخصي" : "Profile",
@@ -219,7 +225,7 @@ export default function StudentSidebar() {
       <aside
         id="durant-student-sidebar"
         aria-label={isArabic ? "القائمة الرئيسية" : "Main navigation"}
-        className={`fixed inset-y-0 z-50 flex h-dvh w-72 max-w-[calc(100vw-2rem)] shrink-0 flex-col overflow-hidden border-slate-200 bg-white p-5 shadow-2xl transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:max-w-none lg:translate-x-0 lg:shadow-none xl:w-72 ${
+        className={`fixed inset-y-0 z-50 flex h-dvh w-72 max-w-[calc(100vw-2rem)] shrink-0 flex-col overflow-hidden border-slate-200 bg-white p-5 shadow-2xl transition-transform duration-300 ease-in-out lg:fixed lg:inset-y-0 lg:h-dvh lg:max-w-none lg:translate-x-0 lg:shadow-none xl:w-72 ${
           isArabic ? "right-0 border-l" : "left-0 border-r"
         } ${
           mobileOpen
