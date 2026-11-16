@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/ThemeProvider";
@@ -143,6 +144,220 @@ function AssistantIcon({
   }
 }
 
+// تنسيق إجابات DURANT AI
+function FormattedMessage({
+  content,
+  direction,
+}: {
+  content: string;
+  direction: "rtl" | "ltr";
+}) {
+  const lines = content.split("\n");
+
+  function renderInline(text: string, keyPrefix: string) {
+    const parts = text.split(
+      /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g
+    );
+
+    return parts.map((part, index) => {
+      const key = `${keyPrefix}-${index}`;
+
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong
+            key={key}
+            className="font-extrabold text-[#172744]"
+          >
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return (
+          <code
+            key={key}
+            dir="ltr"
+            className="rounded-md bg-[#eef1f6] px-1.5 py-0.5 font-mono text-[0.9em] text-[#263e62]"
+          >
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+
+      if (part.startsWith("*") && part.endsWith("*")) {
+        return (
+          <em key={key}>
+            {part.slice(1, -1)}
+          </em>
+        );
+      }
+
+      return part;
+    });
+  }
+
+  const elements: ReactNode[] = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    const line = lines[index].trim();
+
+    if (!line) {
+      index++;
+      continue;
+    }
+
+    const key = `block-${index}`;
+
+    // العناوين الرئيسية والفرعية
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+
+    if (heading) {
+      const level = heading[1].length;
+
+      elements.push(
+        <div
+          key={key}
+          className={`font-extrabold tracking-tight text-[#172744] ${
+            level === 1
+              ? "mt-5 mb-3 text-[23px] sm:text-[27px]"
+              : level === 2
+                ? "mt-5 mb-2.5 text-[20px] sm:text-[23px]"
+                : "mt-4 mb-2 text-[18px] sm:text-[20px]"
+          }`}
+        >
+          {renderInline(heading[2], key)}
+        </div>
+      );
+
+      index++;
+      continue;
+    }
+
+    // القوائم النقطية والمرقمة
+    const isBullet = /^[-*•]\s+/.test(line);
+    const isNumbered = /^\d+[.)]\s+/.test(line);
+
+    if (isBullet || isNumbered) {
+      const items: string[] = [];
+      const ordered = isNumbered;
+
+      while (index < lines.length) {
+        const current = lines[index].trim();
+
+        const matches = ordered
+          ? current.match(/^\d+[.)]\s+(.+)$/)
+          : current.match(/^[-*•]\s+(.+)$/);
+
+        if (!matches) break;
+
+        items.push(matches[1]);
+        index++;
+      }
+
+      const ListTag = ordered ? "ol" : "ul";
+
+      elements.push(
+        <ListTag
+          key={key}
+          className={`my-3 space-y-2 ${
+            ordered ? "list-decimal" : "list-disc"
+          } ${
+            direction === "rtl"
+              ? "me-5 pe-2"
+              : "ms-5 ps-2"
+          }`}
+        >
+          {items.map((item, itemIndex) => (
+            <li
+              key={`${key}-${itemIndex}`}
+              className="ps-1 leading-[2] text-[#34445c]"
+            >
+              {renderInline(item, `${key}-${itemIndex}`)}
+            </li>
+          ))}
+        </ListTag>
+      );
+
+      continue;
+    }
+
+    // الاقتباسات
+    if (line.startsWith(">")) {
+      elements.push(
+        <blockquote
+          key={key}
+          className={`my-4 rounded-xl border-[#c69b43] bg-[#f7f8fb] px-4 py-3 text-[#52627a] ${
+            direction === "rtl"
+              ? "border-r-[3px]"
+              : "border-l-[3px]"
+          }`}
+        >
+          {renderInline(
+            line.replace(/^>\s?/, ""),
+            key
+          )}
+        </blockquote>
+      );
+
+      index++;
+      continue;
+    }
+
+    // الفواصل
+    if (/^[-*_]{3,}$/.test(line)) {
+      elements.push(
+        <hr
+          key={key}
+          className="my-5 border-[#e5eaf1]"
+        />
+      );
+
+      index++;
+      continue;
+    }
+
+    // الفقرات العادية
+    const paragraphLines = [line];
+    index++;
+
+    while (
+      index < lines.length &&
+      lines[index].trim() &&
+      !/^(#{1,3})\s+/.test(lines[index].trim()) &&
+      !/^[-*•]\s+/.test(lines[index].trim()) &&
+      !/^\d+[.)]\s+/.test(lines[index].trim()) &&
+      !lines[index].trim().startsWith(">") &&
+      !/^[-*_]{3,}$/.test(lines[index].trim())
+    ) {
+      paragraphLines.push(lines[index].trim());
+      index++;
+    }
+
+    elements.push(
+      <p
+        key={key}
+        className="my-2 leading-[2] text-[#34445c]"
+      >
+        {renderInline(
+          paragraphLines.join(" "),
+          key
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <div
+      dir={direction}
+      className="w-full break-words text-start text-[16px] font-normal leading-[2] sm:text-[17px]"
+    >
+      {elements}
+    </div>
+  );
+}
+
 export default function DurantAssistantPage() {
   const router = useRouter();
   const { language, languageReady } = useLanguage();
@@ -150,7 +365,8 @@ export default function DurantAssistantPage() {
   const isArabic = language === "ar";
   const direction = isArabic ? "rtl" : "ltr";
 
-  const t = (ar: string, en: string) => (isArabic ? ar : en);
+  const t = (ar: string, en: string) =>
+    isArabic ? ar : en;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -259,7 +475,7 @@ export default function DurantAssistantPage() {
             errorMessage = data.error;
           }
         } catch {
-          // Keep the default error message.
+          // الاحتفاظ برسالة الخطأ الافتراضية
         }
 
         throw new Error(errorMessage);
@@ -284,7 +500,9 @@ export default function DurantAssistantPage() {
 
         if (done) break;
 
-        fullReply += decoder.decode(value, { stream: true });
+        fullReply += decoder.decode(value, {
+          stream: true,
+        });
 
         setMessages((current) =>
           current.map((item) =>
@@ -325,7 +543,9 @@ export default function DurantAssistantPage() {
 
       setMessages((current) =>
         current.filter(
-          (item) => item.id !== assistantId || item.content.trim()
+          (item) =>
+            item.id !== assistantId ||
+            item.content.trim()
         )
       );
     } finally {
@@ -355,7 +575,10 @@ export default function DurantAssistantPage() {
 
   async function copyMessage(message: Message) {
     try {
-      await navigator.clipboard.writeText(message.content);
+      await navigator.clipboard.writeText(
+        message.content
+      );
+
       setCopiedId(message.id);
 
       window.setTimeout(() => {
@@ -380,7 +603,10 @@ export default function DurantAssistantPage() {
 
     const element = event.target;
     element.style.height = "auto";
-    element.style.height = `${Math.min(element.scrollHeight, 160)}px`;
+    element.style.height = `${Math.min(
+      element.scrollHeight,
+      160
+    )}px`;
   }
 
   if (!languageReady || checkingAuth) {
@@ -391,6 +617,7 @@ export default function DurantAssistantPage() {
       >
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-[3px] border-[#dce3ef] border-t-[#172744]" />
+
           <p className="mt-5 text-sm font-semibold text-[#64748b]">
             {t(
               "جاري تجهيز DURANT AI...",
@@ -424,6 +651,7 @@ export default function DurantAssistantPage() {
                 <h1 className="text-[17px] font-extrabold tracking-tight text-[#172744] sm:text-lg">
                   DURANT AI
                 </h1>
+
                 <span className="rounded-md border border-[#e5eaf2] bg-[#f7f9fc] px-2 py-0.5 text-[10px] font-bold text-[#66758d]">
                   AI ASSISTANT
                 </span>
@@ -431,8 +659,12 @@ export default function DurantAssistantPage() {
 
               <div className="mt-0.5 flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#16a36a]" />
+
                 <p className="text-[11px] font-medium text-[#8995a8]">
-                  {t("مساعدك التعليمي الذكي", "Your intelligent learning assistant")}
+                  {t(
+                    "مساعدك التعليمي الذكي",
+                    "Your intelligent learning assistant"
+                  )}
                 </p>
               </div>
             </div>
@@ -444,6 +676,7 @@ export default function DurantAssistantPage() {
             className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-[#dfe5ee] bg-white px-3 text-sm font-bold text-[#243957] transition-all hover:border-[#172744] hover:bg-[#f6f8fb] disabled:cursor-not-allowed disabled:opacity-40 sm:px-4"
           >
             <AssistantIcon name="plus" size={17} />
+
             <span className="hidden sm:inline">
               {t("محادثة جديدة", "New conversation")}
             </span>
@@ -464,6 +697,7 @@ export default function DurantAssistantPage() {
 
                 <div className="mb-3 flex items-center gap-2 rounded-full border border-[#e2e8f1] bg-white px-3 py-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#16a36a]" />
+
                   <span className="text-[10px] font-bold tracking-[0.16em] text-[#64748b]">
                     YOUR PERSONAL AI ASSISTANT
                   </span>
@@ -498,7 +732,10 @@ export default function DurantAssistantPage() {
                       className="group flex min-h-[112px] items-start gap-4 rounded-2xl border border-[#e4e9f1] bg-white p-5 text-start shadow-[0_2px_12px_rgba(23,39,68,0.025)] transition-all duration-200 hover:-translate-y-1 hover:border-[#9aa9c0] hover:shadow-[0_12px_30px_rgba(23,39,68,0.08)] disabled:opacity-50"
                     >
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#f0f3f8] text-[#263d60] transition-colors group-hover:bg-[#172744] group-hover:text-white">
-                        <AssistantIcon name={suggestion.icon} size={21} />
+                        <AssistantIcon
+                          name={suggestion.icon}
+                          size={21}
+                        />
                       </div>
 
                       <div className="min-w-0 flex-1">
@@ -516,7 +753,10 @@ export default function DurantAssistantPage() {
                       </div>
 
                       <span className="mt-1 text-[#a6b1c0] transition group-hover:text-[#172744]">
-                        <AssistantIcon name="arrow" size={17} />
+                        <AssistantIcon
+                          name="arrow"
+                          size={17}
+                        />
                       </span>
                     </button>
                   ))}
@@ -551,7 +791,7 @@ export default function DurantAssistantPage() {
                     </div>
 
                     <div
-                      className={`flex min-w-0 max-w-[88%] flex-col ${
+                      className={`flex min-w-0 max-w-[92%] flex-col sm:max-w-[90%] ${
                         message.role === "user"
                           ? "items-end"
                           : "items-start"
@@ -564,21 +804,32 @@ export default function DurantAssistantPage() {
                       </div>
 
                       <div
-                        className={`rounded-2xl px-4 py-3.5 text-[14px] leading-8 sm:px-5 ${
+                        className={`rounded-2xl px-4 py-4 sm:px-5 sm:py-5 ${
                           message.role === "user"
-                            ? "rounded-tr-md bg-[#172744] text-white shadow-sm"
-                            : "rounded-tl-md border border-[#e5eaf1] bg-white text-[#34445c] shadow-[0_2px_10px_rgba(23,39,68,0.025)]"
+                            ? "rounded-tr-md bg-[#172744] text-[14px] leading-8 text-white shadow-sm sm:text-[15px]"
+                            : "rounded-tl-md border border-[#e5eaf1] bg-white text-[16px] leading-[2] text-[#34445c] shadow-[0_2px_10px_rgba(23,39,68,0.025)] sm:text-[17px]"
                         }`}
                       >
                         {message.content ? (
-                          <p className="whitespace-pre-wrap break-words">
-                            {message.content}
-                          </p>
+                          message.role === "assistant" ? (
+                            <FormattedMessage
+                              content={message.content}
+                              direction={direction}
+                            />
+                          ) : (
+                            <p className="whitespace-pre-wrap break-words">
+                              {message.content}
+                            </p>
+                          )
                         ) : message.role === "assistant" && loading ? (
                           <div className="flex items-center gap-2 py-1 text-[#8290a5]">
                             <span className="h-2 w-2 animate-pulse rounded-full bg-[#172744]" />
+
                             <span className="text-xs font-medium">
-                              {t("جاري التفكير...", "Thinking...")}
+                              {t(
+                                "جاري التفكير...",
+                                "Thinking..."
+                              )}
                             </span>
                           </div>
                         ) : null}
@@ -587,13 +838,22 @@ export default function DurantAssistantPage() {
                           message.content &&
                           !loading && (
                             <button
-                              onClick={() => copyMessage(message)}
+                              onClick={() =>
+                                copyMessage(message)
+                              }
                               className="mt-3 flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold text-[#8290a5] transition hover:bg-[#f1f4f8] hover:text-[#172744]"
                             >
-                              <AssistantIcon name="copy" size={13} />
+                              <AssistantIcon
+                                name="copy"
+                                size={13}
+                              />
+
                               {copiedId === message.id
                                 ? t("تم النسخ", "Copied")
-                                : t("نسخ الإجابة", "Copy response")}
+                                : t(
+                                    "نسخ الإجابة",
+                                    "Copy response"
+                                  )}
                             </button>
                           )}
                       </div>
@@ -603,20 +863,28 @@ export default function DurantAssistantPage() {
 
                 {error && (
                   <div className="mx-12 rounded-xl border border-[#e6caca] bg-white p-4 text-sm text-[#a34c4c] shadow-sm">
-                    <p className="leading-6">{error}</p>
+                    <p className="leading-6">
+                      {error}
+                    </p>
+
                     <button
                       onClick={() =>
                         sendMessage(
                           [...messages]
                             .reverse()
-                            .find((item) => item.role === "user")
+                            .find(
+                              (item) => item.role === "user"
+                            )
                             ?.content
                         )
                       }
                       disabled={loading}
                       className="mt-2 font-bold text-[#263d60] underline underline-offset-4"
                     >
-                      {t("إرسال السؤال مرة أخرى", "Send the question again")}
+                      {t(
+                        "إرسال السؤال مرة أخرى",
+                        "Send the question again"
+                      )}
                     </button>
                   </div>
                 )}
@@ -647,7 +915,10 @@ export default function DurantAssistantPage() {
                 <button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || loading}
-                  aria-label={t("إرسال الرسالة", "Send message")}
+                  aria-label={t(
+                    "إرسال الرسالة",
+                    "Send message"
+                  )}
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#172744] text-white shadow-sm transition-all hover:bg-[#263e62] active:scale-95 disabled:cursor-not-allowed disabled:bg-[#cbd3df] disabled:shadow-none"
                 >
                   <AssistantIcon name="send" size={18} />
