@@ -139,7 +139,13 @@ function SubjectCard({
 }) {
   return (
     <Link
-      href={`/grades/${gradeSlug}`}
+      href={`/grades/${gradeSlug}/subjects/${
+  gradeSlug.includes("prep")
+    ? "social_studies"
+    : subject.title === "التاريخ" || subject.title === "History"
+      ? "history"
+      : "geography"
+}`}
       className="group block rounded-2xl border border-[#e5e8f5] bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-lg sm:p-6"
     >
       <div className="flex items-center justify-between gap-3">
@@ -872,6 +878,42 @@ export default function GradePageClient({
           </section>
 
           {/* الوحدات والدروس */}
+<section id="curriculum" className="mt-7 scroll-mt-8">
+  <SectionTitle
+    eyebrow="CURRICULUM"
+    title={t("الوحدات والدروس", "Units & Lessons")}
+    icon="📖"
+  />
+
+  <div className="rounded-2xl border border-[#e5e8f5] bg-white p-5 shadow-sm sm:p-8">
+    <div className="flex flex-col items-center text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-4xl">
+        📚
+      </div>
+
+      <h3 className="mt-4 text-lg font-black text-[#17213d] sm:text-xl">
+        {t("مكتبة المحتوى الدراسي", "Study Content Library")}
+      </h3>
+
+      <p className="mt-3 max-w-2xl text-xs leading-7 text-slate-500 sm:text-sm sm:leading-8">
+        {t(
+          "اكتشف الوحدات والدروس التعليمية، وشاهد فيديوهات الشرح وافتح الملفات وأدِّ الامتحانات.",
+          "Explore units and lessons, watch explanation videos, open files and take exams."
+        )}
+      </p>
+
+      <Link
+        href={`/grades/${slug}/subjects/${
+          isPrep ? "social_studies" : "history"
+        }`}
+        className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#17213d] px-7 py-3 text-sm font-bold text-white transition hover:bg-blue-900"
+      >
+        {t("ابدأ التعلم", "Start Learning")}
+        <span className="ms-2">←</span>
+      </Link>
+    </div>
+  </div>
+</section>
           <section id="curriculum" className="mt-7 scroll-mt-8">
             <SectionTitle
               eyebrow="CURRICULUM"
