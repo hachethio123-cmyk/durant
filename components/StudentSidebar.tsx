@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/ThemeProvider";
+import DurantMark from "@/components/DurantMark";
 
 export default function StudentSidebar() {
   const pathname = usePathname();
@@ -256,9 +257,7 @@ export default function StudentSidebar() {
         {/* Brand */}
         <div className="relative shrink-0 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#263d70] to-[#17213d] text-2xl font-black text-white shadow-lg shadow-blue-950/15 transition-transform duration-300 hover:rotate-6 hover:scale-105">
-              D
-            </div>
+            <DurantMark />
 
             <div className="min-w-0">
               <h1 className="text-2xl font-black tracking-[0.16em] text-[#17213d]">

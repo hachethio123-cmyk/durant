@@ -771,3 +771,122 @@ html.light .admin-sidebar > div:first-child h2 {
     display: none;
   }
 }
+
+
+/* ========================================
+   DURANT INTERACTIVE MOTION SYSTEM
+======================================== */
+
+.durant-mark {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border: 1px solid rgba(214, 173, 88, .35);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #304b80, #17213d 75%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 7px 18px rgba(23, 33, 61, .19);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1),
+              box-shadow .35s ease,
+              border-color .35s ease;
+}
+
+.durant-mark-letter {
+  position: relative;
+  z-index: 2;
+  font-size: 29px;
+  line-height: 1;
+  font-weight: 950;
+  font-style: italic;
+  color: #e8c879;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  transition: transform .4s ease, text-shadow .4s ease;
+}
+
+.durant-mark-ring {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(232, 200, 121, .65);
+  border-radius: 50%;
+  transform: rotate(-25deg) scale(.82);
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.durant-mark-spark {
+  position: absolute;
+  z-index: 3;
+  top: -5px;
+  right: -5px;
+  color: #d6ad58;
+  font-size: 13px;
+  opacity: .75;
+  transition: transform .4s ease, opacity .4s ease;
+}
+
+.durant-mark:hover {
+  transform: translateY(-3px) rotate(-4deg);
+  border-color: #d6ad58;
+  box-shadow: 0 10px 25px rgba(23, 33, 61, .25),
+              0 0 18px rgba(214, 173, 88, .16);
+}
+
+.durant-mark:hover .durant-mark-ring {
+  transform: rotate(145deg) scale(1.08);
+}
+
+.durant-mark:hover .durant-mark-letter {
+  transform: scale(1.12);
+}
+
+.durant-mark:active {
+  transform: scale(.91);
+}
+
+.durant-mark.is-energized {
+  border-color: #e8c879;
+  box-shadow: 0 0 0 4px rgba(214, 173, 88, .13),
+              0 0 24px rgba(214, 173, 88, .28);
+}
+
+.durant-mark.is-energized .durant-mark-ring {
+  transform: rotate(180deg) scale(1.13);
+  border-color: #f0d48e;
+}
+
+.durant-mark.is-energized .durant-mark-spark {
+  opacity: 1;
+  transform: rotate(90deg) scale(1.35);
+}
+
+.durant-mark:focus-visible {
+  outline: 3px solid rgba(49, 87, 164, .45);
+  outline-offset: 4px;
+}
+
+/* Consistent micro-interactions across the platform */
+a[href],
+button:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a[href]:hover {
+    transition: color .2s ease, background-color .2s ease,
+                border-color .2s ease, box-shadow .2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .durant-mark,
+  .durant-mark * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

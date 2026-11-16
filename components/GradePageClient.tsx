@@ -451,11 +451,11 @@ export default function GradePageClient({
   return (
     <main
       dir={direction}
-      className="flex min-h-screen min-w-0 flex-col bg-[#f1f3fb] text-[#17213d] lg:flex-row"
+      className="min-h-screen min-w-0 bg-[#f1f3fb] text-[#17213d] lg:block"
     >
       <StudentSidebar />
 
-      <section className="min-w-0 w-full flex-1 px-3 pb-8 pt-20 sm:px-5 sm:pb-10 md:px-6 md:py-7 lg:px-7 xl:px-8">
+      <section className="min-w-0 w-full px-3 pb-8 pt-20 sm:px-5 sm:pb-10 md:px-6 md:py-7 lg:ms-72 lg:w-[calc(100%-18rem)] lg:px-7 xl:px-8">
         <div className="mx-auto w-full min-w-0 max-w-[1500px]">
 
           {/* الشريط العلوي المطابق للوحة التحكم */}
