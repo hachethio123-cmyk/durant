@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -31,6 +32,8 @@ type LessonData = {
   title_en: string | null;
   duration_minutes: number | null;
   sort_order: number;
+  video_url: string | null;
+  attachment_url: string | null;
 };
 
 const gradeNames: Record<string, { ar: string; en: string }> = {
@@ -123,7 +126,7 @@ export default function SubjectPageClient({
         if (unitIds.length > 0) {
           const { data: lessonsData, error: lessonsError } = await supabase
             .from("lessons")
-            .select("id, unit_id, title_ar, title_en, duration_minutes, sort_order")
+            .select("id, unit_id, title_ar, title_en, duration_minutes, sort_order, video_url, attachment_url")
             .in("unit_id", unitIds)
             .eq("is_published", true)
             .order("sort_order", { ascending: true });
@@ -282,44 +285,53 @@ export default function SubjectPageClient({
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
-                {units.map((unit, index) => (
-                  <article
-                    key={unit.id}
-                    className="rounded-2xl border border-[#e5e8f5] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-2xl font-black text-[#17213d]">
-                        {index + 1}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-blue-600">
-                          {t("الوحدة", "UNIT")} {index + 1}
-                        </p>
-                        <h3 className="mt-1 text-lg font-black">
-                          {isArabic ? unit.title_ar : unit.title_en || unit.title_ar}
-                        </h3>
-                      </div>
-                    </div>
-                    {(isArabic ? unit.description_ar : unit.description_en || unit.description_ar) && (
-                      <p className="mt-4 text-sm leading-7 text-slate-500">
-                        {isArabic ? unit.description_ar : unit.description_en || unit.description_ar}
-                      </p>
-                    )}
+                {units.map((unit, index) => {
+                  const unitLessons = lessons.filter(
+                    (lesson) => lesson.unit_id === unit.id
+                  );
 
-                    <div className="mt-5 border-t border-slate-100 pt-4">
-                      <p className="mb-3 text-sm font-black text-[#17213d]">
-                        {t("دروس الوحدة", "Unit Lessons")}
-                      </p>
+                  return (
+                    <article
+                      key={unit.id}
+                      className="rounded-2xl border border-[#e5e8f5] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-2xl font-black text-[#17213d]">
+                          {index + 1}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-blue-600">
+                            {t("الوحدة", "UNIT")} {index + 1}
+                          </p>
+                          <h3 className="mt-1 text-lg font-black">
+                            {isArabic ? unit.title_ar : unit.title_en || unit.title_ar}
+                          </h3>
+                        </div>
+                      </div>
 
-                      {lessons.filter((lesson) => lesson.unit_id === unit.id).length === 0 ? (
-                        <p className="rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500">
-                          {t("لا توجد دروس منشورة في هذه الوحدة حاليا.", "No published lessons in this unit yet.")}
+                      <div className="mt-4 flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold text-slate-500">
+                          {t("دروس الوحدة", "Unit Lessons")}
+                        </span>
+                        <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+                          {unitLessons.length} {t("درس", "Lessons")}
+                        </span>
+                      </div>
+
+                      {(isArabic ? unit.description_ar : unit.description_en || unit.description_ar) && (
+                        <p className="mt-3 text-sm leading-7 text-slate-500">
+                          {isArabic ? unit.description_ar : unit.description_en || unit.description_ar}
                         </p>
-                      ) : (
-                        <div className="space-y-2">
-                          {lessons
-                            .filter((lesson) => lesson.unit_id === unit.id)
-                            .map((lesson, lessonIndex) => (
+                      )}
+
+                      <div className="mt-5 border-t border-slate-100 pt-4">
+                        {unitLessons.length === 0 ? (
+                          <p className="rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                            {t("لا توجد دروس منشورة في هذه الوحدة حاليا.", "No published lessons in this unit yet.")}
+                          </p>
+                        ) : (
+                          <div className="space-y-2">
+                            {unitLessons.map((lesson, lessonIndex) => (
                               <div
                                 key={lesson.id}
                                 className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-3"
@@ -327,24 +339,38 @@ export default function SubjectPageClient({
                                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-black text-blue-600 shadow-sm">
                                   {lessonIndex + 1}
                                 </span>
+
                                 <div className="min-w-0 flex-1">
                                   <p className="text-sm font-bold leading-6 text-[#17213d]">
                                     {isArabic ? lesson.title_ar : lesson.title_en || lesson.title_ar}
                                   </p>
+
                                   {lesson.duration_minutes != null && (
                                     <p className="mt-1 text-xs text-slate-400">
                                       {lesson.duration_minutes} {t("دقيقة", "minutes")}
                                     </p>
                                   )}
+
+                                  <div className="mt-2 flex flex-wrap gap-2">
+                                    <span className="rounded-lg bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-700">
+                                      🎥 {lesson.video_url ? 1 : 0} {t("فيديو", "Videos")}
+                                    </span>
+
+                                    <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600">
+                                      📎 {lesson.attachment_url ? 1 : 0} {t("ملف", "Files")}
+                                    </span>
+                                  </div>
                                 </div>
-                                <span className="text-blue-500">📖</span>
+
+                                <span className="shrink-0 text-blue-500">📖</span>
                               </div>
                             ))}
-                        </div>
-                      )}
-                    </div>
-                  </article>
-                ))}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>
