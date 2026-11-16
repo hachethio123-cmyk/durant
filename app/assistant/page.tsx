@@ -621,7 +621,7 @@ export default function DurantAssistantPage() {
   return (
     <div
       dir={direction}
-      className="flex h-dvh min-h-0 w-full overflow-hidden bg-[#f5f7fb] text-[#172744]"
+      className="fixed inset-0 flex h-[100dvh] min-h-0 w-full overflow-hidden bg-[#f5f7fb] text-[#172744]"
     >
       <div className="w-0 shrink-0 lg:w-72">
         <StudentSidebar />
@@ -673,7 +673,7 @@ export default function DurantAssistantPage() {
         </header>
 
         {/* Main conversation */}
-        <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
           <div
             ref={scrollContainerRef}
             className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"
@@ -867,7 +867,7 @@ export default function DurantAssistantPage() {
           </div>
 
           {/* Fixed message composer */}
-          <div className="relative z-20 shrink-0 border-t border-[#e8edf4] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl sm:px-8 sm:pb-6">
+          <div className="sticky bottom-0 z-50 mt-auto w-full shrink-0 border-t border-[#e8edf4] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 shadow-[0_-5px_20px_rgba(23,39,68,0.04)] sm:px-8 sm:pb-6">
             <div className="mx-auto max-w-[850px]">
               <div className="flex items-end gap-3 rounded-[20px] border border-[#dfe5ee] bg-[#f8f9fc] p-2.5 shadow-[0_4px_18px_rgba(23,39,68,0.035)] transition-all focus-within:border-[#8292ac] focus-within:bg-white focus-within:shadow-[0_5px_24px_rgba(23,39,68,0.07)]">
                 <textarea
