@@ -547,7 +547,7 @@ export default function Dashboard() {
   return (
     <main
       dir={direction}
-      className="flex min-h-screen min-w-0 flex-col bg-[#f1f3fb] text-[#17213d] lg:flex-row"
+      className="flex min-h-screen min-w-0 flex-col bg-[#f1f3fb] text-[#17213d] lg:flex-row lg:ps-72"
     >
       <StudentSidebar />
 
