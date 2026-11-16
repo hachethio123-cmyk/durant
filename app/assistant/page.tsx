@@ -7,6 +7,7 @@ import {
   useState,
   type KeyboardEvent,
   type ReactNode,
+  type ChangeEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/ThemeProvider";
@@ -209,8 +210,6 @@ function FormattedMessage({
     }
 
     const key = `block-${index}`;
-
-    // العناوين الرئيسية والفرعية
     const heading = line.match(/^(#{1,3})\s+(.+)$/);
 
     if (heading) {
@@ -235,7 +234,6 @@ function FormattedMessage({
       continue;
     }
 
-    // القوائم النقطية والمرقمة
     const isBullet = /^[-*•]\s+/.test(line);
     const isNumbered = /^\d+[.)]\s+/.test(line);
 
@@ -283,7 +281,6 @@ function FormattedMessage({
       continue;
     }
 
-    // الاقتباسات
     if (line.startsWith(">")) {
       elements.push(
         <blockquote
@@ -294,10 +291,7 @@ function FormattedMessage({
               : "border-l-[3px]"
           }`}
         >
-          {renderInline(
-            line.replace(/^>\s?/, ""),
-            key
-          )}
+          {renderInline(line.replace(/^>\s?/, ""), key)}
         </blockquote>
       );
 
@@ -305,20 +299,15 @@ function FormattedMessage({
       continue;
     }
 
-    // الفواصل
     if (/^[-*_]{3,}$/.test(line)) {
       elements.push(
-        <hr
-          key={key}
-          className="my-5 border-[#e5eaf1]"
-        />
+        <hr key={key} className="my-5 border-[#e5eaf1]" />
       );
 
       index++;
       continue;
     }
 
-    // الفقرات العادية
     const paragraphLines = [line];
     index++;
 
@@ -340,10 +329,7 @@ function FormattedMessage({
         key={key}
         className="my-2 font-semibold leading-[2] text-[#34445c]"
       >
-        {renderInline(
-          paragraphLines.join(" "),
-          key
-        )}
+        {renderInline(paragraphLines.join(" "), key)}
       </p>
     );
   }
@@ -405,10 +391,15 @@ export default function DurantAssistantPage() {
     };
   }, [languageReady, router]);
 
+  // تحريك الرسائل داخل منطقة المحادثة فقط
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
+    const container = scrollContainerRef.current;
+
+    if (!container) return;
+
+    container.scrollTo({
+      top: container.scrollHeight,
       behavior: "smooth",
-      block: "end",
     });
   }, [messages]);
 
@@ -575,9 +566,7 @@ export default function DurantAssistantPage() {
 
   async function copyMessage(message: Message) {
     try {
-      await navigator.clipboard.writeText(
-        message.content
-      );
+      await navigator.clipboard.writeText(message.content);
 
       setCopiedId(message.id);
 
@@ -597,7 +586,7 @@ export default function DurantAssistantPage() {
   }
 
   function resizeTextarea(
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: ChangeEvent<HTMLTextAreaElement>
   ) {
     setInput(event.target.value);
 
@@ -613,7 +602,7 @@ export default function DurantAssistantPage() {
     return (
       <div
         dir={direction}
-        className="flex min-h-screen items-center justify-center bg-[#f5f7fb]"
+        className="flex h-dvh items-center justify-center overflow-hidden bg-[#f5f7fb]"
       >
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-[3px] border-[#dce3ef] border-t-[#172744]" />
@@ -632,13 +621,13 @@ export default function DurantAssistantPage() {
   return (
     <div
       dir={direction}
-      className="flex min-h-screen w-full overflow-hidden bg-[#f5f7fb] text-[#172744]"
+      className="flex h-dvh min-h-0 w-full overflow-hidden bg-[#f5f7fb] text-[#172744]"
     >
       <div className="w-0 shrink-0 lg:w-72">
         <StudentSidebar />
       </div>
 
-      <main className="flex min-h-screen min-w-0 flex-1 flex-col">
+      <main className="flex h-dvh min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         {/* Top navigation */}
         <header className="sticky top-0 z-20 flex h-[76px] shrink-0 items-center justify-between border-b border-[#e8edf4] bg-white/95 px-4 backdrop-blur-xl sm:px-7 lg:px-10">
           <div className="flex min-w-0 items-center gap-3">
@@ -684,10 +673,10 @@ export default function DurantAssistantPage() {
         </header>
 
         {/* Main conversation */}
-        <section className="flex min-h-0 flex-1 flex-col">
+        <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div
             ref={scrollContainerRef}
-            className="min-h-0 flex-1 overflow-y-auto"
+            className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"
           >
             {messages.length === 0 ? (
               <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-12 sm:px-8">
@@ -723,9 +712,7 @@ export default function DurantAssistantPage() {
                       key={suggestion.icon}
                       onClick={() =>
                         sendMessage(
-                          isArabic
-                            ? suggestion.ar
-                            : suggestion.en
+                          isArabic ? suggestion.ar : suggestion.en
                         )
                       }
                       disabled={loading}
@@ -753,10 +740,7 @@ export default function DurantAssistantPage() {
                       </div>
 
                       <span className="mt-1 text-[#a6b1c0] transition group-hover:text-[#172744]">
-                        <AssistantIcon
-                          name="arrow"
-                          size={17}
-                        />
+                        <AssistantIcon name="arrow" size={17} />
                       </span>
                     </button>
                   ))}
@@ -838,22 +822,14 @@ export default function DurantAssistantPage() {
                           message.content &&
                           !loading && (
                             <button
-                              onClick={() =>
-                                copyMessage(message)
-                              }
+                              onClick={() => copyMessage(message)}
                               className="mt-3 flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold text-[#8290a5] transition hover:bg-[#f1f4f8] hover:text-[#172744]"
                             >
-                              <AssistantIcon
-                                name="copy"
-                                size={13}
-                              />
+                              <AssistantIcon name="copy" size={13} />
 
                               {copiedId === message.id
                                 ? t("تم النسخ", "Copied")
-                                : t(
-                                    "نسخ الإجابة",
-                                    "Copy response"
-                                  )}
+                                : t("نسخ الإجابة", "Copy response")}
                             </button>
                           )}
                       </div>
@@ -863,18 +839,14 @@ export default function DurantAssistantPage() {
 
                 {error && (
                   <div className="mx-12 rounded-xl border border-[#e6caca] bg-white p-4 text-sm text-[#a34c4c] shadow-sm">
-                    <p className="leading-6">
-                      {error}
-                    </p>
+                    <p className="leading-6">{error}</p>
 
                     <button
                       onClick={() =>
                         sendMessage(
                           [...messages]
                             .reverse()
-                            .find(
-                              (item) => item.role === "user"
-                            )
+                            .find((item) => item.role === "user")
                             ?.content
                         )
                       }
@@ -894,8 +866,8 @@ export default function DurantAssistantPage() {
             )}
           </div>
 
-          {/* Message composer */}
-          <div className="shrink-0 border-t border-[#e8edf4] bg-white/95 px-4 pb-4 pt-4 backdrop-blur-xl sm:px-8 sm:pb-6">
+          {/* Fixed message composer */}
+          <div className="relative z-20 shrink-0 border-t border-[#e8edf4] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl sm:px-8 sm:pb-6">
             <div className="mx-auto max-w-[850px]">
               <div className="flex items-end gap-3 rounded-[20px] border border-[#dfe5ee] bg-[#f8f9fc] p-2.5 shadow-[0_4px_18px_rgba(23,39,68,0.035)] transition-all focus-within:border-[#8292ac] focus-within:bg-white focus-within:shadow-[0_5px_24px_rgba(23,39,68,0.07)]">
                 <textarea
@@ -915,10 +887,7 @@ export default function DurantAssistantPage() {
                 <button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || loading}
-                  aria-label={t(
-                    "إرسال الرسالة",
-                    "Send message"
-                  )}
+                  aria-label={t("إرسال الرسالة", "Send message")}
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#172744] text-white shadow-sm transition-all hover:bg-[#263e62] active:scale-95 disabled:cursor-not-allowed disabled:bg-[#cbd3df] disabled:shadow-none"
                 >
                   <AssistantIcon name="send" size={18} />
