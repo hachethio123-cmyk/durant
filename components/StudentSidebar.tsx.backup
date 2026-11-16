@@ -2,13 +2,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/ThemeProvider";
 
 export default function StudentSidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const { language, languageReady } = useLanguage();
@@ -89,7 +90,7 @@ export default function StudentSidebar() {
 
   useEffect(() => {
     setMobileOpen(false);
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   const menuItems = [
     {
@@ -212,7 +213,6 @@ export default function StudentSidebar() {
 
   return (
     <div dir={isArabic ? "rtl" : "ltr"}>
-      {/* Mobile menu button */}
       <button
         type="button"
         onClick={() => setMobileOpen((current) => !current)}
@@ -226,7 +226,6 @@ export default function StudentSidebar() {
         <span>{mobileOpen ? "✕" : "☰"}</span>
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <button
           type="button"
@@ -236,7 +235,6 @@ export default function StudentSidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         id="durant-student-sidebar"
         aria-label={isArabic ? "القائمة الرئيسية" : "Main navigation"}
@@ -250,14 +248,14 @@ export default function StudentSidebar() {
               : "-translate-x-full"
         }`}
       >
-        {/* Background decoration */}
         <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-blue-50/80 blur-3xl" />
 
-        {/* Brand */}
         <div className="relative shrink-0 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#263d70] to-[#17213d] text-2xl font-black text-white shadow-lg shadow-blue-950/15 transition-transform duration-300 hover:rotate-6 hover:scale-105">
-              D
+            <div className="durant-mark group flex h-11 w-11 shrink-0 items-center justify-center">
+              <span className="durant-mark-ring" />
+              <span className="durant-mark-letter">D</span>
+              <span className="durant-mark-spark">✦</span>
             </div>
 
             <div className="min-w-0">
@@ -283,9 +281,7 @@ export default function StudentSidebar() {
           </div>
         </div>
 
-        {/* All navigation items - always visible */}
-        <nav className="relative flex min-h-0 flex-1 flex-col gap-1 overflow-hidden pt-3">
-          {/* Main menu heading */}
+        <nav className="relative flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain pt-3 pb-2">
           <div className="mb-1 flex shrink-0 items-center justify-between px-2">
             <p className="text-[10px] font-black tracking-widest text-slate-400">
               {isArabic ? "القائمة الرئيسية" : "MAIN MENU"}
@@ -296,7 +292,6 @@ export default function StudentSidebar() {
             </span>
           </div>
 
-          {/* Main links */}
           {menuItems.map((item) => {
             const active = isMenuActive(item.href);
 
@@ -352,7 +347,6 @@ export default function StudentSidebar() {
             );
           })}
 
-          {/* Admin link */}
           {isAdmin && (
             <Link
               href="/admin"
@@ -395,7 +389,6 @@ export default function StudentSidebar() {
             </Link>
           )}
 
-          {/* Settings divider */}
           <div className="my-1 flex shrink-0 items-center gap-2 px-2">
             <div className="h-px flex-1 bg-slate-100" />
             <span className="text-[9px] font-black tracking-widest text-slate-300">
@@ -404,7 +397,6 @@ export default function StudentSidebar() {
             <div className="h-px flex-1 bg-slate-100" />
           </div>
 
-          {/* Settings heading */}
           <Link
             href="/settings"
             onClick={closeMobile}
@@ -424,19 +416,15 @@ export default function StudentSidebar() {
             </span>
           </Link>
 
-          {/* All settings links - permanently visible */}
           <div
-            className={`flex min-h-0 flex-col gap-0.5 ${
+            className={`flex shrink-0 flex-col gap-0.5 ${
               isArabic ? "mr-5 border-r-2 pr-2" : "ml-5 border-l-2 pl-2"
             } border-slate-200`}
           >
             {settingsItems.map((item) => {
               const active =
                 pathname === "/settings" &&
-                typeof window !== "undefined" &&
-                window.location.search.includes(
-                  `section=${item.section}`
-                );
+                searchParams.get("section") === item.section;
 
               return (
                 <Link
@@ -454,16 +442,13 @@ export default function StudentSidebar() {
                     {item.icon}
                   </span>
 
-                  <span className="min-w-0">
-                    {item.label}
-                  </span>
+                  <span className="min-w-0">{item.label}</span>
                 </Link>
               );
             })}
           </div>
         </nav>
 
-        {/* Bottom section */}
         <div className="relative shrink-0 border-t border-slate-100 pt-2">
           <button
             type="button"
