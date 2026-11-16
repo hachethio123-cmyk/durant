@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -10,28 +10,83 @@ const MODEL = "gemini-3.5-flash-lite";
 const SYSTEM_INSTRUCTIONS = `
 أنت DURANT AI، المساعد الذكي الرسمي لمنصة DURANT التعليمية.
 
-معلومات المنصة:
-- المنصة مخصصة للتاريخ والدراسات الاجتماعية فقط.
+━━━━━━━━━━━━━━━━━━━━
+هوية المنصة
+━━━━━━━━━━━━━━━━━━━━
+
+- المنصة متخصصة في التاريخ والدراسات الاجتماعية فقط.
 - المرحلة الإعدادية: الدراسات الاجتماعية.
 - المرحلة الثانوية: التاريخ والجغرافيا.
 - الصفوف:
   first-prep, second-prep, third-prep,
   first-secondary, second-secondary, third-secondary.
-- المنصة تحتوي على لوحة الطالب والملف الشخصي والإعدادات والإنجازات.
 - Gold Coins هي عملات الطالب.
-- XP هي نقاط الخبرة، وStudent Level هو مستوى الطالب.
+- XP هي نقاط الخبرة.
+- Student Level هو مستوى الطالب.
 
-قواعد:
+━━━━━━━━━━━━━━━━━━━━
+طريقة التفكير والتحليل
+━━━━━━━━━━━━━━━━━━━━
+
+- افهم السؤال جيدًا قبل الإجابة.
+- حلل المطلوب وحدد المعلومات الضرورية للإجابة.
+- لا تتسرع في الإجابة عن الأسئلة التاريخية الدقيقة.
+- تحقق من أسماء الشخصيات والتواريخ والأحداث وأسبابها.
+- فرّق بين الحقائق التاريخية والآراء والتفسيرات.
+- لا تعرض معلومات غير مؤكدة باعتبارها حقائق.
+- لا تكشف التفكير الداخلي أو المداولات الخاصة؛ اعرض النتيجة والتفسير المفيد فقط.
+
+━━━━━━━━━━━━━━━━━━━━
+البحث والتحقق من المصادر
+━━━━━━━━━━━━━━━━━━━━
+
+لديك إمكانية استخدام Google Search.
+
+استخدم البحث عندما:
+- يسأل الطالب عن معلومة تاريخية دقيقة.
+- يسأل عن الشخص الذي أنشأ أو بنى أو اكتشف شيئًا.
+- يسأل عن تاريخ أو سنة أو واقعة تحتاج إلى تحقق.
+- تكون المعلومة غير مؤكدة أو قابلة للالتباس.
+- يسأل عن معلومة حديثة أو متغيرة.
+- تحتاج إلى مقارنة أكثر من رواية أو مصدر.
+
+عند البحث:
+- أعطِ الأولوية للمصادر الحكومية والتعليمية والجامعات والمؤسسات العلمية والمراجع التاريخية المعروفة.
+- لا تعتمد على منشور مجهول أو منتدى باعتباره دليلًا.
+- قارن المعلومات عند وجود اختلاف بين المصادر.
+- لا تخترع روابط أو مصادر.
+- لا تدّعِ أنك بحثت إذا لم تستخدم البحث بالفعل.
+- استخدم نتائج البحث في صياغة إجابة دقيقة ومفهومة.
+- إذا لم تجد دليلًا موثوقًا، وضّح ذلك للطالب.
+
+━━━━━━━━━━━━━━━━━━━━
+قواعد الإجابة التعليمية
+━━━━━━━━━━━━━━━━━━━━
+
 - تحدث بالعربية المصرية عند استخدام العربية.
-- اجعل إجاباتك مباشرة وواضحة وغير طويلة بلا داعٍ.
-- ساعد في شرح التاريخ والجغرافيا والدراسات الاجتماعية والتدريب والمراجعة.
+- اجعل الإجابة مباشرة وواضحة ومنظمة.
+- استخدم عناوين ونقاطًا عند الحاجة.
+- اشرح المصطلحات الصعبة بطريقة تناسب المرحلة الدراسية.
+- لا تطل الإجابة دون داعٍ.
+- عند شرح درس، استخدم أمثلة مناسبة للمنهج.
+- لا تخلط بين الشخصيات التاريخية المتشابهة.
+- إذا كان السؤال يحتمل أكثر من معنى، اطلب توضيحًا.
+- إذا اكتشفت أن إجابة سابقة كانت خاطئة، اعترف بالخطأ وصححه.
+
+━━━━━━━━━━━━━━━━━━━━
+خصوصية الطالب وأمان المنصة
+━━━━━━━━━━━━━━━━━━━━
+
 - استخدم بيانات الطالب المرفقة فقط عند الحديث عن حسابه.
 - لا تخترع درجات أو إنجازات أو تقدمًا غير موجود.
-- لا تدّعِ أن الدروس أو الاختبارات متاحة إذا لم تتوفر بيانات تثبت ذلك.
-- لا تكشف بيانات أي طالب آخر أو معلومات المديرين أو الأسرار التقنية.
+- لا تكشف بيانات أي طالب آخر.
+- لا تكشف معلومات المديرين أو الأسرار التقنية.
 - لا تطلب كلمات المرور أو مفاتيح API.
 - لا تدّعِ تنفيذ أي إجراء داخل المنصة.
-- إذا سألك الطالب عن شيء غير متاح لك، وضّح ذلك بصراحة.
+- لا تدّعِ أن الدروس أو الاختبارات متاحة إذا لم تتوفر بيانات تثبت ذلك.
+- إذا لم تكن المعلومة متاحة لك، قل ذلك بوضوح.
+
+هدفك الأساسي: تقديم إجابات تعليمية صحيحة وموثوقة ومفيدة للطالب.
 `;
 
 type ChatMessage = {
@@ -39,8 +94,24 @@ type ChatMessage = {
   content: string;
 };
 
+type GroundingSource = {
+  web?: {
+    uri?: string;
+    title?: string;
+  };
+};
+
 function errorResponse(message: string, status: number) {
   return Response.json({ error: message }, { status });
+}
+
+function isValidHttpUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
 }
 
 export async function POST(request: Request) {
@@ -72,6 +143,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // التحقق من جلسة الطالب
     const supabase = await createClient();
 
     const {
@@ -86,9 +158,12 @@ export async function POST(request: Request) {
       );
     }
 
+    // تحميل بيانات الطالب الحالي فقط
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("full_name, grade, gold_coins, xp_points, student_level")
+      .select(
+        "full_name, grade, gold_coins, xp_points, student_level"
+      )
       .eq("id", user.id)
       .maybeSingle();
 
@@ -99,10 +174,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // تنظيف سجل المحادثة
     const history: ChatMessage[] = Array.isArray(body.history)
       ? body.history
           .filter((item: unknown): item is ChatMessage => {
-            if (!item || typeof item !== "object") return false;
+            if (!item || typeof item !== "object") {
+              return false;
+            }
 
             const candidate = item as Record<string, unknown>;
 
@@ -115,7 +193,10 @@ export async function POST(request: Request) {
           })
           .slice(-8)
           .map((item) => ({
-            role: item.role === "assistant" ? "model" : item.role,
+            role:
+              item.role === "assistant"
+                ? "model"
+                : item.role,
             content: item.content.slice(0, 1500),
           }))
       : [];
@@ -147,13 +228,26 @@ XP: ${profile.xp_points ?? 0}
       apiKey: process.env.GEMINI_API_KEY,
     });
 
+    // تشغيل النموذج مع البحث عند الحاجة
     const stream = await ai.models.generateContentStream({
       model: MODEL,
       contents,
       config: {
         systemInstruction:
           SYSTEM_INSTRUCTIONS + "\n" + studentContext,
-        maxOutputTokens: 700,
+
+        thinkingConfig: {
+          thinkingLevel: ThinkingLevel.MEDIUM,
+        },
+
+        tools: [
+          {
+            googleSearch: {},
+          },
+        ],
+
+        maxOutputTokens: 1200,
+        abortSignal: request.signal,
       },
     });
 
@@ -161,13 +255,51 @@ XP: ${profile.xp_points ?? 0}
 
     const readableStream = new ReadableStream<Uint8Array>({
       async start(controller) {
+        const sources = new Map<string, string>();
+
         try {
           for await (const chunk of stream) {
+            // إرسال الإجابة تدريجيًا
             const text = chunk.text;
 
             if (text) {
-              controller.enqueue(encoder.encode(text));
+              controller.enqueue(
+                encoder.encode(text)
+              );
             }
+
+            // استخراج مصادر Google Search
+            const candidate = chunk.candidates?.[0];
+
+            const groundingChunks =
+              candidate?.groundingMetadata?.groundingChunks ?? [];
+
+            for (const item of groundingChunks as GroundingSource[]) {
+              const uri = item.web?.uri;
+              const title = item.web?.title || "مصدر";
+
+              if (
+                uri &&
+                isValidHttpUrl(uri) &&
+                !sources.has(uri)
+              ) {
+                sources.set(uri, title);
+              }
+            }
+          }
+
+          // إضافة المصادر في نهاية الإجابة
+          if (sources.size > 0) {
+            let sourceText = "\n\n---\n";
+            sourceText += "**المصادر والمراجع:**\n";
+
+            for (const [uri, title] of sources) {
+              sourceText += `- ${title}\n  ${uri}\n`;
+            }
+
+            controller.enqueue(
+              encoder.encode(sourceText)
+            );
           }
 
           controller.close();
@@ -179,7 +311,17 @@ XP: ${profile.xp_points ?? 0}
               : "Unknown error"
           );
 
-          controller.error(error);
+          try {
+            controller.enqueue(
+              encoder.encode(
+                "\n\nتعذر إكمال الإجابة بسبب مشكلة مؤقتة في الاتصال. حاول مرة أخرى."
+              )
+            );
+
+            controller.close();
+          } catch {
+            // قد يكون الاتصال قد أُغلق بالفعل.
+          }
         }
       },
     });
