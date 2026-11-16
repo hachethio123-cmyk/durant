@@ -178,7 +178,7 @@ function FormattedMessage({
           <code
             key={key}
             dir="ltr"
-            className="rounded-md bg-[#eef1f6] px-1.5 py-0.5 font-mono text-[0.9em] text-[#263e62]"
+            className="rounded-md bg-[#eef1f6] px-1.5 py-0.5 font-semibold text-[0.9em] text-[#263e62]"
           >
             {part.slice(1, -1)}
           </code>
@@ -187,7 +187,7 @@ function FormattedMessage({
 
       if (part.startsWith("*") && part.endsWith("*")) {
         return (
-          <em key={key}>
+          <em key={key} className="font-semibold">
             {part.slice(1, -1)}
           </em>
         );
@@ -272,7 +272,7 @@ function FormattedMessage({
           {items.map((item, itemIndex) => (
             <li
               key={`${key}-${itemIndex}`}
-              className="ps-1 leading-[2] text-[#34445c]"
+              className="ps-1 font-semibold leading-[2] text-[#34445c]"
             >
               {renderInline(item, `${key}-${itemIndex}`)}
             </li>
@@ -288,7 +288,7 @@ function FormattedMessage({
       elements.push(
         <blockquote
           key={key}
-          className={`my-4 rounded-xl border-[#c69b43] bg-[#f7f8fb] px-4 py-3 text-[#52627a] ${
+          className={`my-4 rounded-xl border-[#c69b43] bg-[#f7f8fb] px-4 py-3 font-semibold leading-[2] text-[#52627a] ${
             direction === "rtl"
               ? "border-r-[3px]"
               : "border-l-[3px]"
@@ -338,7 +338,7 @@ function FormattedMessage({
     elements.push(
       <p
         key={key}
-        className="my-2 leading-[2] text-[#34445c]"
+        className="my-2 font-semibold leading-[2] text-[#34445c]"
       >
         {renderInline(
           paragraphLines.join(" "),
@@ -351,7 +351,7 @@ function FormattedMessage({
   return (
     <div
       dir={direction}
-      className="w-full break-words text-start text-[16px] font-normal leading-[2] sm:text-[17px]"
+      className="w-full break-words text-start text-[17px] font-semibold leading-[2] sm:text-[18px]"
     >
       {elements}
     </div>
@@ -806,8 +806,8 @@ export default function DurantAssistantPage() {
                       <div
                         className={`rounded-2xl px-4 py-4 sm:px-5 sm:py-5 ${
                           message.role === "user"
-                            ? "rounded-tr-md bg-[#172744] text-[14px] leading-8 text-white shadow-sm sm:text-[15px]"
-                            : "rounded-tl-md border border-[#e5eaf1] bg-white text-[16px] leading-[2] text-[#34445c] shadow-[0_2px_10px_rgba(23,39,68,0.025)] sm:text-[17px]"
+                            ? "rounded-tr-md bg-[#172744] text-[16px] font-semibold leading-[2] text-white shadow-sm sm:text-[17px]"
+                            : "rounded-tl-md border border-[#e5eaf1] bg-white text-[17px] font-semibold leading-[2] text-[#34445c] shadow-[0_2px_10px_rgba(23,39,68,0.025)] sm:text-[18px]"
                         }`}
                       >
                         {message.content ? (
@@ -817,7 +817,7 @@ export default function DurantAssistantPage() {
                               direction={direction}
                             />
                           ) : (
-                            <p className="whitespace-pre-wrap break-words">
+                            <p className="whitespace-pre-wrap break-words font-semibold">
                               {message.content}
                             </p>
                           )
@@ -825,7 +825,7 @@ export default function DurantAssistantPage() {
                           <div className="flex items-center gap-2 py-1 text-[#8290a5]">
                             <span className="h-2 w-2 animate-pulse rounded-full bg-[#172744]" />
 
-                            <span className="text-xs font-medium">
+                            <span className="text-sm font-semibold">
                               {t(
                                 "جاري التفكير...",
                                 "Thinking..."
@@ -909,7 +909,7 @@ export default function DurantAssistantPage() {
                     "اكتب سؤالك لـ DURANT AI...",
                     "Message DURANT AI..."
                   )}
-                  className="max-h-40 min-h-[46px] flex-1 resize-none bg-transparent px-3 py-3 text-sm leading-6 text-[#172744] outline-none placeholder:text-[#9aa5b5] disabled:opacity-60"
+                  className="max-h-40 min-h-[46px] flex-1 resize-none bg-transparent px-3 py-3 text-[15px] font-semibold leading-7 text-[#172744] outline-none placeholder:text-[#9aa5b5] disabled:opacity-60"
                 />
 
                 <button
