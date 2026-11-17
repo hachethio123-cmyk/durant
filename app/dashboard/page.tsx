@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -85,7 +84,7 @@ function getRankStyle(rank: number) {
   return "bg-blue-50 text-blue-600 border-blue-100";
 }
 
-/* XP progress card */
+/* DURANT XP COMMAND CENTER */
 function XPProgressCard({
   xpPoints,
   studentLevel,
@@ -108,134 +107,208 @@ function XPProgressCard({
   const format = (value: number) => value.toLocaleString(locale);
 
   return (
-    <div className="relative mt-5 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-br from-white via-white to-blue-50/80 p-4 shadow-[0_8px_30px_rgba(30,64,175,0.06)] sm:p-5">
-      <div className="pointer-events-none absolute -end-12 -top-16 h-36 w-36 rounded-full bg-blue-200/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-16 -start-10 h-36 w-36 rounded-full bg-violet-200/20 blur-3xl" />
+    <div className="relative mt-5 overflow-hidden rounded-[26px] border border-[#263b67] bg-[#101a35] p-4 text-white shadow-[0_18px_45px_rgba(15,23,42,0.22)] sm:p-5">
+      {/* Ambient lighting */}
+      <div className="pointer-events-none absolute -end-16 -top-20 h-52 w-52 rounded-full bg-blue-500/20 blur-[65px]" />
+      <div className="pointer-events-none absolute -bottom-24 -start-16 h-52 w-52 rounded-full bg-violet-500/20 blur-[65px]" />
 
-      <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
-        <div className="relative flex h-28 w-28 shrink-0 items-center justify-center">
-          <svg
-            viewBox="0 0 100 100"
-            className="h-full w-full -rotate-90 overflow-visible"
-            role="img"
-            aria-label={`${progress}%`}
-          >
-            <defs>
-              <linearGradient
-                id="xpProgressGradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#38bdf8" />
-                <stop offset="55%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#6366f1" />
-              </linearGradient>
-            </defs>
+      {/* Background grid */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.08]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
 
-            <circle
-              cx="50"
-              cy="50"
-              r="43"
-              fill="none"
-              stroke="#e8edf8"
-              strokeWidth="8"
-            />
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-blue-400/30 bg-blue-400/10 text-sm text-blue-300">
+                ✦
+              </span>
+              <span className="text-[10px] font-black tracking-[0.22em] text-blue-200">
+                DURANT
+              </span>
+              <span className="text-[9px] font-bold tracking-widest text-slate-500">
+                / LEVEL SYSTEM
+              </span>
+            </div>
 
-            <circle
-              cx="50"
-              cy="50"
-              r="43"
-              fill="none"
-              stroke="url(#xpProgressGradient)"
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={dashOffset}
-              className="transition-all duration-1000 ease-out"
-            />
-          </svg>
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-black text-[#17213d]">
-              {format(progress)}%
-            </span>
-            <span className="mt-0.5 text-[9px] font-bold text-slate-400">
-              {isArabic ? "التقدم" : "PROGRESS"}
-            </span>
-          </div>
-
-          <div className="absolute -end-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-blue-500 text-xs text-white shadow-md">
-            ✦
-          </div>
-        </div>
-
-        <div className="min-w-0 flex-1 text-center sm:text-start">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black text-blue-600">
-              {isArabic ? "رحلة التطور" : "LEVEL JOURNEY"}
-            </span>
-
-            <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-black text-amber-600">
-              <span>⭐</span>
+            <h3 className="mt-3 text-lg font-black text-white sm:text-xl">
+              {isArabic ? "مركز التطور الشخصي" : "Personal Growth Center"}
+            </h3>
+            <p className="mt-1 text-[10px] leading-5 text-slate-400 sm:text-xs">
               {isArabic
-                ? `المستوى ${format(studentLevel)}`
-                : `Level ${format(studentLevel)}`}
+                ? "كل نقطة خبرة تقربك من إنجاز جديد."
+                : "Every XP point takes you closer to a new achievement."}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2">
+            <p className="text-[9px] font-bold tracking-widest text-amber-200/70">
+              {isArabic ? "مستواك الحالي" : "CURRENT LEVEL"}
+            </p>
+            <p className="mt-1 text-center text-xl font-black text-amber-300">
+              {format(studentLevel)}
+            </p>
+          </div>
+        </div>
+
+        {/* Main progress */}
+        <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
+          {/* Animated XP ring */}
+          <div className="relative flex h-36 w-36 shrink-0 items-center justify-center">
+            <div className="absolute inset-0 rounded-full border border-blue-400/10" />
+            <div className="absolute inset-2 rounded-full border border-dashed border-blue-300/15" />
+
+            <div className="absolute inset-0 animate-[spin_18s_linear_infinite] rounded-full border border-transparent border-t-blue-300/50" />
+
+            <svg
+              viewBox="0 0 100 100"
+              className="h-full w-full -rotate-90 overflow-visible"
+              role="img"
+              aria-label={`${progress}%`}
+            >
+              <defs>
+                <linearGradient
+                  id="durantXpGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#67e8f9" />
+                  <stop offset="50%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#a78bfa" />
+                </linearGradient>
+
+                <filter id="durantXpGlow">
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <circle
+                cx="50"
+                cy="50"
+                r="43"
+                fill="none"
+                stroke="#263653"
+                strokeWidth="7"
+              />
+
+              <circle
+                cx="50"
+                cy="50"
+                r="43"
+                fill="none"
+                stroke="url(#durantXpGradient)"
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
+                filter="url(#durantXpGlow)"
+                className="transition-all duration-1000 ease-out"
+              />
+            </svg>
+
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-black tracking-tight text-white">
+                {format(progress)}%
+              </span>
+              <span className="mt-1 text-[9px] font-bold tracking-[0.18em] text-blue-200/70">
+                {isArabic ? "التقدم" : "PROGRESS"}
+              </span>
+            </div>
+
+            <div className="absolute -end-0.5 top-3 flex h-7 w-7 items-center justify-center rounded-full border border-[#101a35] bg-gradient-to-br from-cyan-300 to-blue-500 text-xs text-white shadow-lg shadow-blue-500/30">
+              ✦
+            </div>
+          </div>
+
+          {/* XP details */}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[9px] font-black tracking-wider text-blue-200">
+                {isArabic ? "رحلة المستوى" : "LEVEL JOURNEY"}
+              </span>
+
+              <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[9px] font-black text-amber-200">
+                ⭐ {isArabic ? `المستوى ${format(studentLevel)}` : `LEVEL ${format(studentLevel)}`}
+              </span>
+            </div>
+
+            <h4 className="mt-3 text-base font-black leading-7 text-white sm:text-lg">
+              {isArabic
+                ? "أنت تصنع تقدمك بنفسك!"
+                : "You're building your own progress!"}
+            </h4>
+
+            <p className="mt-1 text-[11px] leading-6 text-slate-400">
+              {isArabic
+                ? "واصل رحلتك التعليمية واجمع نقاط الخبرة للوصول إلى المستوى التالي."
+                : "Continue your learning journey and collect XP to reach the next level."}
+            </p>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="rounded-xl border border-white/10 bg-white/[0.05] p-3 backdrop-blur-sm">
+                <p className="text-[9px] font-bold tracking-wider text-slate-400">
+                  {isArabic ? "إجمالي الخبرة" : "TOTAL EXPERIENCE"}
+                </p>
+                <p className="mt-1 text-xl font-black text-white">
+                  {format(xpPoints)}
+                  <span className="ms-1 text-[10px] font-black text-cyan-300">
+                    XP
+                  </span>
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-violet-400/15 bg-violet-400/[0.07] p-3 backdrop-blur-sm">
+                <p className="text-[9px] font-bold tracking-wider text-slate-400">
+                  {isArabic ? "المتبقي للتقدم" : "XP REMAINING"}
+                </p>
+                <p className="mt-1 text-xl font-black text-white">
+                  {format(remaining)}
+                  <span className="ms-1 text-[10px] font-black text-violet-300">
+                    XP
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom progress bar */}
+        <div className="mt-6 border-t border-white/10 pt-4">
+          <div className="mb-2 flex items-center justify-between gap-2 text-[9px] font-bold tracking-wider text-slate-400">
+            <span>{isArabic ? "تقدمك نحو المستوى التالي" : "NEXT LEVEL PROGRESS"}</span>
+            <span className="text-cyan-300">
+              {format(progress)} / 100
             </span>
           </div>
 
-          <h3 className="mt-3 text-base font-black text-[#17213d] sm:text-lg">
-            {isArabic
-              ? "أنت تقترب من المستوى التالي!"
-              : "You're getting closer to the next level!"}
-          </h3>
-
-          <p className="mt-1 text-xs leading-6 text-slate-500">
-            {isArabic
-              ? "استمر في التعلم واجمع نقاط الخبرة لتطوير مستواك."
-              : "Keep learning and collecting XP to advance your level."}
-          </p>
-
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-blue-100/80 bg-white/80 px-3 py-2.5 backdrop-blur-sm">
-              <p className="text-[10px] font-bold text-slate-400">
-                {isArabic ? "إجمالي الخبرة" : "TOTAL EXPERIENCE"}
-              </p>
-              <p className="mt-1 text-lg font-black text-[#17213d]">
-                {format(xpPoints)}
-                <span className="ms-1 text-[10px] font-bold text-blue-500">
-                  XP
-                </span>
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-violet-100/80 bg-white/80 px-3 py-2.5 backdrop-blur-sm">
-              <p className="text-[10px] font-bold text-slate-400">
-                {isArabic ? "المتبقي للتقدم" : "REMAINING"}
-              </p>
-              <p className="mt-1 text-lg font-black text-[#17213d]">
-                {format(remaining)}
-                <span className="ms-1 text-[10px] font-bold text-violet-500">
-                  XP
-                </span>
-              </p>
+          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+            <div
+              className="relative h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 transition-all duration-1000 ease-out"
+              style={{ width: `${progress}%` }}
+            >
+              <div className="absolute inset-0 animate-pulse bg-white/20" />
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="relative mt-5">
-        <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-bold text-slate-400">
-          <span>{isArabic ? "تقدمك الحالي" : "YOUR PROGRESS"}</span>
-          <span className="text-blue-600">{format(progress)} / 100</span>
-        </div>
-
-        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 transition-all duration-1000 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="mt-3 flex items-center justify-between text-[9px] text-slate-500">
+            <span>{isArabic ? "استمر، أنت تتقدم!" : "Keep going, you're progressing!"}</span>
+            <span className="font-bold text-blue-200">
+              DURANT XP SYSTEM
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -291,13 +364,13 @@ export default function Dashboard() {
           return;
         }
 
-        const studentId = authData.user.id;
-        setStudentId(studentId);
+        const currentStudentId = authData.user.id;
+        setStudentId(currentStudentId);
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("full_name, grade, gold_coins, xp_points, student_level")
-          .eq("id", studentId)
+          .eq("id", currentStudentId)
           .maybeSingle();
 
         if (!active) return;
@@ -331,7 +404,7 @@ export default function Dashboard() {
             supabase
               .from("student_achievements")
               .select("achievement_id")
-              .eq("student_id", studentId),
+              .eq("student_id", currentStudentId),
 
             studentGrade
               ? supabase.rpc("get_student_leaderboard", {
@@ -413,6 +486,7 @@ export default function Dashboard() {
 
   async function loadNotifications(currentStudentId = studentId) {
     if (!currentStudentId) return;
+
     setNotificationsLoading(true);
     setNotificationsError("");
 
@@ -424,10 +498,13 @@ export default function Dashboard() {
       .limit(20);
 
     if (error) {
-      setNotificationsError(t("تعذر تحميل الإشعارات حاليًا.", "Could not load notifications."));
+      setNotificationsError(
+        t("تعذر تحميل الإشعارات حاليًا.", "Could not load notifications.")
+      );
     } else {
       setNotifications((data ?? []) as NotificationItem[]);
     }
+
     setNotificationsLoading(false);
   }
 
@@ -459,13 +536,17 @@ export default function Dashboard() {
     if (notification.is_read || markingNotificationId) return true;
 
     setMarkingNotificationId(notification.id);
+
     const { data, error } = await supabase.rpc("mark_notification_read", {
       p_notification_id: notification.id,
     });
+
     setMarkingNotificationId(null);
 
     if (error || data !== true) {
-      setNotificationsError(t("تعذر تحديث الإشعار.", "Could not update this notification."));
+      setNotificationsError(
+        t("تعذر تحديث الإشعار.", "Could not update this notification.")
+      );
       return false;
     }
 
@@ -474,6 +555,7 @@ export default function Dashboard() {
         item.id === notification.id ? { ...item, is_read: true } : item
       )
     );
+
     return true;
   }
 
@@ -482,13 +564,21 @@ export default function Dashboard() {
     if (!updated) return;
 
     setNotificationsOpen(false);
+
     const destination = notification.action_url;
-    if (destination && destination.startsWith("/") && !destination.startsWith("//")) {
+
+    if (
+      destination &&
+      destination.startsWith("/") &&
+      !destination.startsWith("//")
+    ) {
       router.push(destination);
     }
   }
 
-  const unreadNotifications = notifications.filter((item) => !item.is_read).length;
+  const unreadNotifications = notifications.filter(
+    (item) => !item.is_read
+  ).length;
 
   if (!languageReady || loading) {
     return (
@@ -500,9 +590,11 @@ export default function Dashboard() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#17213d] text-3xl font-black text-amber-400">
             D
           </div>
+
           <h1 className="mt-3 text-3xl font-black tracking-widest text-[#17213d]">
             DURANT
           </h1>
+
           <p className="mt-3 text-sm text-slate-500">
             {t("جاري تجهيز لوحة التحكم...", "Preparing your dashboard...")}
           </p>
@@ -559,6 +651,7 @@ export default function Dashboard() {
               <div className="relative min-w-0 flex-1">
                 <div className="flex min-h-11 items-center gap-3 rounded-full border border-[#e2e6f5] bg-white px-4 py-3 shadow-sm sm:px-5">
                   <span className="shrink-0 text-xl text-slate-400">⌕</span>
+
                   <input
                     type="search"
                     value={search}
@@ -569,6 +662,7 @@ export default function Dashboard() {
                     onFocus={() => setSearchOpen(true)}
                     onKeyDown={(event) => {
                       if (event.key === "Escape") setSearchOpen(false);
+
                       if (event.key === "Enter" && searchResults[0]) {
                         router.push(searchResults[0].href);
                         setSearch("");
@@ -579,6 +673,7 @@ export default function Dashboard() {
                     aria-label={t("البحث في المنصة", "Search the platform")}
                     className="min-w-0 flex-1 bg-transparent text-sm text-[#17213d] outline-none placeholder:text-slate-400"
                   />
+
                   {search && (
                     <button
                       type="button"
@@ -602,6 +697,7 @@ export default function Dashboard() {
                       className="fixed inset-0 z-30 cursor-default"
                       onClick={() => setSearchOpen(false)}
                     />
+
                     <div className="absolute start-0 top-full z-40 mt-2 w-full min-w-[250px] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white p-2 shadow-xl">
                       {searchResults.length ? (
                         searchResults.map((item) => (
@@ -618,6 +714,7 @@ export default function Dashboard() {
                             <span className="text-sm font-black text-[#17213d]">
                               {item.title}
                             </span>
+
                             <span className="mt-1 text-xs text-slate-500">
                               {item.description}
                             </span>
@@ -641,6 +738,7 @@ export default function Dashboard() {
                   onClick={() => {
                     setNotificationsOpen((value) => !value);
                     setSearchOpen(false);
+
                     if (!notificationsOpen) loadNotifications();
                   }}
                   aria-label={t("الإشعارات", "Notifications")}
@@ -648,6 +746,7 @@ export default function Dashboard() {
                   className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm transition hover:bg-amber-50 sm:h-11 sm:w-11"
                 >
                   🔔
+
                   {unreadNotifications > 0 && (
                     <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
                       {unreadNotifications > 99 ? "99+" : unreadNotifications}
@@ -663,11 +762,13 @@ export default function Dashboard() {
                       className="fixed inset-0 z-30 cursor-default"
                       onClick={() => setNotificationsOpen(false)}
                     />
+
                     <div className="absolute end-0 top-full z-40 mt-3 w-[min(350px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white shadow-2xl">
                       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
                         <h3 className="font-black text-[#17213d]">
                           {t("الإشعارات", "Notifications")}
                         </h3>
+
                         <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">
                           {unreadNotifications} {t("غير مقروء", "unread")}
                         </span>
@@ -683,6 +784,7 @@ export default function Dashboard() {
                             <p className="text-sm text-red-500">
                               {notificationsError}
                             </p>
+
                             <button
                               type="button"
                               onClick={() => loadNotifications()}
@@ -707,21 +809,25 @@ export default function Dashboard() {
                               }`}
                             >
                               <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
+
                               <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-black text-[#17213d]">
                                   {isArabic
                                     ? notification.title_ar
                                     : notification.title_en || notification.title_ar}
                                 </span>
+
                                 <span className="mt-1 block text-xs leading-6 text-slate-500">
                                   {isArabic
                                     ? notification.message_ar
                                     : notification.message_en || notification.message_ar}
                                 </span>
+
                                 <span className="mt-2 block text-[10px] text-slate-400">
                                   {new Date(notification.created_at).toLocaleString(locale)}
                                 </span>
                               </span>
+
                               {!notification.is_read && (
                                 <span className="shrink-0 self-center text-[10px] font-bold text-blue-600">
                                   {t("جديد", "New")}
@@ -754,10 +860,12 @@ export default function Dashboard() {
                   <p className="truncate text-xs font-black text-[#17213d] sm:text-sm">
                     {t("مرحبًا", "Hello")} {studentName}
                   </p>
+
                   <p className="mt-1 truncate text-[10px] text-slate-500 sm:text-xs">
                     {gradeName}
                   </p>
                 </div>
+
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-blue-200 bg-gradient-to-br from-sky-100 to-blue-200 text-xl sm:h-12 sm:w-12 sm:text-2xl">
                   👨🏻‍🎓
                 </div>
@@ -772,9 +880,11 @@ export default function Dashboard() {
           ) : !gradeSlug ? (
             <div className="rounded-3xl border border-amber-200 bg-white p-5 text-center shadow-sm sm:p-10">
               <div className="text-5xl">🎓</div>
+
               <h2 className="mt-4 text-lg font-black sm:text-xl">
                 {t("لم يتم تحديد الصف الدراسي", "No Grade Selected")}
               </h2>
+
               <p className="mt-3 text-sm leading-7 text-slate-500">
                 {t(
                   "تواصل مع إدارة المنصة لتحديث بيانات صفك الدراسي.",
@@ -801,14 +911,17 @@ export default function Dashboard() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
                     🏆
                   </div>
+
                   <div className="min-w-0">
                     <p className="text-base font-black sm:text-lg">
                       {formatNumber(earnedCount, locale)}
                     </p>
+
                     <p className="truncate text-[10px] text-slate-500 sm:text-xs">
                       {t("إنجاز مكتمل", "Achievements")}
                     </p>
                   </div>
+
                   <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">
                     +{formatNumber(earnedCount, locale)}
                   </span>
@@ -818,14 +931,17 @@ export default function Dashboard() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
                     📗
                   </div>
+
                   <div className="min-w-0">
                     <p className="text-base font-black sm:text-lg">
                       {formatNumber(subjects.length, locale)}
                     </p>
+
                     <p className="truncate text-[10px] text-slate-500 sm:text-xs">
                       {t("مواد دراسية", "Subjects")}
                     </p>
                   </div>
+
                   <span className="ms-auto hidden shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-bold text-emerald-600 sm:inline">
                     +{formatNumber(subjects.length, locale)}
                   </span>
@@ -835,14 +951,17 @@ export default function Dashboard() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
                     ⭐
                   </div>
+
                   <div className="min-w-0">
                     <p className="text-base font-black sm:text-lg">
                       {formatNumber(xpPoints, locale)}
                     </p>
+
                     <p className="truncate text-[10px] text-slate-500 sm:text-xs">
                       {t("نقاط الخبرة", "Experience")}
                     </p>
                   </div>
+
                   <span className="ms-auto hidden shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[9px] font-bold text-blue-600 sm:inline">
                     XP
                   </span>
@@ -852,10 +971,12 @@ export default function Dashboard() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-xl sm:h-11 sm:w-11 sm:text-2xl">
                     🪙
                   </div>
+
                   <div className="min-w-0">
                     <p className="text-base font-black sm:text-lg">
                       {formatNumber(goldCoins, locale)}
                     </p>
+
                     <p className="truncate text-[10px] text-slate-500 sm:text-xs">
                       {t("عملة ذهبية", "Gold Coins")}
                     </p>
@@ -899,17 +1020,22 @@ export default function Dashboard() {
                         <div
                           className={`absolute inset-0 bg-gradient-to-br ${subject.visual} opacity-95 transition group-hover:scale-105`}
                         />
+
                         <div className="absolute inset-0 bg-gradient-to-t from-[#101a35] via-[#101a35]/20 to-transparent" />
+
                         <div className="relative z-10 mb-auto flex h-20 items-center justify-center text-6xl drop-shadow-xl sm:h-24 sm:text-7xl">
                           {subject.icon}
                         </div>
+
                         <div className="relative z-10 min-w-0 text-center">
                           <h3 className="break-words text-lg font-black sm:text-xl">
                             {subject.title}
                           </h3>
+
                           <p className="mt-1 break-words text-xs leading-6 text-blue-100">
                             {subject.subtitle}
                           </p>
+
                           <span className="mx-auto mt-3 inline-flex max-w-full rounded-full bg-white/10 px-5 py-2 text-xs font-bold">
                             {t("ابدأ التعلم ←", "Start Learning →")}
                           </span>
@@ -932,15 +1058,18 @@ export default function Dashboard() {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-black text-emerald-600">
                           ✓
                         </span>
+
                         <div className="min-w-0">
                           <p className="text-xs font-bold sm:text-sm">
                             {t("حسابك جاهز للتعلم", "Your account is ready")}
                           </p>
+
                           <p className="mt-1 text-[10px] text-slate-400">
                             {t("يمكنك استكشاف مواد صفك", "Explore your grade subjects")}
                           </p>
                         </div>
                       </div>
+
                       <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
 
@@ -949,16 +1078,19 @@ export default function Dashboard() {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
                           📚
                         </span>
+
                         <div className="min-w-0">
                           <p className="text-xs font-bold sm:text-sm">
                             {t("المواد الدراسية", "School Subjects")}
                           </p>
+
                           <p className="mt-1 text-[10px] text-slate-400">
                             {formatNumber(subjects.length, locale)}{" "}
                             {t("مواد متاحة", "subjects available")}
                           </p>
                         </div>
                       </div>
+
                       <span className="shrink-0 text-emerald-600">✓</span>
                     </div>
 
@@ -967,21 +1099,23 @@ export default function Dashboard() {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                           ⭐
                         </span>
+
                         <div className="min-w-0">
                           <p className="text-xs font-bold sm:text-sm">
                             {t("مستواك الحالي", "Current Level")}
                           </p>
+
                           <p className="mt-1 text-[10px] text-slate-400">
                             {t(`المستوى ${studentLevel}`, `Level ${studentLevel}`)}{" "}
                             · {formatNumber(xpPoints, locale)} XP
                           </p>
                         </div>
                       </div>
+
                       <span className="shrink-0 text-amber-500">★</span>
                     </div>
                   </div>
 
-                  {/* New XP progress card */}
                   <XPProgressCard
                     xpPoints={xpPoints}
                     studentLevel={studentLevel}
@@ -1013,7 +1147,9 @@ export default function Dashboard() {
                   ) : (
                     <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-4 sm:gap-3">
                       {achievements.map((achievement) => {
-                        const earned = earnedAchievementIds.includes(achievement.id);
+                        const earned = earnedAchievementIds.includes(
+                          achievement.id
+                        );
 
                         return (
                           <div
@@ -1027,11 +1163,17 @@ export default function Dashboard() {
                             <div className="text-3xl sm:text-4xl">
                               {achievement.icon}
                             </div>
+
                             <p className="mt-2 line-clamp-2 break-words text-[10px] font-black text-[#17213d] sm:mt-3 sm:text-xs">
-                              {isArabic ? achievement.name_ar : achievement.name_en}
+                              {isArabic
+                                ? achievement.name_ar
+                                : achievement.name_en}
                             </p>
+
                             <p className="mt-2 text-[9px] font-bold text-slate-400 sm:text-[10px]">
-                              {earned ? t("مكتسب", "Earned") : t("مقفل", "Locked")}
+                              {earned
+                                ? t("مكتسب", "Earned")
+                                : t("مقفل", "Locked")}
                             </p>
                           </div>
                         );
@@ -1049,10 +1191,12 @@ export default function Dashboard() {
 
                   <div className="rounded-xl border border-amber-100 bg-[#fffaf0] px-4 py-6 text-center">
                     <div className="text-3xl">🪙</div>
+
                     <p className="mt-2 text-2xl font-black text-[#17213d] sm:text-3xl">
                       {formatNumber(goldCoins, locale)}{" "}
                       <span className="text-amber-500">⭐</span>
                     </p>
+
                     <p className="mt-1 text-xs text-slate-500">
                       {t("رصيد العملات الذهبية", "Gold coins balance")}
                     </p>
@@ -1062,6 +1206,7 @@ export default function Dashboard() {
                     <span className="text-slate-500">
                       {t("مستواك الحالي", "Current level")}
                     </span>
+
                     <span className="font-black text-[#17213d]">
                       {formatNumber(studentLevel, locale)}
                     </span>
@@ -1071,6 +1216,7 @@ export default function Dashboard() {
                     <span className="text-slate-500">
                       {t("نقاط الخبرة", "Experience points")}
                     </span>
+
                     <span className="font-black text-[#17213d]">
                       {formatNumber(xpPoints, locale)} XP
                     </span>
@@ -1120,16 +1266,20 @@ export default function Dashboard() {
                               ? ["🥇", "🥈", "🥉"][student.rank_number - 1]
                               : student.rank_number}
                           </span>
+
                           <div className="min-w-0">
                             <p className="truncate text-xs font-black sm:text-sm">
                               {student.student_name}
                             </p>
+
                             <p className="truncate text-[9px] text-slate-400 sm:text-[10px]">
-                              {gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ??
-                                student.grade}
+                              {gradeNames[student.grade]?.[
+                                isArabic ? "ar" : "en"
+                              ] ?? student.grade}
                             </p>
                           </div>
                         </div>
+
                         <p className="shrink-0 text-[11px] font-black text-[#17213d] sm:text-sm">
                           {formatNumber(Number(student.gold_coins), locale)} 🪙
                         </p>
@@ -1153,9 +1303,11 @@ export default function Dashboard() {
                     className="min-w-0 rounded-xl border border-blue-100 bg-blue-50/50 p-4 transition hover:-translate-y-1 hover:shadow-md sm:p-5"
                   >
                     <span className="text-3xl">📚</span>
+
                     <h3 className="mt-3 break-words font-black">
                       {t("الوحدات والدروس", "Units & Lessons")}
                     </h3>
+
                     <p className="mt-2 break-words text-xs leading-6 text-slate-500">
                       {t("استكشف محتوى صفك الدراسي.", "Explore your grade content.")}
                     </p>
@@ -1163,12 +1315,15 @@ export default function Dashboard() {
 
                   <div className="min-w-0 rounded-xl border border-violet-100 bg-violet-50/50 p-4 sm:p-5">
                     <span className="text-3xl">📝</span>
+
                     <h3 className="mt-3 break-words font-black">
                       {t("الامتحانات", "Exams")}
                     </h3>
+
                     <p className="mt-2 break-words text-xs leading-6 text-slate-500">
                       {t("اختباراتك وتقييم مستواك الدراسي.", "Test your knowledge and progress.")}
                     </p>
+
                     <span className="mt-3 inline-block text-[10px] font-black text-violet-600">
                       {t("قيد التطوير", "Coming Soon")}
                     </span>
@@ -1176,12 +1331,15 @@ export default function Dashboard() {
 
                   <div className="min-w-0 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 sm:p-5">
                     <span className="text-3xl">🤖</span>
+
                     <h3 className="mt-3 break-words font-black">
                       {t("مساعد ديورانت الذكي", "DURANT AI Assistant")}
                     </h3>
+
                     <p className="mt-2 break-words text-xs leading-6 text-slate-500">
                       {t("مساعدك لفهم الدروس والتدرب.", "Your learning and practice assistant.")}
                     </p>
+
                     <span className="mt-3 inline-block text-[10px] font-black text-emerald-600">
                       {t("قيد التطوير", "Coming Soon")}
                     </span>
@@ -1195,6 +1353,7 @@ export default function Dashboard() {
             <p className="font-black tracking-[0.25em] text-[#17213d]">
               DURANT
             </p>
+
             <p className="mt-2 break-words text-[10px] text-slate-400 sm:text-xs">
               {t(
                 "منصة ديورانت التعليمية — جميع الحقوق محفوظة",
