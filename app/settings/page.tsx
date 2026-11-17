@@ -95,7 +95,6 @@ export default function SettingsPage() {
 
   const [notifications, setNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
-
   const [sectionVisible, setSectionVisible] = useState(true);
 
   const t = (ar: string, en: string) => (isArabic ? ar : en);
@@ -212,8 +211,7 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-bold text-[#17213d]">
-                    {option.icon}{" "}
-                    {t(option.ar, option.en)}
+                    {option.icon} {t(option.ar, option.en)}
                   </span>
 
                   <span
@@ -390,9 +388,7 @@ export default function SettingsPage() {
             <button
               key={option.id}
               type="button"
-              onClick={() =>
-                setLanguage(option.id as "ar" | "en")
-              }
+              onClick={() => setLanguage(option.id as "ar" | "en")}
               aria-pressed={selected}
               className={`flex items-center gap-4 rounded-2xl border-2 p-5 text-start transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${
                 selected
@@ -618,10 +614,10 @@ export default function SettingsPage() {
       <StudentSidebar />
 
       <main
-  className={`min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9 ${
-    isArabic ? "lg:pr-72" : "lg:pl-72"
-  }`}
->
+        className={`min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9 ${
+          isArabic ? "lg:pr-72" : "lg:pl-72"
+        }`}
+      >
         <div className="mx-auto max-w-7xl">
           {/* Header */}
           <div className="settings-hero relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#111b35] via-[#1b2b50] to-[#263e69] p-6 text-white shadow-xl sm:p-9">
@@ -630,7 +626,7 @@ export default function SettingsPage() {
             <div className="pointer-events-none absolute -bottom-20 -left-0 h-44 w-44 rounded-full border border-[#c69b43]/20" />
 
             <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
-              <div>
+              <div className="min-w-0 flex-1">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#d5ad5b]/30 bg-[#d5ad5b]/10 px-3 py-1.5 text-xs font-bold text-[#f1d89f]">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-[#d5ad5b]" />
                   DURANT PERSONAL SPACE
@@ -646,9 +642,34 @@ export default function SettingsPage() {
                     "Manage your learning experience and personalize the platform your way."
                   )}
                 </p>
+
+                {/* Developer dedication - inside the main navy hero */}
+                <div className="mt-5 inline-flex max-w-full flex-col items-start rounded-2xl border border-[#d5ad5b]/25 bg-white/[0.06] px-5 py-4 text-start backdrop-blur-sm">
+                  <p className="text-xs font-semibold tracking-wider text-[#d5ad5b]">
+                    ✦ {t("إهداء خاص", "A SPECIAL DEDICATION")} ✦
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium text-white">
+                    {t("إنشاء وتطوير", "Created & Developed by")}
+                  </p>
+
+                  <p className="mt-1 text-base font-black leading-relaxed text-[#e8c77e] sm:text-lg">
+                    {t(
+                      "الطالب المبرمج محمد سامح فريد",
+                      "Student Developer Mohamed Sameh Farid"
+                    )}
+                  </p>
+
+                  <p className="mt-2 text-sm text-slate-300">
+                    {t(
+                      "إهداء منه لمستر أمير عبد الناصر",
+                      "Dedicated to Mr. Amir Abdel Nasser"
+                    )}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 self-start rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-md md:self-center">
+              <div className="flex shrink-0 items-center gap-3 self-start rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-md md:self-center">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#d5ad5b]/15 text-2xl">
                   ⚙️
                 </div>
