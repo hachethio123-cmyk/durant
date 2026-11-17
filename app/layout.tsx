@@ -1,8 +1,9 @@
-
+﻿
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
+import DurantMotion from "@/components/DurantMotion";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,12 +16,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://durant-rose.vercel.app"),
 
   title: {
-    default: "DURANT | منصة ديورانت التعليمية",
+    default: "DURANT | Ù…Ù†ØµØ© Ø¯ÙŠÙˆØ±Ø§Ù†Øª Ø§Ù„ØªØ¹Ù„ÙŠÙ…ÙŠØ©",
     template: "%s | DURANT",
   },
 
   description:
-    "منصة ديورانت التعليمية مع مستر أمير عبد الناصر، متخصصة في الدراسات الاجتماعية والتاريخ والجغرافيا.",
+    "Ù…Ù†ØµØ© Ø¯ÙŠÙˆØ±Ø§Ù†Øª Ø§Ù„ØªØ¹Ù„ÙŠÙ…ÙŠØ© Ù…Ø¹ Ù…Ø³ØªØ± Ø£Ù…ÙŠØ± Ø¹Ø¨Ø¯ Ø§Ù„Ù†Ø§ØµØ±ØŒ Ù…ØªØ®ØµØµØ© ÙÙŠ Ø§Ù„Ø¯Ø±Ø§Ø³Ø§Øª Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ© ÙˆØ§Ù„ØªØ§Ø±ÙŠØ® ÙˆØ§Ù„Ø¬ØºØ±Ø§ÙÙŠØ§.",
 
   applicationName: "DURANT",
 
@@ -40,9 +41,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ar_EG",
     siteName: "DURANT",
-    title: "منصة ديورانت التعليمية",
+    title: "Ù…Ù†ØµØ© Ø¯ÙŠÙˆØ±Ø§Ù†Øª Ø§Ù„ØªØ¹Ù„ÙŠÙ…ÙŠØ©",
     description:
-      "منصة تعليمية متخصصة في الدراسات الاجتماعية مع مستر أمير عبد الناصر.",
+      "Ù…Ù†ØµØ© ØªØ¹Ù„ÙŠÙ…ÙŠØ© Ù…ØªØ®ØµØµØ© ÙÙŠ Ø§Ù„Ø¯Ø±Ø§Ø³Ø§Øª Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ© Ù…Ø¹ Ù…Ø³ØªØ± Ø£Ù…ÙŠØ± Ø¹Ø¨Ø¯ Ø§Ù„Ù†Ø§ØµØ±.",
     url: "https://durant-rose.vercel.app/",
   },
 };
@@ -58,8 +59,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <DurantMotion />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
 }
+
