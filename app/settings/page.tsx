@@ -799,23 +799,6 @@ export default function SettingsPage() {
                   <p className="mt-1 text-xs text-slate-500">
                     {t(active.descriptionAr, active.descriptionEn)}
                   </p>
-                  <div className="mt-5 inline-flex flex-col gap-1 rounded-2xl border border-[#d5ad5b]/25 bg-white/[0.06] px-5 py-3 backdrop-blur-sm">
-  <span className="text-[10px] font-semibold tracking-[0.2em] text-[#d5ad5b]">
-    A SPECIAL DEDICATION
-  </span>
-
-  <span className="text-sm font-bold text-white">
-    إنشاء وتطوير
-  </span>
-
-  <span className="text-base font-black text-[#e8c77e]">
-    الطالب المبرمج محمد سامح فريد
-  </span>
-
-  <span className="text-xs text-slate-300">
-    إهداء إلى مستر أمير عبد الناصر
-  </span>
-</div>
                 </div>
               </div>
 
