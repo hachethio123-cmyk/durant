@@ -7,6 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { supabase } from "@/lib/supabase";
+import DurantWelcome from "@/components/DurantWelcome";
 
 type Theme = "dark" | "light" | "system";
 type Language = "ar" | "en";
@@ -23,6 +25,8 @@ type ThemeContextType = {
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
+
+const WELCOME_KEY = "durant-welcome-shown";
 
 export function useTheme() {
   const context = useContext(ThemeContext);
@@ -55,7 +59,9 @@ export default function ThemeProvider({
 
   const [ready, setReady] = useState(false);
   const [languageReady, setLanguageReady] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
 
+  // Load saved preferences
   useEffect(() => {
     const savedTheme = localStorage.getItem("durant-theme");
     const savedLanguage = localStorage.getItem("durant-language");
@@ -85,6 +91,65 @@ export default function ThemeProvider({
     setLanguageReady(true);
   }, []);
 
+  // Detect authenticated visits and successful login
+  useEffect(() => {
+    let active = true;
+
+    function showWelcomeOnce() {
+      try {
+        if (sessionStorage.getItem(WELCOME_KEY) === "1") {
+          return;
+        }
+
+        sessionStorage.setItem(WELCOME_KEY, "1");
+      } catch {
+        // Continue even if browser storage is unavailable.
+      }
+
+      if (active) {
+        setWelcomeOpen(true);
+      }
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+
+      if (event === "SIGNED_IN" && session) {
+        showWelcomeOnce();
+      }
+
+      if (event === "SIGNED_OUT") {
+        try {
+          sessionStorage.removeItem(WELCOME_KEY);
+        } catch {
+          // Ignore unavailable storage.
+        }
+
+        setWelcomeOpen(false);
+      }
+    });
+
+    async function checkExistingSession() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (!active || error) return;
+
+      if (data.session?.user) {
+        showWelcomeOnce();
+      }
+    }
+
+    checkExistingSession();
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Save and apply theme
   useEffect(() => {
     if (!ready) return;
 
@@ -111,6 +176,7 @@ export default function ThemeProvider({
     }
   }, [theme, ready]);
 
+  // Save and apply language
   useEffect(() => {
     if (!languageReady) return;
 
@@ -120,6 +186,7 @@ export default function ThemeProvider({
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
   }, [language, languageReady]);
 
+  // Save and apply font size
   useEffect(() => {
     if (!ready) return;
 
@@ -151,6 +218,13 @@ export default function ThemeProvider({
       }}
     >
       {children}
+
+      {welcomeOpen && (
+        <DurantWelcome
+          language={language}
+          onEnter={() => setWelcomeOpen(false)}
+        />
+      )}
     </ThemeContext.Provider>
   );
 }
