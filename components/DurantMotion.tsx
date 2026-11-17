@@ -12,6 +12,12 @@ export default function DurantMotion() {
     const cardSelector =
       ".admin-premium-card, .admin-stat-card, .admin-hero, article, [data-tilt='true']";
 
+    const isProtected = (element: HTMLElement) =>
+      !!(
+        element.closest("#durant-student-sidebar, aside, .durant-welcome") ||
+        element.querySelector("#durant-student-sidebar, aside")
+      );
+
     const resetCard = (card: HTMLElement) => {
       card.style.removeProperty("transform");
       card.style.removeProperty("--durant-card-x");
@@ -39,16 +45,19 @@ export default function DurantMotion() {
 
       if (activeCard && activeCard !== card) {
         resetCard(activeCard);
+        activeCard = null;
       }
 
-      if (!card || card.closest(".durant-welcome")) {
-        activeCard = null;
+      if (!card || isProtected(card)) {
+        if (card) resetCard(card);
         return;
       }
 
       activeCard = card;
 
       const rect = card.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
       const x = (event.clientX - rect.left) / rect.width;
       const y = (event.clientY - rect.top) / rect.height;
 
@@ -67,7 +76,10 @@ export default function DurantMotion() {
       const card = event.target.closest<HTMLElement>(cardSelector);
       if (!card) return;
 
-      if (event.relatedTarget instanceof Node && card.contains(event.relatedTarget)) {
+      if (
+        event.relatedTarget instanceof Node &&
+        card.contains(event.relatedTarget)
+      ) {
         return;
       }
 
@@ -75,8 +87,10 @@ export default function DurantMotion() {
       if (activeCard === card) activeCard = null;
     };
 
+    // لا نستخدم main > div حتى لا نضيف reveal إلى حاوية التخطيط
+    // التي قد تحتوي القائمة الجانبية.
     const revealSelector =
-      "main section, main article, main > div, .admin-premium-card, .admin-stat-card, .admin-hero";
+      "main section, main article, .admin-premium-card, .admin-stat-card, .admin-hero";
 
     let revealObserver: IntersectionObserver | null = null;
 
@@ -85,7 +99,7 @@ export default function DurantMotion() {
 
       root.querySelectorAll(revealSelector).forEach((element) => {
         if (!(element instanceof HTMLElement)) return;
-        if (element.closest(".durant-welcome")) return;
+        if (isProtected(element)) return;
         if (element.dataset.durantReveal === "done") return;
 
         element.dataset.durantReveal = "done";
@@ -112,11 +126,12 @@ export default function DurantMotion() {
       const mutationObserver = new MutationObserver((records) => {
         records.forEach((record) => {
           record.addedNodes.forEach((node) => {
-            if (node instanceof HTMLElement) {
-              prepareReveal(node);
-              if (node.matches?.(revealSelector)) {
-                prepareReveal(node.parentElement ?? document);
-              }
+            if (!(node instanceof HTMLElement)) return;
+
+            prepareReveal(node);
+
+            if (node.matches(revealSelector)) {
+              prepareReveal(node.parentElement ?? document);
             }
           });
         });
