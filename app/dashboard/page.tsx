@@ -7,6 +7,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import StudentSidebar from "@/components/StudentSidebar";
 import DashboardHero from "@/components/DashboardHero";
+import XPPodium from "@/components/XPPodium";
 import { useLanguage } from "@/components/ThemeProvider";
 
 const gradeNames: Record<string, { ar: string; en: string }> = {
@@ -1001,6 +1002,14 @@ export default function Dashboard() {
                       </Link>
                     ))}
                   </div>
+
+                  {/* NEW: XP CHAMPIONS PODIUM */}
+                  <div className="mt-6 border-t border-slate-100 pt-6">
+                    <XPPodium
+                      gradeSlug={gradeSlug}
+                      isArabic={isArabic}
+                    />
+                  </div>
                 </Panel>
 
                 {/* JOURNEY */}
@@ -1170,7 +1179,7 @@ export default function Dashboard() {
                 </Panel>
               </section>
 
-              {/* LEADERBOARD */}
+              {/* GOLD COINS LEADERBOARD - EXISTING SYSTEM */}
               <section className="mt-5">
                 <div className="relative overflow-hidden rounded-[26px] border border-[#26385e] bg-[#111c38] p-4 text-white shadow-[0_15px_40px_rgba(15,23,42,0.12)] sm:p-6">
                   <div className="pointer-events-none absolute -end-16 -top-24 h-64 w-64 rounded-full bg-blue-500/15 blur-[70px]" />
