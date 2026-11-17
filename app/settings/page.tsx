@@ -643,29 +643,46 @@ export default function SettingsPage() {
                   )}
                 </p>
 
-                {/* Developer dedication - inside the main navy hero */}
-                <div className="mt-5 inline-flex max-w-full flex-col items-start rounded-2xl border border-[#d5ad5b]/25 bg-white/[0.06] px-5 py-4 text-start backdrop-blur-sm">
-                  <p className="text-xs font-semibold tracking-wider text-[#d5ad5b]">
-                    ✦ {t("إهداء خاص", "A SPECIAL DEDICATION")} ✦
-                  </p>
+                {/* Animated Developer Dedication */}
+                <div className="dedication-card mt-6" dir="rtl">
+                  <span className="dedication-star star-one">✦</span>
+                  <span className="dedication-star star-two">✧</span>
+                  <span className="dedication-star star-three">✦</span>
+                  <span className="dedication-star star-four">✧</span>
+                  <span className="dedication-star star-five">✧</span>
 
-                  <p className="mt-2 text-sm font-medium text-white">
-                    {t("إنشاء وتطوير", "Created & Developed by")}
-                  </p>
+                  <div className="dedication-content">
+                    <div className="dedication-label">
+                      ✨ بكل فخر وامتنان ✨
+                    </div>
 
-                  <p className="mt-1 text-base font-black leading-relaxed text-[#e8c77e] sm:text-lg">
-                    {t(
-                      "الطالب المبرمج محمد سامح فريد",
-                      "Student Developer Mohamed Sameh Farid"
-                    )}
-                  </p>
+                    <p className="dedication-intro">
+                      إنشاء وتطوير الطالب المبرمج
+                    </p>
 
-                  <p className="mt-2 text-sm text-slate-300">
-                    {t(
-                      "إهداء منه لمستر أمير عبد الناصر",
-                      "Dedicated to Mr. Amir Abdel Nasser"
-                    )}
-                  </p>
+                    <h2 className="dedication-name">
+                      محمد سامح فريد
+                    </h2>
+
+                    <div className="dedication-divider" />
+
+                    <div className="dedication-gift">
+                      <span className="dedication-cap">🎓</span>
+
+                      <div className="dedication-teacher">
+                        <p className="dedication-to">
+                          إهداء وتقدير إلى
+                        </p>
+                        <h3>الأستاذ أمير عبد الناصر</h3>
+                      </div>
+
+                      <span className="dedication-trophy">🏆</span>
+                    </div>
+
+                    <p className="dedication-footer">
+                      صُنع بشغف… ليصنع فرقًا 🤍
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -904,12 +921,308 @@ export default function SettingsPage() {
           }
         }
 
+        /* =========================================
+           DURANT - PREMIUM DEVELOPER DEDICATION
+        ========================================= */
+
+        .dedication-card {
+          position: relative;
+          isolation: isolate;
+          overflow: hidden;
+          width: 100%;
+          max-width: 530px;
+          padding: 23px 20px;
+          border: 2px solid transparent;
+          border-radius: 23px;
+          background:
+            linear-gradient(#fff, #fff) padding-box,
+            linear-gradient(
+                120deg,
+                #fff,
+                #d6ad56,
+                #fff4d4,
+                #d6ad56,
+                #fff
+              )
+              border-box;
+          color: #17213d;
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+          animation: dedication-appear 1s cubic-bezier(.2, .8, .2, 1) both;
+        }
+
+        .dedication-card::after {
+          content: "";
+          position: absolute;
+          z-index: 0;
+          top: 0;
+          bottom: 0;
+          left: -75%;
+          width: 45%;
+          pointer-events: none;
+          background: linear-gradient(
+            110deg,
+            transparent,
+            rgba(214, 173, 86, 0.2),
+            rgba(255, 255, 255, 0.8),
+            transparent
+          );
+          transform: skewX(-18deg);
+          animation: dedication-shine 5s ease-in-out infinite;
+        }
+
+        .dedication-content {
+          position: relative;
+          z-index: 2;
+          text-align: center;
+          animation: dedication-content-appear 1.2s ease both;
+          animation-delay: 0.2s;
+        }
+
+        .dedication-star {
+          position: absolute;
+          z-index: 1;
+          color: #c99b37;
+          pointer-events: none;
+          animation: dedication-star-float 3.5s ease-in-out infinite;
+        }
+
+        .star-one {
+          top: 13px;
+          left: 18px;
+          font-size: 21px;
+        }
+
+        .star-two {
+          top: 50px;
+          right: 17px;
+          font-size: 23px;
+          animation-delay: 0.7s;
+        }
+
+        .star-three {
+          bottom: 18px;
+          left: 35px;
+          font-size: 17px;
+          animation-delay: 1.3s;
+        }
+
+        .star-four {
+          bottom: 40px;
+          right: 25px;
+          font-size: 19px;
+          animation-delay: 1.8s;
+        }
+
+        .star-five {
+          top: 17px;
+          right: 48%;
+          font-size: 14px;
+          animation-delay: 2.2s;
+        }
+
+        .dedication-label {
+          color: #a77b28;
+          font-size: 15px;
+          font-weight: 900;
+          margin-bottom: 12px;
+        }
+
+        .dedication-intro {
+          color: #475569;
+          font-size: 16px;
+          font-weight: 800;
+          margin: 0;
+        }
+
+        .dedication-name {
+          display: inline-block;
+          margin: 8px 0;
+          color: #17213d;
+          font-size: clamp(27px, 4vw, 36px);
+          font-weight: 1000;
+          line-height: 1.5;
+          cursor: default;
+          transition:
+            color 0.3s ease,
+            text-shadow 0.3s ease,
+            transform 0.3s ease;
+        }
+
+        .dedication-name:hover {
+          color: #b88628;
+          text-shadow: 0 0 10px rgba(214, 168, 63, 0.55);
+          transform: scale(1.05);
+        }
+
+        .dedication-divider {
+          width: 65%;
+          height: 2px;
+          margin: 13px auto;
+          border-radius: 20px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            #d6ad56,
+            #f5dfa8,
+            #d6ad56,
+            transparent
+          );
+        }
+
+        .dedication-gift {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          margin-top: 13px;
+        }
+
+        .dedication-cap {
+          display: inline-block;
+          font-size: 34px;
+          animation: dedication-cap-bounce 2.2s ease-in-out infinite;
+        }
+
+        .dedication-teacher {
+          text-align: center;
+        }
+
+        .dedication-to {
+          margin: 0 0 5px;
+          color: #64748b;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        .dedication-gift h3 {
+          margin: 0;
+          color: #17213d;
+          font-size: clamp(18px, 3vw, 22px);
+          font-weight: 950;
+        }
+
+        .dedication-trophy {
+          font-size: 27px;
+          animation: dedication-trophy-glow 2.5s ease-in-out infinite;
+        }
+
+        .dedication-footer {
+          margin: 16px 0 0;
+          color: #64748b;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        @keyframes dedication-appear {
+          from {
+            opacity: 0;
+            transform: translateY(25px) scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes dedication-content-appear {
+          from {
+            opacity: 0;
+            transform: translateY(13px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes dedication-star-float {
+          0%,
+          100% {
+            opacity: 0.35;
+            transform: translateY(0) rotate(0deg) scale(0.9);
+          }
+          50% {
+            opacity: 1;
+            transform: translateY(-9px) rotate(25deg) scale(1.15);
+          }
+        }
+
+        @keyframes dedication-cap-bounce {
+          0%,
+          100% {
+            transform: translateY(0) rotate(0);
+          }
+          40% {
+            transform: translateY(-8px) rotate(-9deg);
+          }
+          65% {
+            transform: translateY(0) rotate(5deg);
+          }
+        }
+
+        @keyframes dedication-trophy-glow {
+          0%,
+          100% {
+            filter: drop-shadow(0 0 0 transparent);
+          }
+          50% {
+            filter: drop-shadow(0 0 8px rgba(214, 168, 63, 0.7));
+          }
+        }
+
+        @keyframes dedication-shine {
+          0%,
+          15% {
+            left: -75%;
+          }
+          55%,
+          100% {
+            left: 140%;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .dedication-card {
+            padding: 22px 12px;
+          }
+
+          .dedication-name {
+            font-size: 28px;
+          }
+
+          .dedication-gift {
+            gap: 9px;
+          }
+
+          .dedication-cap {
+            font-size: 29px;
+          }
+
+          .dedication-trophy {
+            font-size: 23px;
+          }
+
+          .dedication-star {
+            animation-duration: 3s;
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .settings-glow,
           .settings-ring,
           .settings-nav-item,
-          .settings-content {
+          .settings-content,
+          .dedication-card,
+          .dedication-card::after,
+          .dedication-content,
+          .dedication-star,
+          .dedication-cap,
+          .dedication-trophy {
             animation: none !important;
+            transition: none !important;
+          }
+
+          .dedication-name {
             transition: none !important;
           }
         }
