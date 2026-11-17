@@ -617,7 +617,11 @@ export default function SettingsPage() {
     >
       <StudentSidebar />
 
-      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9">
+      <main
+  className={`min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9 ${
+    isArabic ? "lg:pr-72" : "lg:pl-72"
+  }`}
+>
         <div className="mx-auto max-w-7xl">
           {/* Header */}
           <div className="settings-hero relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#111b35] via-[#1b2b50] to-[#263e69] p-6 text-white shadow-xl sm:p-9">
