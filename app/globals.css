@@ -1060,3 +1060,141 @@ a[href],
     transition-duration: .01ms !important;
   }
 }
+
+/* ========================================
+   DURANT LIVING BACKGROUND
+   Waves + Gold Particles + Grid + Ambient Light
+======================================== */
+
+html {
+  background-color: var(--background);
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Ambient blue and gold light + flowing waves */
+body::before {
+  background:
+    radial-gradient(ellipse at 12% 18%, rgba(59, 130, 246, .10), transparent 38%),
+    radial-gradient(ellipse at 88% 72%, rgba(214, 173, 88, .09), transparent 35%),
+    radial-gradient(ellipse at 75% 8%, rgba(96, 165, 250, .08), transparent 32%),
+    repeating-radial-gradient(
+      ellipse at 50% 120%,
+      transparent 0 45px,
+      rgba(49, 87, 164, .035) 47px 48px,
+      transparent 51px 90px
+    );
+  background-size: 150% 150%;
+  animation: durant-living-waves 24s ease-in-out infinite alternate;
+}
+
+/* Floating golden particles and subtle geometric grid */
+body::after {
+  opacity: .55;
+  background-image:
+    radial-gradient(circle, rgba(214, 173, 88, .55) 1px, transparent 2px),
+    radial-gradient(circle, rgba(49, 87, 164, .30) 1px, transparent 2px),
+    linear-gradient(rgba(49, 87, 164, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(49, 87, 164, .035) 1px, transparent 1px);
+  background-size:
+    170px 190px,
+    230px 220px,
+    55px 55px,
+    55px 55px;
+  background-position:
+    20px 30px,
+    90px 110px,
+    center center,
+    center center;
+  animation: durant-particles-drift 35s linear infinite;
+}
+
+/* Dark theme adjustment */
+html.dark body::before {
+  background:
+    radial-gradient(ellipse at 12% 18%, rgba(59, 130, 246, .16), transparent 38%),
+    radial-gradient(ellipse at 88% 72%, rgba(214, 173, 88, .10), transparent 35%),
+    radial-gradient(ellipse at 75% 8%, rgba(96, 165, 250, .13), transparent 32%),
+    repeating-radial-gradient(
+      ellipse at 50% 120%,
+      transparent 0 45px,
+      rgba(96, 165, 250, .045) 47px 48px,
+      transparent 51px 90px
+    );
+}
+
+html.dark body::after {
+  opacity: .38;
+  background-image:
+    radial-gradient(circle, rgba(232, 200, 121, .65) 1px, transparent 2px),
+    radial-gradient(circle, rgba(96, 165, 250, .45) 1px, transparent 2px),
+    linear-gradient(rgba(148, 163, 184, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, .035) 1px, transparent 1px);
+  background-size: 170px 190px, 230px 220px, 55px 55px, 55px 55px;
+}
+
+/* Motion */
+@keyframes durant-living-waves {
+  0% {
+    background-position: 0% 0%;
+    transform: scale(1);
+  }
+  50% {
+    background-position: 50% 40%;
+    transform: scale(1.04);
+  }
+  100% {
+    background-position: 100% 80%;
+    transform: scale(1);
+  }
+}
+
+@keyframes durant-particles-drift {
+  from {
+    background-position:
+      20px 30px,
+      90px 110px,
+      center center,
+      center center;
+  }
+  to {
+    background-position:
+      190px 230px,
+      -140px 330px,
+      center center,
+      center center;
+  }
+}
+
+/* Respect device motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+}
+
+/* Keep the background lightweight on small screens */
+@media (max-width: 640px) {
+  body::before {
+    animation-duration: 35s;
+  }
+
+  body::after {
+    opacity: .35;
+    background-size: 210px 230px, 260px 250px, 70px 70px, 70px 70px;
+  }
+}
