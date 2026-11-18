@@ -902,20 +902,7 @@ button:not(:disabled) {
 
 /* Mouse-follow ambient light */
 @media (hover: hover) and (pointer: fine) {
-  html::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    pointer-events: none;
-    background: radial-gradient(
-      260px circle at var(--durant-pointer-x) var(--durant-pointer-y),
-      var(--durant-motion-gold),
-      transparent 72%
-    );
-    opacity: .85;
-  }
-
+ 
   .admin-premium-card,
   .admin-stat-card,
   .admin-hero,
