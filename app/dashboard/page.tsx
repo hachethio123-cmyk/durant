@@ -1119,10 +1119,26 @@ export default function Dashboard() {
                     <div className="relative overflow-hidden rounded-[22px] border border-amber-200 bg-gradient-to-br from-[#fff9e9] via-[#fffdf6] to-[#fff1cf] p-5 text-center">
                       <div className="absolute -end-8 -top-8 h-28 w-28 rounded-full border border-amber-300/40" />
                       <div className="absolute -end-3 -top-3 h-16 w-16 rounded-full border border-amber-300/30" />
-                      <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-amber-200 bg-white/80 text-5xl shadow-[0_8px_25px_rgba(180,120,20,0.12)]">
-                        🪙
+
+                      {/* DURANT GOLD COINS */}
+                      <div className="relative mx-auto flex h-28 w-36 items-center justify-center">
+                        <div className="absolute h-24 w-24 rounded-full bg-amber-300/30 blur-2xl" />
+
+                        {/* Back coin */}
+                        <div className="absolute h-[76px] w-[76px] translate-x-5 translate-y-2 rounded-full border-[5px] border-[#a66c12] bg-gradient-to-br from-[#ffe99a] via-[#d99a25] to-[#9b6415] shadow-[0_9px_16px_rgba(120,75,10,0.25)]" />
+
+                        {/* Front coin */}
+                        <div className="absolute flex h-[82px] w-[82px] -translate-x-3 -translate-y-1 items-center justify-center rounded-full border-[5px] border-[#f8df91] bg-gradient-to-br from-[#fff4b8] via-[#efc34f] to-[#bd811c] shadow-[inset_0_3px_7px_rgba(255,255,255,0.75),0_10px_20px_rgba(120,75,10,0.25)]">
+                          <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full border-2 border-[#bd811c]/70 text-4xl font-black text-[#986214] shadow-inner">
+                            D
+                          </div>
+                        </div>
+
+                        {/* Coin shine */}
+                        <div className="absolute left-[38%] top-3 h-3 w-8 rotate-[-35deg] rounded-full bg-white/60 blur-[2px]" />
                       </div>
-                      <p className="relative mt-4 text-[10px] font-black tracking-[0.2em] text-amber-700">
+
+                      <p className="relative mt-2 text-[10px] font-black tracking-[0.2em] text-amber-700">
                         {t("إجمالي رصيدك", "TOTAL BALANCE")}
                       </p>
                       <p className="relative mt-1 text-4xl font-black tracking-tight text-[#17213d]">
