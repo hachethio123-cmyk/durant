@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import StudentSidebar from "@/components/StudentSidebar";
 import DashboardHero from "@/components/DashboardHero";
 import XPPodium from "@/components/XPPodium";
+import DurantChallengePortal from "@/components/DurantChallengePortal";
 import { useLanguage } from "@/components/ThemeProvider";
 
 const gradeNames: Record<string, { ar: string; en: string }> = {
@@ -17,13 +18,6 @@ const gradeNames: Record<string, { ar: string; en: string }> = {
   "first-secondary": { ar: "الصف الأول الثانوي", en: "First Secondary Grade" },
   "second-secondary": { ar: "الصف الثاني الثانوي", en: "Second Secondary Grade" },
   "third-secondary": { ar: "الصف الثالث الثانوي", en: "Third Secondary Grade" },
-};
-
-type LeaderboardStudent = {
-  rank_number: number;
-  student_name: string;
-  grade: string;
-  gold_coins: number;
 };
 
 type Achievement = {
@@ -140,13 +134,6 @@ function StatCard({
       <div className="absolute bottom-0 start-0 h-1 w-0 bg-gradient-to-r from-blue-500 to-violet-400 transition-all duration-500 group-hover:w-full" />
     </div>
   );
-}
-
-function getRankStyle(rank: number) {
-  if (rank === 1) return "border-amber-200 bg-amber-100 text-amber-700";
-  if (rank === 2) return "border-slate-200 bg-slate-100 text-slate-600";
-  if (rank === 3) return "border-orange-200 bg-orange-100 text-orange-700";
-  return "border-blue-100 bg-blue-50 text-blue-600";
 }
 
 function XPProgressCard({
@@ -349,10 +336,6 @@ export default function Dashboard() {
   const [xpPoints, setXpPoints] = useState(0);
   const [studentLevel, setStudentLevel] = useState(1);
 
-  const [leaderboard, setLeaderboard] = useState<LeaderboardStudent[]>([]);
-  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
-  const [leaderboardError, setLeaderboardError] = useState("");
-
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
   const [studentId, setStudentId] = useState("");
@@ -393,7 +376,6 @@ export default function Dashboard() {
         if (profileError || !profile) {
           setLoadError("تعذر تحميل بيانات حسابك. حاول تحديث الصفحة.");
           setLoading(false);
-          setLeaderboardLoading(false);
           return;
         }
 
@@ -407,18 +389,16 @@ export default function Dashboard() {
 
         setGradeSlug(studentGrade);
 
-        const [achievementResult, earnedResult, rankingResult] = await Promise.all([
+        const [achievementResult, earnedResult] = await Promise.all([
           supabase
             .from("achievements")
             .select("id, code, name_ar, name_en, description_ar, description_en, icon, xp_reward")
             .order("xp_reward", { ascending: true }),
+
           supabase
             .from("student_achievements")
             .select("achievement_id")
             .eq("student_id", currentStudentId),
-          studentGrade
-            ? supabase.rpc("get_student_leaderboard", { p_grade: studentGrade })
-            : Promise.resolve({ data: [], error: null }),
         ]);
 
         if (!active) return;
@@ -433,19 +413,10 @@ export default function Dashboard() {
           );
         }
 
-        if (rankingResult.error) {
-          setLeaderboardError("تعذر تحميل ترتيب صفك الدراسي حاليًا.");
-          setLeaderboard([]);
-        } else {
-          setLeaderboard((rankingResult.data ?? []) as LeaderboardStudent[]);
-        }
-
-        setLeaderboardLoading(false);
         setLoading(false);
       } catch {
         if (!active) return;
         setLoadError("حدث خطأ أثناء تحميل بياناتك. حاول تحديث الصفحة.");
-        setLeaderboardLoading(false);
         setLoading(false);
       }
     }
@@ -880,7 +851,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              {/* WELCOME / HERO: KEEP THE EXISTING 5-SECOND CAROUSEL */}
+              {/* WELCOME / HERO */}
               <section className="relative min-w-0">
                 <div className="pointer-events-none absolute -inset-2 -z-10 rounded-[30px] bg-gradient-to-r from-blue-200/40 via-violet-100/50 to-amber-100/40 blur-xl" />
                 <div className="min-w-0 overflow-hidden rounded-[24px] shadow-[0_15px_45px_rgba(23,33,61,0.09)]">
@@ -1003,7 +974,7 @@ export default function Dashboard() {
                     ))}
                   </div>
 
-                  {/* NEW: XP CHAMPIONS PODIUM */}
+                  {/* XP CHAMPIONS PODIUM - PRESERVED */}
                   <div className="mt-6 border-t border-slate-100 pt-6">
                     <XPPodium
                       gradeSlug={gradeSlug}
@@ -1179,75 +1150,13 @@ export default function Dashboard() {
                 </Panel>
               </section>
 
-              {/* GOLD COINS LEADERBOARD - EXISTING SYSTEM */}
+              {/* DURANT CHALLENGE PORTAL */}
               <section className="mt-5">
-                <div className="relative overflow-hidden rounded-[26px] border border-[#26385e] bg-[#111c38] p-4 text-white shadow-[0_15px_40px_rgba(15,23,42,0.12)] sm:p-6">
-                  <div className="pointer-events-none absolute -end-16 -top-24 h-64 w-64 rounded-full bg-blue-500/15 blur-[70px]" />
-                  <div className="pointer-events-none absolute -bottom-24 -start-16 h-64 w-64 rounded-full bg-amber-400/10 blur-[70px]" />
-
-                  <div className="relative">
-                    <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-[9px] font-black tracking-[0.22em] text-amber-300">DURANT HALL OF FAME</p>
-                        <h2 className="mt-2 flex items-center gap-2 text-xl font-black sm:text-2xl">
-                          <span>👑</span>
-                          {t("أبطال صفك الدراسي", "Your Grade Champions")}
-                        </h2>
-                        <p className="mt-1 text-[10px] text-slate-400">
-                          {t("المنافسة على أساس العملات الذهبية.", "Ranked by gold coins.")}
-                        </p>
-                      </div>
-                      <div className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-2">
-                        <p className="text-[9px] font-black tracking-widest text-amber-200">TOP 10</p>
-                        <p className="mt-1 text-center text-lg font-black text-amber-300">🏆</p>
-                      </div>
-                    </div>
-
-                    {leaderboardLoading ? (
-                      <p className="rounded-xl bg-white/5 p-5 text-center text-sm text-slate-300">
-                        {t("جاري تحميل الترتيب...", "Loading leaderboard...")}
-                      </p>
-                    ) : leaderboardError ? (
-                      <p className="break-words rounded-xl bg-red-400/10 p-5 text-center text-sm text-red-200">
-                        {t(leaderboardError, "Unable to load leaderboard.")}
-                      </p>
-                    ) : leaderboard.length === 0 ? (
-                      <p className="rounded-xl bg-white/5 p-5 text-center text-sm text-slate-300">
-                        {t("لا يوجد ترتيب متاح حاليًا.", "No ranking available yet.")}
-                      </p>
-                    ) : (
-                      <div className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
-                        {leaderboard.slice(0, 5).map((student) => (
-                          <div
-                            key={student.rank_number}
-                            className={`flex min-w-0 items-center justify-between gap-3 rounded-2xl border px-3 py-3 transition ${
-                              student.rank_number === 1
-                                ? "border-amber-300/30 bg-amber-300/10"
-                                : "border-white/10 bg-white/[0.045] hover:bg-white/[0.08]"
-                            }`}
-                          >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-black ${getRankStyle(student.rank_number)}`}>
-                                {student.rank_number <= 3
-                                  ? ["🥇", "🥈", "🥉"][student.rank_number - 1]
-                                  : student.rank_number}
-                              </span>
-                              <div className="min-w-0">
-                                <p className="truncate text-xs font-black text-white sm:text-sm">{student.student_name}</p>
-                                <p className="mt-1 truncate text-[9px] text-slate-400 sm:text-[10px]">
-                                  {gradeNames[student.grade]?.[isArabic ? "ar" : "en"] ?? student.grade}
-                                </p>
-                              </div>
-                            </div>
-                            <p className="shrink-0 text-xs font-black text-amber-300 sm:text-sm">
-                              {formatNumber(Number(student.gold_coins), locale)} 🪙
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <DurantChallengePortal
+                  gradeSlug={gradeSlug}
+                  gradeName={gradeName}
+                  isArabic={isArabic}
+                />
               </section>
 
               {/* LEARNING CENTER */}
