@@ -1,0 +1,2148 @@
+
+========== app/globals.css ==========
+
+@import "tailwindcss";
+
+/* ========================================
+   DURANT GLOBAL THEME
+======================================== */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --durant-font-size: 16px;
+}
+
+html.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --surface: #0f172a;
+  --surface-border: #1e293b;
+}
+
+html.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f1f5f9;
+  --surface-border: #e2e8f0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Font size */
+
+html {
+  font-size: var(--durant-font-size);
+  scroll-behavior: smooth;
+  transition: font-size 0.2s ease;
+}
+
+html[data-font-size="small"] {
+  --durant-font-size: 14px;
+}
+
+html[data-font-size="medium"] {
+  --durant-font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  --durant-font-size: 18px;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ========================================
+   DURANT LIGHT THEME
+======================================== */
+
+html.light [class~="bg-slate-950"] {
+  background-color: #f8fafc !important;
+}
+
+html.light [class~="bg-slate-900"] {
+  background-color: #ffffff !important;
+}
+
+html.light [class~="bg-slate-800"] {
+  background-color: #e2e8f0 !important;
+}
+
+html.light [class~="text-white"] {
+  color: #0f172a !important;
+}
+
+html.light [class~="text-slate-300"] {
+  color: #334155 !important;
+}
+
+html.light [class~="text-slate-400"] {
+  color: #475569 !important;
+}
+
+html.light [class~="text-slate-500"] {
+  color: #64748b !important;
+}
+
+html.light [class~="text-slate-600"] {
+  color: #64748b !important;
+}
+
+html.light [class~="border-slate-800"] {
+  border-color: #e2e8f0 !important;
+}
+
+html.light [class~="border-slate-700"] {
+  border-color: #cbd5e1 !important;
+}
+
+html.light [class~="hover:bg-slate-800"]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* ========================================
+   DURANT ADMIN DESIGN SYSTEM
+======================================== */
+
+.admin-page {
+  --admin-navy: #17213d;
+  --admin-deep: #0d162b;
+  --admin-blue: #3157a4;
+  --admin-gold: #d6ad58;
+  --admin-bg: #f1f3fb;
+  --admin-glass: rgba(255, 255, 255, 0.94);
+
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 90% 0%,
+      rgba(49, 91, 155, 0.09),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 5% 80%,
+      rgba(214, 173, 88, 0.045),
+      transparent 30%
+    ),
+    var(--admin-bg);
+  color: var(--admin-navy);
+}
+
+/* ========================================
+   HERO SECTION
+======================================== */
+
+.admin-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  background: linear-gradient(
+    120deg,
+    #101a33 0%,
+    #192b4d 55%,
+    #29446f 100%
+  );
+  color: #ffffff;
+  box-shadow: 0 22px 55px rgba(23, 33, 61, 0.17);
+}
+
+.admin-hero::before,
+.admin-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.admin-hero::before {
+  width: 340px;
+  height: 340px;
+  top: -190px;
+  left: -80px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 35px rgba(255, 255, 255, 0.025),
+    0 0 0 75px rgba(255, 255, 255, 0.02);
+  animation: admin-orbit 24s linear infinite;
+}
+
+.admin-hero::after {
+  width: 220px;
+  height: 220px;
+  bottom: -150px;
+  right: 20%;
+  background: rgba(213, 173, 98, 0.12);
+  filter: blur(45px);
+  animation: admin-glow 7s ease-in-out infinite alternate;
+}
+
+/* Keep hero text white in light mode */
+
+html.light .admin-hero [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+/* ========================================
+   FLOATING EDUCATIONAL ELEMENTS
+======================================== */
+
+.admin-float {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.18;
+  animation: admin-float 7s ease-in-out infinite;
+}
+
+.admin-float:nth-child(2) {
+  animation-delay: -2s;
+}
+
+.admin-float:nth-child(3) {
+  animation-delay: -4s;
+}
+
+/* ========================================
+   HYBRID SIDEBAR
+======================================== */
+
+.admin-sidebar {
+  position: sticky;
+  top: 24px;
+  height: calc(100vh - 48px);
+  min-height: 600px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(67, 105, 180, 0.25),
+      transparent 32%
+    ),
+    linear-gradient(
+      165deg,
+      #17213d 0%,
+      #111a30 55%,
+      #0c1427 100%
+    );
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.18);
+  animation: adminSidebarEnter 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-sidebar::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 190px;
+  height: 190px;
+  left: -100px;
+  bottom: 90px;
+  border: 1px solid rgba(213, 173, 98, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.admin-sidebar::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 150px;
+  height: 150px;
+  right: -95px;
+  top: 35%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Sidebar typography */
+
+.admin-sidebar h2 {
+  color: #ffffff !important;
+}
+
+.admin-sidebar p {
+  color: #94a3b8;
+}
+
+.admin-sidebar .text-xs.font-bold {
+  color: #ffffff;
+}
+
+/* Protect sidebar from global light theme overrides */
+
+html.light .admin-sidebar [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+html.light .admin-sidebar [class~="text-slate-300"],
+html.light .admin-sidebar [class~="text-slate-400"],
+html.light .admin-sidebar [class~="text-slate-500"] {
+  color: #aebbd0 !important;
+}
+
+html.light .admin-sidebar > div:first-child h2 {
+  color: #ffffff !important;
+}
+
+/* Sidebar navigation */
+
+.admin-sidebar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 10px 13px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    color 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.admin-sidebar-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(-3px);
+}
+
+.admin-sidebar-link.active {
+  color: #ffffff;
+  background: linear-gradient(
+    110deg,
+    rgba(49, 87, 164, 0.95),
+    rgba(35, 54, 91, 0.95)
+  );
+  border-color: rgba(213, 173, 98, 0.28);
+  box-shadow: 0 8px 22px rgba(4, 10, 25, 0.2);
+}
+
+.admin-sidebar-link.active::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 5px;
+  background: var(--admin-gold);
+}
+
+.admin-sidebar-link > span:first-child {
+  background: rgba(255, 255, 255, 0.09);
+  color: #e2c78e;
+  transition:
+    background 220ms ease,
+    transform 220ms ease;
+}
+
+.admin-sidebar-link:hover > span:first-child {
+  transform: scale(1.06);
+}
+
+.admin-sidebar-link.active > span:first-child {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Sidebar security card */
+
+.admin-sidebar > div:last-child > div {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-sidebar > div:last-child p {
+  color: #dce5f5;
+}
+
+.admin-sidebar > div:last-child p:last-child {
+  color: #94a3b8;
+}
+
+/* ========================================
+   STATISTICS
+======================================== */
+
+.admin-stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e7eaf2;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(23, 33, 61, 0.035);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(49, 91, 155, 0.25);
+  box-shadow: 0 15px 32px rgba(23, 33, 61, 0.09);
+}
+
+.admin-stat-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(49, 87, 164, 0.06);
+  border-radius: 16px;
+  background: #eef3fc;
+  transition: transform 0.25s ease;
+}
+
+.admin-stat-card:hover .admin-stat-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* ========================================
+   PREMIUM CARDS
+======================================== */
+
+.admin-premium-card {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 24px;
+  background: var(--admin-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(23, 33, 61, 0.045);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.admin-premium-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(49, 87, 164, 0.22);
+  box-shadow: 0 17px 38px rgba(23, 33, 61, 0.08);
+}
+
+/* ========================================
+   ENTRANCE ANIMATIONS
+======================================== */
+
+.admin-entrance {
+  animation: admin-entrance 0.65s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-right {
+  animation: adminSlideRight 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-left {
+  animation: adminSlideLeft 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-up {
+  animation: adminSlideUp 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-delay-1 {
+  animation-delay: 100ms;
+}
+
+.admin-delay-2 {
+  animation-delay: 180ms;
+}
+
+.admin-delay-3 {
+  animation-delay: 260ms;
+}
+
+.admin-delay-4 {
+  animation-delay: 340ms;
+}
+
+.admin-delay-5 {
+  animation-delay: 420ms;
+}
+
+.admin-delay-6 {
+  animation-delay: 500ms;
+}
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.admin-search {
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-search:focus {
+  border-color: #6487c0;
+  box-shadow: 0 0 0 4px rgba(49, 91, 155, 0.10);
+  outline: none;
+}
+
+/* ========================================
+   TABLE
+======================================== */
+
+.admin-table-row {
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.admin-table-row:hover {
+  background-color: #f4f7fd;
+}
+
+/* ========================================
+   STATUS AND DECORATIONS
+======================================== */
+
+.admin-pulse {
+  animation: admin-pulse 2.2s ease-in-out infinite;
+}
+
+.admin-sidebar-decoration {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: admin-float 7s ease-in-out infinite;
+}
+
+/* ========================================
+   KEYFRAMES
+======================================== */
+
+@keyframes admin-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes admin-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(5deg);
+  }
+}
+
+@keyframes admin-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes admin-glow {
+  from {
+    opacity: 0.5;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes admin-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes adminSidebarEnter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-page *,
+  .admin-page *::before,
+  .admin-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 1023px) {
+  .admin-sidebar {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-hero {
+    border-radius: 22px;
+  }
+
+  .admin-premium-card:hover,
+  .admin-stat-card:hover {
+    transform: none;
+  }
+
+  .admin-page {
+    background: #f1f3fb;
+  }
+}
+
+/* ========================================
+   DURANT ANIMATED SIDEBAR LOGO
+======================================== */
+
+.admin-logo-morph {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 300px;
+}
+
+.admin-logo-morph .admin-logo-item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: rotateY(90deg) scale(0.5);
+  animation: durant-logo-cycle 9s infinite;
+  animation-fill-mode: both;
+}
+
+.admin-logo-morph .admin-logo-letter {
+  color: #d6ad55;
+  font-size: 30px;
+  font-weight: 900;
+  animation-delay: 0s;
+}
+
+.admin-logo-morph .admin-logo-teacher {
+  font-size: 25px;
+  animation-delay: 3s;
+}
+
+.admin-logo-morph .admin-logo-screen {
+  font-size: 25px;
+  animation-delay: 6s;
+}
+
+@keyframes durant-logo-cycle {
+  0%, 5% {
+    opacity: 0;
+    visibility: hidden;
+    transform: rotateY(90deg) scale(0.5);
+  }
+
+  12%, 27% {
+    opacity: 1;
+    visibility: visible;
+    transform: rotateY(0deg) scale(1);
+  }
+
+  34%, 100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: rotateY(-90deg) scale(0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-logo-morph .admin-logo-item {
+    animation: none;
+  }
+
+  .admin-logo-morph .admin-logo-letter {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .admin-logo-morph .admin-logo-teacher,
+  .admin-logo-morph .admin-logo-screen {
+    display: none;
+  }
+}
+
+
+/* ========================================
+   DURANT INTERACTIVE MOTION SYSTEM
+======================================== */
+
+.durant-mark {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border: 1px solid rgba(214, 173, 88, .35);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #304b80, #17213d 75%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 7px 18px rgba(23, 33, 61, .19);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1),
+              box-shadow .35s ease,
+              border-color .35s ease;
+}
+
+.durant-mark-letter {
+  position: relative;
+  z-index: 2;
+  font-size: 29px;
+  line-height: 1;
+  font-weight: 950;
+  font-style: italic;
+  color: #e8c879;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  transition: transform .4s ease, text-shadow .4s ease;
+}
+
+.durant-mark-ring {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(232, 200, 121, .65);
+  border-radius: 50%;
+  transform: rotate(-25deg) scale(.82);
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.durant-mark-spark {
+  position: absolute;
+  z-index: 3;
+  top: -5px;
+  right: -5px;
+  color: #d6ad58;
+  font-size: 13px;
+  opacity: .75;
+  transition: transform .4s ease, opacity .4s ease;
+}
+
+.durant-mark:hover {
+  transform: translateY(-3px) rotate(-4deg);
+  border-color: #d6ad58;
+  box-shadow: 0 10px 25px rgba(23, 33, 61, .25),
+              0 0 18px rgba(214, 173, 88, .16);
+}
+
+.durant-mark:hover .durant-mark-ring {
+  transform: rotate(145deg) scale(1.08);
+}
+
+.durant-mark:hover .durant-mark-letter {
+  transform: scale(1.12);
+}
+
+.durant-mark:active {
+  transform: scale(.91);
+}
+
+.durant-mark.is-energized {
+  border-color: #e8c879;
+  box-shadow: 0 0 0 4px rgba(214, 173, 88, .13),
+              0 0 24px rgba(214, 173, 88, .28);
+}
+
+.durant-mark.is-energized .durant-mark-ring {
+  transform: rotate(180deg) scale(1.13);
+  border-color: #f0d48e;
+}
+
+.durant-mark.is-energized .durant-mark-spark {
+  opacity: 1;
+  transform: rotate(90deg) scale(1.35);
+}
+
+.durant-mark:focus-visible {
+  outline: 3px solid rgba(49, 87, 164, .45);
+  outline-offset: 4px;
+}
+
+/* Consistent micro-interactions across the platform */
+a[href],
+button:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a[href]:hover {
+    transition: color .2s ease, background-color .2s ease,
+                border-color .2s ease, box-shadow .2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .durant-mark,
+  .durant-mark * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+========== app/layout.tsx ==========
+
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+import "./globals.css";
+import ThemeProvider from "@/components/ThemeProvider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://durant-rose.vercel.app"),
+
+  title: {
+    default: "DURANT | منصة ديورانت التعليمية",
+    template: "%s | DURANT",
+  },
+
+  description:
+    "منصة ديورانت التعليمية مع مستر أمير عبد الناصر، متخصصة في الدراسات الاجتماعية والتاريخ والجغرافيا.",
+
+  applicationName: "DURANT",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  verification: {
+    google: [
+      "clIujkJjJA9CAokGu5ICHDDrG_6DyITg3WEBmTwLBds",
+      "1xX3qz2UvE5sltQoImjRmvEdbKJyQoxWXxfYo_c5OQU",
+      "qb6XADN7aV1ZTPFepZRxzaXueNQ_JNXoi5ldPch7ysY",
+    ],
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "ar_EG",
+    siteName: "DURANT",
+    title: "منصة ديورانت التعليمية",
+    description:
+      "منصة تعليمية متخصصة في الدراسات الاجتماعية مع مستر أمير عبد الناصر.",
+    url: "https://durant-rose.vercel.app/",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html
+      lang="ar"
+      dir="rtl"
+      className={`${geistSans.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  );
+}
+
+
+========== components/DashboardInteractions.tsx ==========
+
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/components/ThemeProvider";
+
+type NotificationItem = {
+  id: string;
+  title_ar: string;
+  title_en: string | null;
+  message_ar: string;
+  message_en: string | null;
+  type: string;
+  action_url: string | null;
+  is_read: boolean;
+  created_at: string;
+};
+
+type Props = {
+  gradeSlug: string;
+};
+
+export default function DashboardInteractions({ gradeSlug }: Props) {
+  const router = useRouter();
+  const { language } = useLanguage();
+  const isArabic = language === "ar";
+
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
+  const [notificationError, setNotificationError] = useState("");
+  const [markingId, setMarkingId] = useState<string | null>(null);
+
+  const t = (ar: string, en: string) => isArabic ? ar : en;
+
+  const searchItems = useMemo(() => [
+    {
+      title: t("الرئيسية", "Home"),
+      description: t("لوحة التحكم الرئيسية", "Main dashboard"),
+      href: "/dashboard",
+      keywords: "home dashboard الرئيسية",
+    },
+    {
+      title: t("الصفوف الدراسية", "School Grades"),
+      description: t("موادك ومحتوى صفك الدراسي", "Your grade and subjects"),
+      href: gradeSlug ? `/grades/${gradeSlug}` : "/dashboard#grades",
+      keywords: "grades subjects الصفوف المواد دروس",
+    },
+    {
+      title: t("الملف الشخصي", "Profile"),
+      description: t("بيانات حسابك الشخصي", "Your account information"),
+      href: "/profile",
+      keywords: "profile account الملف الشخصي حساب",
+    },
+    {
+      title: t("الإعدادات", "Settings"),
+      description: t("إعدادات المنصة والحساب", "Platform and account settings"),
+      href: "/settings",
+      keywords: "settings preferences الإعدادات",
+    },
+  ], [gradeSlug, isArabic]);
+
+  const searchResults = search.trim()
+    ? searchItems.filter((item) =>
+        `${item.title} ${item.description} ${item.keywords}`
+          .toLowerCase()
+          .includes(search.trim().toLowerCase())
+      )
+    : [];
+
+  async function loadNotifications(studentId?: string) {
+    setNotificationsLoading(true);
+    setNotificationError("");
+
+    let id = studentId;
+
+    if (!id) {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error || !data.user) {
+        setNotifications([]);
+        setNotificationsLoading(false);
+        setNotificationError(t("تعذر التحقق من الحساب.", "Unable to verify your account."));
+        return;
+      }
+
+      id = data.user.id;
+    }
+
+    const { data, error } = await supabase
+      .from("notifications")
+      .select(
+        "id, title_ar, title_en, message_ar, message_en, type, action_url, is_read, created_at"
+      )
+      .eq("student_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      setNotificationError(
+        t("تعذر تحميل الإشعارات حاليًا.", "Could not load notifications.")
+      );
+      setNotifications([]);
+    } else {
+      setNotifications((data ?? []) as NotificationItem[]);
+    }
+
+    setNotificationsLoading(false);
+  }
+
+  useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let active = true;
+
+    async function initialize() {
+      const { data } = await supabase.auth.getUser();
+
+      if (!active || !data.user) return;
+
+      await loadNotifications(data.user.id);
+
+      if (!active) return;
+
+      channel = supabase
+        .channel(`student-notifications-${data.user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `student_id=eq.${data.user.id}`,
+          },
+          () => {
+            if (active) loadNotifications(data.user.id);
+          }
+        )
+        .subscribe();
+    }
+
+    initialize();
+
+    return () => {
+      active = false;
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, []);
+
+  async function markAsRead(notification: NotificationItem) {
+    if (notification.is_read || markingId) return;
+
+    setMarkingId(notification.id);
+
+    const { data, error } = await supabase.rpc(
+      "mark_notification_read",
+      { p_notification_id: notification.id }
+    );
+
+    if (error || data !== true) {
+      setNotificationError(
+        t("لم نتمكن من تحديث الإشعار.", "Could not update this notification.")
+      );
+      setMarkingId(null);
+      return;
+    }
+
+    setNotifications((current) =>
+      current.map((item) =>
+        item.id === notification.id
+          ? { ...item, is_read: true }
+          : item
+      )
+    );
+
+    setMarkingId(null);
+  }
+
+  async function openNotification(notification: NotificationItem) {
+    await markAsRead(notification);
+
+    const destination = notification.action_url;
+
+    setNotificationsOpen(false);
+
+    if (destination && destination.startsWith("/") && !destination.startsWith("//")) {
+      router.push(destination);
+    }
+  }
+
+  const unreadCount = notifications.filter((item) => !item.is_read).length;
+
+  return (
+    <div className="flex min-w-0 flex-1 items-center gap-3">
+      {/* Search */}
+      <div className="relative min-w-0 flex-1 sm:max-w-[360px]">
+        <div className="flex min-h-11 items-center gap-3 rounded-full border border-[#e2e6f5] bg-white px-4 py-3 shadow-sm sm:px-5">
+          <span className="shrink-0 text-xl text-slate-400">⌕</span>
+
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setSearchOpen(true);
+            }}
+            onFocus={() => setSearchOpen(true)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setSearchOpen(false);
+
+              if (event.key === "Enter" && searchResults[0]) {
+                router.push(searchResults[0].href);
+                setSearch("");
+                setSearchOpen(false);
+              }
+            }}
+            placeholder={t("ابحث عن أي محتوى...", "Search for any content...")}
+            aria-label={t("البحث في المنصة", "Search the platform")}
+            className="min-w-0 flex-1 bg-transparent text-sm text-[#17213d] outline-none placeholder:text-slate-400"
+          />
+
+          {search.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setSearchOpen(false);
+              }}
+              className="text-slate-400 hover:text-slate-700"
+              aria-label={t("مسح البحث", "Clear search")}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {searchOpen && search.trim() && (
+          <>
+            <button
+              type="button"
+              aria-label={t("إغلاق نتائج البحث", "Close search results")}
+              className="fixed inset-0 z-30 cursor-default"
+              onClick={() => setSearchOpen(false)}
+            />
+
+            <div className="absolute start-0 top-full z-40 mt-2 w-full min-w-[250px] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white p-2 shadow-xl">
+              {searchResults.length > 0 ? (
+                searchResults.map((item) => (
+                  <button
+                    key={item.href}
+                    type="button"
+                    onClick={() => {
+                      router.push(item.href);
+                      setSearch("");
+                      setSearchOpen(false);
+                    }}
+                    className="flex w-full flex-col rounded-xl px-3 py-3 text-start transition hover:bg-blue-50"
+                  >
+                    <span className="text-sm font-black text-[#17213d]">
+                      {item.title}
+                    </span>
+                    <span className="mt-1 text-xs text-slate-500">
+                      {item.description}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <p className="p-4 text-center text-sm text-slate-500">
+                  {t("لا توجد نتائج مطابقة.", "No matching results.")}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Notifications */}
+      <div className="relative shrink-0">
+        <button
+          type="button"
+          onClick={() => {
+            setNotificationsOpen((value) => !value);
+            setSearchOpen(false);
+            if (!notificationsOpen) loadNotifications();
+          }}
+          aria-label={t("الإشعارات", "Notifications")}
+          aria-expanded={notificationsOpen}
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm transition hover:bg-amber-50 sm:h-11 sm:w-11"
+        >
+          🔔
+
+          {unreadCount > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </button>
+
+        {notificationsOpen && (
+          <>
+            <button
+              type="button"
+              aria-label={t("إغلاق الإشعارات", "Close notifications")}
+              className="fixed inset-0 z-30 cursor-default"
+              onClick={() => setNotificationsOpen(false)}
+            />
+
+            <div className="absolute end-0 top-full z-40 mt-3 w-[min(350px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
+                <h3 className="font-black text-[#17213d]">
+                  {t("الإشعارات", "Notifications")}
+                </h3>
+                <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">
+                  {unreadCount} {t("غير مقروء", "unread")}
+                </span>
+              </div>
+
+              <div className="max-h-[360px] overflow-y-auto">
+                {notificationsLoading ? (
+                  <p className="p-6 text-center text-sm text-slate-500">
+                    {t("جاري تحميل الإشعارات...", "Loading notifications...")}
+                  </p>
+                ) : notificationError ? (
+                  <div className="p-5 text-center">
+                    <p className="text-sm text-red-500">{notificationError}</p>
+                    <button
+                      type="button"
+                      onClick={() => loadNotifications()}
+                      className="mt-3 text-xs font-bold text-blue-600"
+                    >
+                      {t("إعادة المحاولة", "Try again")}
+                    </button>
+                  </div>
+                ) : notifications.length === 0 ? (
+                  <p className="p-6 text-center text-sm text-slate-500">
+                    {t("لا توجد إشعارات حتى الآن.", "No notifications yet.")}
+                  </p>
+                ) : (
+                  notifications.map((notification) => (
+                    <button
+                      key={notification.id}
+                      type="button"
+                      disabled={markingId === notification.id}
+                      onClick={() => openNotification(notification)}
+                      className={`flex w-full gap-3 border-b border-slate-50 px-4 py-4 text-start transition hover:bg-blue-50 ${
+                        notification.is_read ? "bg-white" : "bg-blue-50/60"
+                      }`}
+                    >
+                      <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
+
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-black text-[#17213d]">
+                          {isArabic
+                            ? notification.title_ar
+                            : notification.title_en || notification.title_ar}
+                        </span>
+
+                        <span className="mt-1 block text-xs leading-6 text-slate-500">
+                          {isArabic
+                            ? notification.message_ar
+                            : notification.message_en || notification.message_ar}
+                        </span>
+
+                        <span className="mt-2 block text-[10px] text-slate-400">
+                          {new Date(notification.created_at).toLocaleString(
+                            isArabic ? "ar-EG" : "en-US"
+                          )}
+                        </span>
+                      </span>
+
+                      {!notification.is_read && (
+                        <span className="shrink-0 self-center text-[10px] font-bold text-blue-600">
+                          {t("جديد", "New")}
+                        </span>
+                      )}
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <div className="border-t border-slate-100 p-3">
+                <button
+                  type="button"
+                  onClick={() => loadNotifications()}
+                  className="w-full rounded-xl bg-slate-50 py-2.5 text-xs font-bold text-[#17213d] transition hover:bg-slate-100"
+                >
+                  {t("تحديث الإشعارات", "Refresh notifications")}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+========== components/SubjectPageClient.tsx ==========
+
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/components/ThemeProvider";
+import StudentSidebar from "@/components/StudentSidebar";
+
+type SubjectData = {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  description_ar: string | null;
+  description_en: string | null;
+  icon: string | null;
+};
+
+type UnitData = {
+  id: string;
+  title_ar: string;
+  title_en: string | null;
+  description_ar: string | null;
+  description_en: string | null;
+  sort_order: number;
+};
+
+type LessonData = {
+  id: string;
+  unit_id: string;
+  title_ar: string;
+  title_en: string | null;
+  duration_minutes: number | null;
+  sort_order: number;
+  video_url: string | null;
+  attachment_url: string | null;
+};
+
+const gradeNames: Record<string, { ar: string; en: string }> = {
+  "first-prep": { ar: "الصف الأول الإعدادي", en: "First Preparatory Grade" },
+  "second-prep": { ar: "الصف الثاني الإعدادي", en: "Second Preparatory Grade" },
+  "third-prep": { ar: "الصف الثالث الإعدادي", en: "Third Preparatory Grade" },
+  "first-secondary": { ar: "الصف الأول الثانوي", en: "First Secondary Grade" },
+  "second-secondary": { ar: "الصف الثاني الثانوي", en: "Second Secondary Grade" },
+  "third-secondary": { ar: "الصف الثالث الثانوي", en: "Third Secondary Grade" },
+};
+
+const subjectIcons: Record<string, string> = {
+  social_studies: "🌍",
+  history: "🏛️",
+  geography: "🌍",
+};
+
+export default function SubjectPageClient({
+  gradeSlug,
+  subjectKey,
+}: {
+  gradeSlug: string;
+  subjectKey: string;
+}) {
+  const { language, languageReady } = useLanguage();
+  const isArabic = language === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+  const t = (ar: string, en: string) => isArabic ? ar : en;
+
+  const [subject, setSubject] = useState<SubjectData | null>(null);
+  const [units, setUnits] = useState<UnitData[]>([]);
+  const [lessons, setLessons] = useState<LessonData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [openUnits, setOpenUnits] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+
+  const grade = gradeNames[gradeSlug];
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadSubject() {
+      setLoading(true);
+      setError("");
+
+      const { data: subjectData, error: subjectError } = await supabase
+        .from("subjects")
+        .select("id, name_ar, name_en, description_ar, description_en, icon")
+        .eq("grade_slug", gradeSlug)
+        .eq("subject_key", subjectKey)
+        .eq("is_published", true)
+        .maybeSingle();
+
+      if (!active) return;
+
+      if (subjectError) {
+        setError(t("حدث خطأ أثناء تحميل المادة.", "Could not load this subject."));
+        setLoading(false);
+        return;
+      }
+
+      if (!subjectData) {
+        setSubject(null);
+        setUnits([]);
+        setLessons([]);
+        setOpenUnits([]);
+        setLoading(false);
+        return;
+      }
+
+      setSubject(subjectData as SubjectData);
+
+      const { data: unitsData, error: unitsError } = await supabase
+        .from("units")
+        .select("id, title_ar, title_en, description_ar, description_en, sort_order")
+        .eq("subject_id", subjectData.id)
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true });
+
+      if (!active) return;
+
+      if (unitsError) {
+        setError(t("تعذر تحميل الوحدات حاليا.", "Could not load the units."));
+        setUnits([]);
+        setLessons([]);
+      } else {
+        const loadedUnits = (unitsData ?? []) as UnitData[];
+        setUnits(loadedUnits);
+
+        const unitIds = loadedUnits.map((unit) => unit.id);
+
+        if (unitIds.length > 0) {
+          const { data: lessonsData, error: lessonsError } = await supabase
+            .from("lessons")
+            .select("id, unit_id, title_ar, title_en, duration_minutes, sort_order, video_url, attachment_url")
+            .in("unit_id", unitIds)
+            .eq("is_published", true)
+            .order("sort_order", { ascending: true });
+
+          if (!active) return;
+
+          if (lessonsError) {
+            setError(t("تعذر تحميل الدروس حاليا.", "Could not load the lessons."));
+            setLessons([]);
+          } else {
+            setLessons((lessonsData ?? []) as LessonData[]);
+          }
+        } else {
+          setLessons([]);
+        }
+
+        setOpenUnits(loadedUnits[0] ? [loadedUnits[0].id] : []);
+      }
+
+      setLoading(false);
+    }
+
+    loadSubject();
+
+    return () => {
+      active = false;
+    };
+  }, [gradeSlug, subjectKey, isArabic]);
+
+  const subjectName = subject
+    ? isArabic ? subject.name_ar : subject.name_en || subject.name_ar
+    : subjectKey === "social_studies"
+      ? t("الدراسات الاجتماعية", "Social Studies")
+      : subjectKey === "history"
+        ? t("التاريخ", "History")
+        : t("الجغرافيا", "Geography");
+
+  const subjectDescription = subject
+    ? isArabic
+      ? subject.description_ar
+      : subject.description_en || subject.description_ar
+    : "";
+
+  const totalVideos = lessons.filter((lesson) => !!lesson.video_url).length;
+  const totalFiles = lessons.filter((lesson) => !!lesson.attachment_url).length;
+
+  const filteredLessons = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+    if (!query) return lessons;
+
+    return lessons.filter((lesson) => {
+      const title = `${lesson.title_ar} ${lesson.title_en || ""}`.toLocaleLowerCase();
+      return title.includes(query);
+    });
+  }, [lessons, search]);
+
+  const getUnitLessons = (unitId: string) =>
+    filteredLessons.filter((lesson) => lesson.unit_id === unitId);
+
+  const toggleUnit = (unitId: string) => {
+    setOpenUnits((current) =>
+      current.includes(unitId)
+        ? current.filter((id) => id !== unitId)
+        : [...current, unitId]
+    );
+  };
+
+  const openAllUnits = () => {
+    setOpenUnits(units.map((unit) => unit.id));
+  };
+
+  const closeAllUnits = () => {
+    setOpenUnits([]);
+  };
+
+  const handlePointerMove = (
+    event: React.MouseEvent<HTMLElement>,
+    intensity = 1
+  ) => {
+    const element = event.currentTarget;
+    const rect = element.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    element.style.setProperty("--pointer-x", `${x * 100}%`);
+    element.style.setProperty("--pointer-y", `${y * 100}%`);
+    element.style.setProperty("--tilt-x", `${(0.5 - y) * 7 * intensity}deg`);
+    element.style.setProperty("--tilt-y", `${(x - 0.5) * 7 * intensity}deg`);
+  };
+
+  const resetPointer = (event: React.MouseEvent<HTMLElement>) => {
+    const element = event.currentTarget;
+    element.style.setProperty("--tilt-x", "0deg");
+    element.style.setProperty("--tilt-y", "0deg");
+    element.style.setProperty("--pointer-x", "50%");
+    element.style.setProperty("--pointer-y", "50%");
+  };
+
+  if (!grade) return null;
+
+  if (!languageReady) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#f1f3fb]">
+        <span className="text-2xl font-black tracking-widest text-[#17213d]">DURANT</span>
+      </main>
+    );
+  }
+
+  return (
+    <main
+      dir={direction}
+      className="durant-subject-page flex min-h-screen min-w-0 flex-col bg-[#f1f3fb] text-[#17213d] lg:block"
+    >
+      <style jsx global>{`
+        .durant-subject-page {
+          --navy: #17213d;
+          --blue: #315caa;
+          --soft-blue: #edf3ff;
+        }
+
+        .subject-reveal {
+          animation: subjectReveal 0.7s cubic-bezier(.2,.8,.2,1) both;
+        }
+
+        .subject-delay-1 { animation-delay: .08s; }
+        .subject-delay-2 { animation-delay: .16s; }
+        .subject-delay-3 { animation-delay: .24s; }
+
+        @keyframes subjectReveal {
+          from { opacity: 0; transform: translateY(22px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .subject-hero {
+          isolation: isolate;
+          background:
+            radial-gradient(circle at var(--pointer-x, 80%) var(--pointer-y, 30%), rgba(111,166,255,.24), transparent 28%),
+            linear-gradient(125deg, #17213d 0%, #202e50 52%, #30466c 100%);
+          transition: background-position .2s ease;
+        }
+
+        .subject-hero::before {
+          content: "";
+          position: absolute;
+          inset: -50%;
+          z-index: -1;
+          pointer-events: none;
+          background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.055) 50%, transparent 60%);
+          transform: translateX(-30%);
+          animation: heroShimmer 9s ease-in-out infinite;
+        }
+
+        @keyframes heroShimmer {
+          0%, 100% { transform: translateX(-30%) rotate(0deg); }
+          50% { transform: translateX(30%) rotate(0deg); }
+        }
+
+        .hero-orbit {
+          animation: orbitFloat 7s ease-in-out infinite;
+        }
+
+        .hero-orbit-two {
+          animation: orbitFloat 9s ease-in-out infinite reverse;
+        }
+
+        @keyframes orbitFloat {
+          0%, 100% { transform: translate3d(0,0,0) rotate(0deg); }
+          50% { transform: translate3d(0,-12px,0) rotate(5deg); }
+        }
+
+        .unit-card {
+          transform:
+            perspective(1000px)
+            rotateX(var(--tilt-x, 0deg))
+            rotateY(var(--tilt-y, 0deg));
+          transform-style: preserve-3d;
+          transition:
+            transform .22s ease,
+            box-shadow .3s ease,
+            border-color .3s ease;
+          will-change: transform;
+        }
+
+        .unit-card::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          pointer-events: none;
+          opacity: 0;
+          background: radial-gradient(
+            circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+            rgba(83,132,220,.12),
+            transparent 48%
+          );
+          transition: opacity .3s ease;
+        }
+
+        .unit-card:hover {
+          border-color: #c6d5f3;
+          box-shadow: 0 22px 55px rgba(23,33,61,.11);
+        }
+
+        .unit-card:hover::after { opacity: 1; }
+
+        .unit-number {
+          transition: transform .35s cubic-bezier(.2,.8,.2,1), background .3s ease;
+        }
+
+        .unit-card:hover .unit-number {
+          transform: translateY(-3px) rotate(-5deg) scale(1.06);
+          background: #e0eaff;
+        }
+
+        .lesson-row {
+          transition: transform .22s ease, background .22s ease, box-shadow .22s ease;
+        }
+
+        .lesson-row:hover {
+          transform: translateX(var(--lesson-shift, 4px));
+          background: #edf3ff;
+          box-shadow: 0 5px 18px rgba(35,65,120,.06);
+        }
+
+        .lesson-action {
+          transition: transform .2s ease, background .2s ease;
+        }
+
+        .lesson-action:hover { transform: translateY(-2px) scale(1.04); }
+
+        .stat-card {
+          transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .stat-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 14px 32px rgba(23,33,61,.08);
+        }
+
+        .unit-content {
+          display: grid;
+          grid-template-rows: 0fr;
+          opacity: 0;
+          transition: grid-template-rows .38s ease, opacity .3s ease;
+        }
+
+        .unit-content.is-open {
+          grid-template-rows: 1fr;
+          opacity: 1;
+        }
+
+        .unit-content-inner { overflow: hidden; }
+
+        .unit-chevron {
+          transition: transform .3s ease;
+        }
+
+        .unit-chevron.is-open { transform: rotate(180deg); }
+
+        @media (prefers-reduced-motion: reduce) {
+          .durant-subject-page *,
+          .durant-subject-page *::before,
+          .durant-subject-page *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+            scroll-behavior: auto !important;
+          }
+
+          .unit-card { transform: none !important; }
+        }
+      `}</style>
+
+      <StudentSidebar />
+
+      <section className={`min-w-0 w-full px-3 pb-8 pt-20 sm:px-5 sm:py-7 md:px-6 lg:px-7 xl:px-8 lg:w-[calc(100%-18rem)] ${isArabic ? "lg:mr-72" : "lg:ml-72"}`}>
+        <div className="mx-auto w-full max-w-[1200px]">
+
+          <div className="subject-reveal mb-5 flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href={`/grades/${gradeSlug}`}
+              className="group inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#e5e8f5] bg-white px-4 py-2.5 text-xs font-bold text-[#17213d] shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md sm:text-sm"
+            >
+              <span className="transition-transform duration-300 group-hover:-translate-x-1">
+                {isArabic ? "→" : "←"}
+              </span>
+              {t("العودة إلى مواد الصف", "Back to Grade")}
+            </Link>
+
+            <span className="text-sm font-black tracking-widest">DURANT</span>
+          </div>
+
+          {/* Interactive Hero */}
+          <section
+            onMouseMove={(event) => handlePointerMove(event, 0.5)}
+            onMouseLeave={resetPointer}
+            className="subject-hero subject-reveal subject-delay-1 relative overflow-hidden rounded-3xl p-6 text-white shadow-lg sm:p-9"
+          >
+            <div className="hero-orbit pointer-events-none absolute -end-12 -top-16 h-64 w-64 rounded-full border-[30px] border-white/[0.045]" />
+            <div className="hero-orbit-two pointer-events-none absolute end-20 bottom-[-100px] h-52 w-52 rounded-full border border-white/[0.08]" />
+            <div className="pointer-events-none absolute end-[35%] top-8 h-2 w-2 rounded-full bg-blue-200/60 blur-[1px]" />
+            <div className="pointer-events-none absolute end-[18%] bottom-12 h-3 w-3 rounded-full bg-white/20 blur-[1px]" />
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-3 py-1.5">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-300" />
+                <p className="text-[10px] font-black tracking-[0.18em] text-blue-100">
+                  {t("رحلتك التعليمية", "YOUR LEARNING JOURNEY")}
+                </p>
+              </div>
+
+              <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm text-blue-100">
+                    {isArabic ? grade.ar : grade.en}
+                  </p>
+
+                  <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
+                    {subject?.icon || subjectIcons[subjectKey]} {subjectName}
+                  </h1>
+
+                  {subjectDescription && (
+                    <p className="mt-3 max-w-2xl text-sm leading-7 text-blue-100">
+                      {subjectDescription}
+                    </p>
+                  )}
+
+                  <p className="mt-3 text-sm text-blue-100">
+                    {t("مع مستر أمير عبد الناصر", "With Mr. Amir Abdel Nasser")}
+                  </p>
+
+                  <a
+                    href="#subject-units"
+                    className="group mt-7 inline-flex min-h-11 items-center justify-center gap-3 rounded-xl bg-white px-6 py-3 text-sm font-black text-[#17213d] shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:bg-blue-50 hover:shadow-xl"
+                  >
+                    {t("ابدأ التعلم", "Start Learning")}
+                    <span className="transition-transform duration-300 group-hover:translate-y-1">↓</span>
+                  </a>
+                </div>
+
+                <div className="hero-orbit flex h-28 w-28 shrink-0 items-center justify-center self-center rounded-[2rem] border border-white/15 bg-white/[0.09] text-6xl shadow-inner shadow-white/10 backdrop-blur-sm sm:h-36 sm:w-36 sm:text-7xl">
+                  {subject?.icon || subjectIcons[subjectKey]}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Live content statistics */}
+          {!loading && subject && !error && (
+            <section className="subject-reveal subject-delay-2 mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {[
+                {
+                  icon: "📚",
+                  value: units.length,
+                  label: t("الوحدات", "Units"),
+                  color: "bg-blue-50 text-blue-700",
+                },
+                {
+                  icon: "📖",
+                  value: lessons.length,
+                  label: t("الدروس", "Lessons"),
+                  color: "bg-indigo-50 text-indigo-700",
+                },
+                {
+                  icon: "🎥",
+                  value: totalVideos,
+                  label: t("الفيديوهات", "Videos"),
+                  color: "bg-sky-50 text-sky-700",
+                },
+                {
+                  icon: "📎",
+                  value: totalFiles,
+                  label: t("الملفات", "Files"),
+                  color: "bg-slate-100 text-slate-700",
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="stat-card rounded-2xl border border-[#e5e8f5] bg-white p-4 shadow-sm sm:p-5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`flex h-10 w-10 items-center justify-center rounded-xl text-lg ${stat.color}`}>
+                      {stat.icon}
+                    </span>
+                    <span className="text-2xl font-black tabular-nums text-[#17213d]">
+                      {stat.value}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs font-bold text-slate-500">{stat.label}</p>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* Course content */}
+          <section id="subject-units" className="subject-reveal subject-delay-3 mt-9 scroll-mt-6">
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[10px] font-black tracking-[0.18em] text-blue-600">
+                  COURSE CONTENT
+                </p>
+                <h2 className="mt-1 text-xl font-black text-[#17213d] sm:text-2xl">
+                  📚 {t("الوحدات الدراسية", "Course Units")}
+                </h2>
+                <p className="mt-2 text-sm text-slate-500">
+                  {t("اختر الوحدة التي تريد دراستها.", "Choose a unit to study.")}
+                </p>
+              </div>
+
+              {!loading && units.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={openAllUnits}
+                    className="rounded-xl border border-[#e2e8f4] bg-white px-3 py-2 text-xs font-bold text-[#315caa] transition hover:border-blue-200 hover:bg-blue-50"
+                  >
+                    {t("فتح الكل", "Expand all")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeAllUnits}
+                    className="rounded-xl border border-[#e2e8f4] bg-white px-3 py-2 text-xs font-bold text-slate-500 transition hover:bg-slate-50"
+                  >
+                    {t("إغلاق الكل", "Collapse all")}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Search */}
+            {!loading && !error && units.length > 0 && (
+              <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e5e8f5] bg-white px-4 py-3 shadow-sm transition focus-within:border-blue-300 focus-within:shadow-md">
+                <span className="text-lg">⌕</span>
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder={t("ابحث عن درس...", "Search for a lesson...")}
+                  className="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#17213d] outline-none placeholder:text-slate-400"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    className="rounded-lg px-2 py-1 text-xs font-bold text-blue-600 hover:bg-blue-50"
+                  >
+                    {t("مسح", "Clear")}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {loading ? (
+              <div className="rounded-2xl border border-[#e5e8f5] bg-white p-10 text-center shadow-sm">
+                <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+                <p className="mt-4 text-sm font-medium text-slate-500">
+                  {t("جاري تحميل المحتوى...", "Loading course content...")}
+                </p>
+              </div>
+            ) : error ? (
+              <div className="rounded-2xl border border-red-100 bg-white p-8 text-center shadow-sm">
+                <div className="text-3xl">⚠️</div>
+                <p className="mt-3 font-bold text-red-500">{error}</p>
+              </div>
+            ) : !subject ? (
+              <div className="rounded-2xl border border-[#e5e8f5] bg-white p-8 text-center shadow-sm">
+                <div className="text-5xl">📚</div>
+                <h3 className="mt-4 text-lg font-black">
+                  {t("المادة غير متاحة حاليا", "Subject Not Available")}
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-slate-500">
+                  {t("تأكد من تسجيل الدخول بالصف الدراسي الصحيح أو تواصل مع الإدارة.", "Please check your grade or contact the administration.")}
+                </p>
+              </div>
+            ) : units.length === 0 ? (
+              <div className="rounded-2xl border border-[#e5e8f5] bg-white p-8 text-center shadow-sm sm:p-12">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-4xl">
+                  📖
+                </div>
+                <h3 className="mt-4 text-lg font-black">
+                  {t("المحتوى قيد التجهيز", "Content Coming Soon")}
+                </h3>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-500">
+                  {t("تم تجهيز صفحة المادة وسيتم عرض الوحدات هنا بمجرد إضافتها ونشرها من الإدارة.", "The subject page is ready. Units will appear here once they are added and published by the administration.")}
+                </p>
+              </div>
+            ) : (
+              <div className="grid items-start gap-4 md:grid-cols-2">
+                {units.map((unit, index) => {
+                  const unitLessons = getUnitLessons(unit.id);
+                  const isOpen = openUnits.includes(unit.id);
+                  const originalCount = lessons.filter(
+                    (lesson) => lesson.unit_id === unit.id
+                  ).length;
+
+                  return (
+                    <article
+                      key={unit.id}
+                      onMouseMove={(event) => handlePointerMove(event, 0.7)}
+                      onMouseLeave={resetPointer}
+                      className="unit-card relative overflow-hidden rounded-2xl border border-[#e5e8f5] bg-white p-5 shadow-sm sm:p-6"
+                      style={{ animationDelay: `${index * 90}ms` }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleUnit(unit.id)}
+                        aria-expanded={isOpen}
+                        className="relative z-10 flex w-full items-center gap-4 text-start"
+                      >
+                        <div className="unit-number flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-2xl font-black text-[#17213d]">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-black tracking-widest text-blue-600">
+                            {t("الوحدة الدراسية", "STUDY UNIT")} {index + 1}
+                          </p>
+                          <h3 className="mt-1 text-base font-black leading-6 text-[#17213d] sm:text-lg">
+                            {isArabic ? unit.title_ar : unit.title_en || unit.title_ar}
+                          </h3>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {originalCount} {t("درس", "lessons")}
+                          </p>
+                        </div>
+
+                        <div className={`unit-chevron flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500 ${isOpen ? "is-open" : ""}`}>
+                          <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="2">
+                            <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                      </button>
+
+                      {(isArabic ? unit.description_ar : unit.description_en || unit.description_ar) && (
+                        <p className="relative z-10 mt-4 text-sm leading-7 text-slate-500">
+                          {isArabic ? unit.description_ar : unit.description_en || unit.description_ar}
+                        </p>
+                      )}
+
+                      <div className={`unit-content relative z-10 ${isOpen ? "is-open" : ""}`}>
+                        <div className="unit-content-inner">
+                          <div className="mt-5 border-t border-slate-100 pt-4">
+                            <div className="mb-3 flex items-center justify-between gap-2">
+                              <p className="text-sm font-black text-[#17213d]">
+                                {t("دروس الوحدة", "Unit Lessons")}
+                              </p>
+                              <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+                                {unitLessons.length} {t("درس", "Lessons")}
+                              </span>
+                            </div>
+
+                            {unitLessons.length === 0 ? (
+                              <p className="rounded-xl bg-slate-50 px-4 py-3 text-xs leading-6 text-slate-500">
+                                {search
+                                  ? t("لا توجد دروس تطابق البحث في هذه الوحدة.", "No lessons match your search in this unit.")
+                                  : t("لا توجد دروس منشورة في هذه الوحدة حاليا.", "No published lessons in this unit yet.")}
+                              </p>
+                            ) : (
+                              <div className="space-y-2">
+                                {unitLessons.map((lesson, lessonIndex) => (
+                                  <div
+                                    key={lesson.id}
+                                    className="lesson-row flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-3"
+                                    style={{ "--lesson-shift": isArabic ? "-4px" : "4px" } as React.CSSProperties}
+                                  >
+                                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-black text-blue-600 shadow-sm">
+                                      {lessonIndex + 1}
+                                    </span>
+
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-sm font-bold leading-6 text-[#17213d]">
+                                        {isArabic ? lesson.title_ar : lesson.title_en || lesson.title_ar}
+                                      </p>
+
+                                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                                        {lesson.duration_minutes != null && (
+                                          <span className="text-[10px] text-slate-400">
+                                            ◷ {lesson.duration_minutes} {t("دقيقة", "min")}
+                                          </span>
+                                        )}
+
+                                        <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${lesson.video_url ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-400"}`}>
+                                          🎥 {lesson.video_url ? t("فيديو متاح", "Video available") : t("لا يوجد فيديو", "No video")}
+                                        </span>
+
+                                        <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${lesson.attachment_url ? "bg-indigo-50 text-indigo-700" : "bg-slate-100 text-slate-400"}`}>
+                                          📎 {lesson.attachment_url ? t("ملف متاح", "File available") : t("لا يوجد ملف", "No file")}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex shrink-0 items-center gap-1">
+                                      {lesson.video_url && (
+                                        <a
+                                          href={lesson.video_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          aria-label={t("فتح فيديو الدرس", "Open lesson video")}
+                                          title={t("مشاهدة الفيديو", "Watch video")}
+                                          className="lesson-action flex h-9 w-9 items-center justify-center rounded-xl bg-[#17213d] text-sm text-white shadow-sm hover:bg-blue-800"
+                                        >
+                                          ▶
+                                        </a>
+                                      )}
+
+                                      {lesson.attachment_url && (
+                                        <a
+                                          href={lesson.attachment_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          aria-label={t("فتح ملف الدرس", "Open lesson attachment")}
+                                          title={t("فتح الملف", "Open attachment")}
+                                          className="lesson-action flex h-9 w-9 items-center justify-center rounded-xl bg-white text-sm text-blue-700 shadow-sm hover:bg-blue-50"
+                                        >
+                                          ↗
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleUnit(unit.id)}
+                        className="relative z-10 mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#e8edf7] bg-white py-2.5 text-xs font-bold text-[#315caa] transition hover:border-blue-200 hover:bg-blue-50"
+                      >
+                        {isOpen ? t("إخفاء الدروس", "Hide lessons") : t("استكشف دروس الوحدة", "Explore unit lessons")}
+                        <span className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>⌄</span>
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          <footer className="mt-10 border-t border-[#e1e5f1] pt-6 text-center">
+            <p className="font-black tracking-[0.25em] text-[#17213d]">DURANT</p>
+            <p className="mt-2 text-xs text-slate-400">
+              {t("منصة ديورانت التعليمية — جميع الحقوق محفوظة", "DURANT Educational Platform — All Rights Reserved")}
+            </p>
+          </footer>
+        </div>
+      </section>
+    </main>
+  );
+}

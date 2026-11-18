@@ -1,0 +1,892 @@
+
+@import "tailwindcss";
+
+/* ========================================
+   DURANT GLOBAL THEME
+======================================== */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --durant-font-size: 16px;
+}
+
+html.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --surface: #0f172a;
+  --surface-border: #1e293b;
+}
+
+html.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f1f5f9;
+  --surface-border: #e2e8f0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Font size */
+
+html {
+  font-size: var(--durant-font-size);
+  scroll-behavior: smooth;
+  transition: font-size 0.2s ease;
+}
+
+html[data-font-size="small"] {
+  --durant-font-size: 14px;
+}
+
+html[data-font-size="medium"] {
+  --durant-font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  --durant-font-size: 18px;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ========================================
+   DURANT LIGHT THEME
+======================================== */
+
+html.light [class~="bg-slate-950"] {
+  background-color: #f8fafc !important;
+}
+
+html.light [class~="bg-slate-900"] {
+  background-color: #ffffff !important;
+}
+
+html.light [class~="bg-slate-800"] {
+  background-color: #e2e8f0 !important;
+}
+
+html.light [class~="text-white"] {
+  color: #0f172a !important;
+}
+
+html.light [class~="text-slate-300"] {
+  color: #334155 !important;
+}
+
+html.light [class~="text-slate-400"] {
+  color: #475569 !important;
+}
+
+html.light [class~="text-slate-500"] {
+  color: #64748b !important;
+}
+
+html.light [class~="text-slate-600"] {
+  color: #64748b !important;
+}
+
+html.light [class~="border-slate-800"] {
+  border-color: #e2e8f0 !important;
+}
+
+html.light [class~="border-slate-700"] {
+  border-color: #cbd5e1 !important;
+}
+
+html.light [class~="hover:bg-slate-800"]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* ========================================
+   DURANT ADMIN DESIGN SYSTEM
+======================================== */
+
+.admin-page {
+  --admin-navy: #17213d;
+  --admin-deep: #0d162b;
+  --admin-blue: #3157a4;
+  --admin-gold: #d6ad58;
+  --admin-bg: #f1f3fb;
+  --admin-glass: rgba(255, 255, 255, 0.94);
+
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 90% 0%,
+      rgba(49, 91, 155, 0.09),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 5% 80%,
+      rgba(214, 173, 88, 0.045),
+      transparent 30%
+    ),
+    var(--admin-bg);
+  color: var(--admin-navy);
+}
+
+/* ========================================
+   HERO SECTION
+======================================== */
+
+.admin-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  background: linear-gradient(
+    120deg,
+    #101a33 0%,
+    #192b4d 55%,
+    #29446f 100%
+  );
+  color: #ffffff;
+  box-shadow: 0 22px 55px rgba(23, 33, 61, 0.17);
+}
+
+.admin-hero::before,
+.admin-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.admin-hero::before {
+  width: 340px;
+  height: 340px;
+  top: -190px;
+  left: -80px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 35px rgba(255, 255, 255, 0.025),
+    0 0 0 75px rgba(255, 255, 255, 0.02);
+  animation: admin-orbit 24s linear infinite;
+}
+
+.admin-hero::after {
+  width: 220px;
+  height: 220px;
+  bottom: -150px;
+  right: 20%;
+  background: rgba(213, 173, 98, 0.12);
+  filter: blur(45px);
+  animation: admin-glow 7s ease-in-out infinite alternate;
+}
+
+/* Keep hero text white in light mode */
+
+html.light .admin-hero [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+/* ========================================
+   FLOATING EDUCATIONAL ELEMENTS
+======================================== */
+
+.admin-float {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.18;
+  animation: admin-float 7s ease-in-out infinite;
+}
+
+.admin-float:nth-child(2) {
+  animation-delay: -2s;
+}
+
+.admin-float:nth-child(3) {
+  animation-delay: -4s;
+}
+
+/* ========================================
+   HYBRID SIDEBAR
+======================================== */
+
+.admin-sidebar {
+  position: sticky;
+  top: 24px;
+  height: calc(100vh - 48px);
+  min-height: 600px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(67, 105, 180, 0.25),
+      transparent 32%
+    ),
+    linear-gradient(
+      165deg,
+      #17213d 0%,
+      #111a30 55%,
+      #0c1427 100%
+    );
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.18);
+  animation: adminSidebarEnter 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-sidebar::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 190px;
+  height: 190px;
+  left: -100px;
+  bottom: 90px;
+  border: 1px solid rgba(213, 173, 98, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.admin-sidebar::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 150px;
+  height: 150px;
+  right: -95px;
+  top: 35%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Sidebar typography */
+
+.admin-sidebar h2 {
+  color: #ffffff !important;
+}
+
+.admin-sidebar p {
+  color: #94a3b8;
+}
+
+.admin-sidebar .text-xs.font-bold {
+  color: #ffffff;
+}
+
+/* Protect sidebar from global light theme overrides */
+
+html.light .admin-sidebar [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+html.light .admin-sidebar [class~="text-slate-300"],
+html.light .admin-sidebar [class~="text-slate-400"],
+html.light .admin-sidebar [class~="text-slate-500"] {
+  color: #aebbd0 !important;
+}
+
+html.light .admin-sidebar > div:first-child h2 {
+  color: #ffffff !important;
+}
+
+/* Sidebar navigation */
+
+.admin-sidebar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 10px 13px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    color 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.admin-sidebar-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(-3px);
+}
+
+.admin-sidebar-link.active {
+  color: #ffffff;
+  background: linear-gradient(
+    110deg,
+    rgba(49, 87, 164, 0.95),
+    rgba(35, 54, 91, 0.95)
+  );
+  border-color: rgba(213, 173, 98, 0.28);
+  box-shadow: 0 8px 22px rgba(4, 10, 25, 0.2);
+}
+
+.admin-sidebar-link.active::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 5px;
+  background: var(--admin-gold);
+}
+
+.admin-sidebar-link > span:first-child {
+  background: rgba(255, 255, 255, 0.09);
+  color: #e2c78e;
+  transition:
+    background 220ms ease,
+    transform 220ms ease;
+}
+
+.admin-sidebar-link:hover > span:first-child {
+  transform: scale(1.06);
+}
+
+.admin-sidebar-link.active > span:first-child {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Sidebar security card */
+
+.admin-sidebar > div:last-child > div {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-sidebar > div:last-child p {
+  color: #dce5f5;
+}
+
+.admin-sidebar > div:last-child p:last-child {
+  color: #94a3b8;
+}
+
+/* ========================================
+   STATISTICS
+======================================== */
+
+.admin-stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e7eaf2;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(23, 33, 61, 0.035);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(49, 91, 155, 0.25);
+  box-shadow: 0 15px 32px rgba(23, 33, 61, 0.09);
+}
+
+.admin-stat-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(49, 87, 164, 0.06);
+  border-radius: 16px;
+  background: #eef3fc;
+  transition: transform 0.25s ease;
+}
+
+.admin-stat-card:hover .admin-stat-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* ========================================
+   PREMIUM CARDS
+======================================== */
+
+.admin-premium-card {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 24px;
+  background: var(--admin-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(23, 33, 61, 0.045);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.admin-premium-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(49, 87, 164, 0.22);
+  box-shadow: 0 17px 38px rgba(23, 33, 61, 0.08);
+}
+
+/* ========================================
+   ENTRANCE ANIMATIONS
+======================================== */
+
+.admin-entrance {
+  animation: admin-entrance 0.65s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-right {
+  animation: adminSlideRight 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-left {
+  animation: adminSlideLeft 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-slide-up {
+  animation: adminSlideUp 0.7s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.admin-delay-1 {
+  animation-delay: 100ms;
+}
+
+.admin-delay-2 {
+  animation-delay: 180ms;
+}
+
+.admin-delay-3 {
+  animation-delay: 260ms;
+}
+
+.admin-delay-4 {
+  animation-delay: 340ms;
+}
+
+.admin-delay-5 {
+  animation-delay: 420ms;
+}
+
+.admin-delay-6 {
+  animation-delay: 500ms;
+}
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.admin-search {
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-search:focus {
+  border-color: #6487c0;
+  box-shadow: 0 0 0 4px rgba(49, 91, 155, 0.10);
+  outline: none;
+}
+
+/* ========================================
+   TABLE
+======================================== */
+
+.admin-table-row {
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.admin-table-row:hover {
+  background-color: #f4f7fd;
+}
+
+/* ========================================
+   STATUS AND DECORATIONS
+======================================== */
+
+.admin-pulse {
+  animation: admin-pulse 2.2s ease-in-out infinite;
+}
+
+.admin-sidebar-decoration {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: admin-float 7s ease-in-out infinite;
+}
+
+/* ========================================
+   KEYFRAMES
+======================================== */
+
+@keyframes admin-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes admin-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(5deg);
+  }
+}
+
+@keyframes admin-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes admin-glow {
+  from {
+    opacity: 0.5;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes admin-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes adminSidebarEnter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes adminSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-page *,
+  .admin-page *::before,
+  .admin-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 1023px) {
+  .admin-sidebar {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-hero {
+    border-radius: 22px;
+  }
+
+  .admin-premium-card:hover,
+  .admin-stat-card:hover {
+    transform: none;
+  }
+
+  .admin-page {
+    background: #f1f3fb;
+  }
+}
+
+/* ========================================
+   DURANT ANIMATED SIDEBAR LOGO
+======================================== */
+
+.admin-logo-morph {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 300px;
+}
+
+.admin-logo-morph .admin-logo-item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: rotateY(90deg) scale(0.5);
+  animation: durant-logo-cycle 9s infinite;
+  animation-fill-mode: both;
+}
+
+.admin-logo-morph .admin-logo-letter {
+  color: #d6ad55;
+  font-size: 30px;
+  font-weight: 900;
+  animation-delay: 0s;
+}
+
+.admin-logo-morph .admin-logo-teacher {
+  font-size: 25px;
+  animation-delay: 3s;
+}
+
+.admin-logo-morph .admin-logo-screen {
+  font-size: 25px;
+  animation-delay: 6s;
+}
+
+@keyframes durant-logo-cycle {
+  0%, 5% {
+    opacity: 0;
+    visibility: hidden;
+    transform: rotateY(90deg) scale(0.5);
+  }
+
+  12%, 27% {
+    opacity: 1;
+    visibility: visible;
+    transform: rotateY(0deg) scale(1);
+  }
+
+  34%, 100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: rotateY(-90deg) scale(0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-logo-morph .admin-logo-item {
+    animation: none;
+  }
+
+  .admin-logo-morph .admin-logo-letter {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .admin-logo-morph .admin-logo-teacher,
+  .admin-logo-morph .admin-logo-screen {
+    display: none;
+  }
+}
+
+
+/* ========================================
+   DURANT INTERACTIVE MOTION SYSTEM
+======================================== */
+
+.durant-mark {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border: 1px solid rgba(214, 173, 88, .35);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #304b80, #17213d 75%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 7px 18px rgba(23, 33, 61, .19);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1),
+              box-shadow .35s ease,
+              border-color .35s ease;
+}
+
+.durant-mark-letter {
+  position: relative;
+  z-index: 2;
+  font-size: 29px;
+  line-height: 1;
+  font-weight: 950;
+  font-style: italic;
+  color: #e8c879;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  transition: transform .4s ease, text-shadow .4s ease;
+}
+
+.durant-mark-ring {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(232, 200, 121, .65);
+  border-radius: 50%;
+  transform: rotate(-25deg) scale(.82);
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.durant-mark-spark {
+  position: absolute;
+  z-index: 3;
+  top: -5px;
+  right: -5px;
+  color: #d6ad58;
+  font-size: 13px;
+  opacity: .75;
+  transition: transform .4s ease, opacity .4s ease;
+}
+
+.durant-mark:hover {
+  transform: translateY(-3px) rotate(-4deg);
+  border-color: #d6ad58;
+  box-shadow: 0 10px 25px rgba(23, 33, 61, .25),
+              0 0 18px rgba(214, 173, 88, .16);
+}
+
+.durant-mark:hover .durant-mark-ring {
+  transform: rotate(145deg) scale(1.08);
+}
+
+.durant-mark:hover .durant-mark-letter {
+  transform: scale(1.12);
+}
+
+.durant-mark:active {
+  transform: scale(.91);
+}
+
+.durant-mark.is-energized {
+  border-color: #e8c879;
+  box-shadow: 0 0 0 4px rgba(214, 173, 88, .13),
+              0 0 24px rgba(214, 173, 88, .28);
+}
+
+.durant-mark.is-energized .durant-mark-ring {
+  transform: rotate(180deg) scale(1.13);
+  border-color: #f0d48e;
+}
+
+.durant-mark.is-energized .durant-mark-spark {
+  opacity: 1;
+  transform: rotate(90deg) scale(1.35);
+}
+
+.durant-mark:focus-visible {
+  outline: 3px solid rgba(49, 87, 164, .45);
+  outline-offset: 4px;
+}
+
+/* Consistent micro-interactions across the platform */
+a[href],
+button:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a[href]:hover {
+    transition: color .2s ease, background-color .2s ease,
+                border-color .2s ease, box-shadow .2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .durant-mark,
+  .durant-mark * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
